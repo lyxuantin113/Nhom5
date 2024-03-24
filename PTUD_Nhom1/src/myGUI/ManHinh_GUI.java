@@ -30,6 +30,9 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel = new JPanel(cardLayout);
 
 //		CÁC TAB		
+//		Trang Chủ 
+		cardPanel.add(new TrangChu_Gui(), "Trang Chủ");
+		
 //		Khách hàng
 		cardPanel.add(new DSKhachHang_Gui(), "Quản Lý Khách Hàng");
 		cardPanel.add(new TimKhachHang_Gui(), "Tìm Kiếm Khách Hàng");
@@ -37,7 +40,11 @@ public class ManHinh_GUI extends JFrame {
 //		Nhân viên
 		cardPanel.add(new DSNhanVien_Gui(), "Quản Lý Nhân Viên");
 		cardPanel.add(new TimNhanVien_Gui(), "Tìm Kiếm Nhân Viên");
-
+//		Đơn đặt trong Nhân Viên
+		cardPanel.add(new LapDonDat_Gui(), "Lập Phiếu Đặt");
+		cardPanel.add(new DSDonDat_Gui(), "Quản Lý Phiếu Đặt");
+		
+		
 //		Thuốc
 		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
@@ -47,9 +54,7 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel.add(new DSHoaDon_Gui(), "Danh Sách Hóa Đơn");
 		cardPanel.add(new TimHoaDon_Gui(), "Tìm Kiếm Hóa Đơn");
 
-//		Đơn đặt
-		cardPanel.add(new LapDonDat_Gui(), "Lập Phiếu Đặt");
-		cardPanel.add(new DSDonDat_Gui(), "Quản Lý Phiếu Đặt");
+
 
 //		Thống kê
 		cardPanel.add(new XemThongKe_Gui(), "Xem Thống Kê");
@@ -65,52 +70,52 @@ public class ManHinh_GUI extends JFrame {
 	public void showMenu() {
 
 //		Tạo Menu và Icon
-		JMenu trangChuMenu = new JMenu("<html><body>Hệ Thống <b>&#x25BC;</b></body></html>");
-		trangChuMenu.setPreferredSize(new Dimension(155, 50));
+		JMenu trangChuMenu = new JMenu("Trang Chủ");
+		trangChuMenu.setPreferredSize(new Dimension(163, 50));
 		ImageIcon iconTrangChu = new ImageIcon("src//Icon//home.png");
-		Image imageTrangChu = iconTrangChu.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		Image imageTrangChu = iconTrangChu.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconTrangChu = new ImageIcon(imageTrangChu);
 		trangChuMenu.setIcon(iconTrangChu);
+		
+		JMenu heThong = new JMenu("<html><body>Hệ Thống <b>&#x25BC;</b></body></html>");
+		heThong.setPreferredSize(new Dimension(163, 50));
+		ImageIcon iconHeThong = new ImageIcon("src//Icon//home.png");
+		Image imageHeThong = iconHeThong.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		iconHeThong = new ImageIcon(imageHeThong);
+		heThong.setIcon(iconHeThong);
 
 		JMenu qlNhanVien = new JMenu("<html><body>Nhân Viên <b>&#x25BC;</b></body></html>");
-		qlNhanVien.setPreferredSize(new Dimension(180, 50));
+		qlNhanVien.setPreferredSize(new Dimension(185, 50));
 		ImageIcon iconNhanVien = new ImageIcon("src//Icon//nhanvien.png");
-		Image imageNhanVien = iconNhanVien.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		Image imageNhanVien = iconNhanVien.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconNhanVien = new ImageIcon(imageNhanVien);
 		qlNhanVien.setIcon(iconNhanVien);
 
 		JMenu qlThuoc = new JMenu("<html><body>Thuốc <b>&#x25BC;</b></body></html>");
-		qlThuoc.setPreferredSize(new Dimension(160, 50));
+		qlThuoc.setPreferredSize(new Dimension(165, 50));
 		ImageIcon iconThuoc = new ImageIcon("src//Icon//thuoc.png");
-		Image imageThuoc = iconThuoc.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		Image imageThuoc = iconThuoc.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconThuoc = new ImageIcon(imageThuoc);
 		qlThuoc.setIcon(iconThuoc);
 
 		JMenu qlHoaDon = new JMenu("<html><body>Hóa Đơn <b>&#x25BC;</b></body></html>");
-		qlHoaDon.setPreferredSize(new Dimension(175, 50));
+		qlHoaDon.setPreferredSize(new Dimension(180, 50));
 		ImageIcon iconHoaDon = new ImageIcon("src//Icon//hoadon.png");
-		Image imageHoaDon = iconHoaDon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		Image imageHoaDon = iconHoaDon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconHoaDon = new ImageIcon(imageHoaDon);
 		qlHoaDon.setIcon(iconHoaDon);
 
-		JMenu qlDonDat = new JMenu("<html><body>Phiếu Đặt Thuốc <b>&#x25BC;</b></body></html>");
-		qlDonDat.setPreferredSize(new Dimension(210, 50));
-		ImageIcon iconQLDonDat = new ImageIcon("src//Icon//dathang.png");
-		Image imageQLDonDat = iconQLDonDat.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-		iconQLDonDat = new ImageIcon(imageQLDonDat);
-		qlDonDat.setIcon(iconQLDonDat);
-
 		JMenu qlKhachHang = new JMenu("<html><body>Khách Hàng <b>&#x25BC;</b></body></html>");
-		qlKhachHang.setPreferredSize(new Dimension(180, 50));
+		qlKhachHang.setPreferredSize(new Dimension(190, 50));
 		ImageIcon iconKH = new ImageIcon("src//Icon//khach.png");
-		Image imageKH = iconKH.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		Image imageKH = iconKH.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconKH = new ImageIcon(imageKH);
 		qlKhachHang.setIcon(iconKH);
 
-		JMenu qlThongKe = new JMenu("<html><body>Danh Sách Thống Kê <b>&#x25BC;</b></body></html>");
+		JMenu qlThongKe = new JMenu("<html><body>Thống Kê <b>&#x25BC;</b></body></html>");
 		qlThongKe.setPreferredSize(new Dimension(210, 50));
 		ImageIcon iconThongKe = new ImageIcon("src//Icon//thongke.png");
-		Image imageThongKe = iconThongKe.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		Image imageThongKe = iconThongKe.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconThongKe = new ImageIcon(imageThongKe);
 		qlThongKe.setIcon(iconThongKe);
 
@@ -206,10 +211,10 @@ public class ManHinh_GUI extends JFrame {
 		
 //		ADD MENU ITEM VÀO MENU
 //		add Menu Item Hệ Thống
-		trangChuMenu.add(dangXuat);
+		heThong.add(dangXuat);
 		dangXuat.setPreferredSize(new Dimension(160, 50));
 
-		trangChuMenu.add(thoat);
+		heThong.add(thoat);
 		thoat.setPreferredSize(new Dimension(160, 50));
 
 //		add Menu Item Khách Hàng
@@ -226,6 +231,12 @@ public class ManHinh_GUI extends JFrame {
 		
 		qlNhanVien.add(timNhanVien);
 		timNhanVien.setPreferredSize(new Dimension(180, 50));
+//		add Menu Item Đơn Đặt Thuốc
+		qlNhanVien.add(dsDonDat);
+		dsDonDat.setPreferredSize(new Dimension(210, 50));
+
+		qlNhanVien.add(lapDonDat);
+		lapDonDat.setPreferredSize(new Dimension(210, 50));
 		
 //		add Menu Item Thuốc
 		qlThuoc.add(dsThuoc);
@@ -244,13 +255,6 @@ public class ManHinh_GUI extends JFrame {
 
 		qlHoaDon.add(timHoaDon);
 		timHoaDon.setPreferredSize(new Dimension(180, 50));
-		
-//		add Menu Item Đơn Đặt Thuốc
-		qlDonDat.add(dsDonDat);
-		dsDonDat.setPreferredSize(new Dimension(210, 50));
-
-		qlDonDat.add(lapDonDat);
-		lapDonDat.setPreferredSize(new Dimension(210, 50));
 
 //		add Menu Item Thống Kê
 		qlThongKe.add(xemThongKe);
@@ -275,13 +279,21 @@ public class ManHinh_GUI extends JFrame {
 		menuBar.add(new JLabel("|"));
 		menuBar.add(qlHoaDon);
 		menuBar.add(new JLabel("|"));
-		menuBar.add(qlDonDat);
-		menuBar.add(new JLabel("|"));
 		menuBar.add(qlKhachHang);
 		menuBar.add(new JLabel("|"));
 		menuBar.add(qlThongKe);
+		menuBar.add(new JLabel("|"));
+		menuBar.add(heThong);
 //		END MENU
 
+//		TRANG CHỦ
+		trangChuMenu.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				cardLayout.show(cardPanel, "Trang Chủ");
+			}
+		});
+		
 //		HỆ THỐNG
 		dangXuat.addActionListener(new ActionListener() {
 

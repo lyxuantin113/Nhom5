@@ -15,7 +15,7 @@ public class LapHoaDon_Gui extends JPanel {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
-
+		
 //		HEADER
 		JPanel headPn = new JPanel();
 		JLabel headLb = new JLabel("Lập Hóa Đơn");
@@ -123,25 +123,25 @@ public class LapHoaDon_Gui extends JPanel {
 
 		Box containerBox = Box.createVerticalBox();
 		Box boxTong = Box.createHorizontalBox();
+		Box boxNgay = Box.createHorizontalBox();
 		Box boxMa = Box.createHorizontalBox();
+		Box boxKH = Box.createHorizontalBox();
 		
-//		BOX1 Tổng - Ngày Lập - Mã Đơn
+//		BOX1 Tổng - Ngày Lập
 //		Tổng thành tiền
 		JLabel lbTong = new JLabel("Tổng thành tiền:");
 		lbTong.setPreferredSize(new Dimension(100, 0));
 		JTextField tfTong = new JTextField();
 		tfTong.setPreferredSize(new Dimension(getWidth(), 30)); // SET ĐỘ RỘNG JTEXTFIELD
 		tfTong.setEditable(false);
-		boxTong.add(Box.createHorizontalStrut(30));
 		boxTong.add(lbTong);
-		boxTong.add(Box.createHorizontalStrut(10));
 		boxTong.add(tfTong);
-		boxTong.add(Box.createHorizontalStrut(50));
 		
 //		Ngày Lập
 		JLabel lbNgayLap = new JLabel("Ngày Lập HD: ");
-		lbNgayLap.setPreferredSize(lbTong.getPreferredSize());
+//		lbNgayLap.setPreferredSize(lbTong.getPreferredSize());
 		JTextField tfNgayLap = new JTextField();
+		tfNgayLap.setPreferredSize(new Dimension(getWidth(), 30));
 		tfNgayLap.setEditable(false);
 		boxTong.add(Box.createHorizontalStrut(30));
 		boxTong.add(lbNgayLap);
@@ -149,41 +149,46 @@ public class LapHoaDon_Gui extends JPanel {
 		boxTong.add(tfNgayLap);
 		boxTong.add(Box.createHorizontalStrut(30));
 
-		JLabel lbMaHD = new JLabel("Mã Hóa Đơn:");
-		lbTong.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfMaHD = new JTextField();
-		boxTong.add(Box.createHorizontalStrut(30));
-		boxTong.add(lbMaHD);
-		boxTong.add(Box.createHorizontalStrut(10));
-		boxTong.add(tfMaHD);
-		boxTong.add(Box.createHorizontalStrut(50));
-
-//		BOX2 Mã NV - Tên KH - SDT Khách Hàng
+//		BOX2 Tên KH - SDT Khách Hàng
 //		Tên Khách Hàng
 		JLabel lbKH = new JLabel("Tên Khách: ");
-		lbKH.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfKH = new JTextField(20);
+//		lbKH.setPreferredSize(lbTong.getPreferredSize());
+		JTextField tfKH = new JTextField();
 		tfKH.setPreferredSize(new Dimension(getWidth(), 30)); // SET ĐỘ RỘNG JTEXTFIELD
-		boxMa.add(Box.createHorizontalStrut(30));
-		boxMa.add(lbKH);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfKH);
-		boxMa.add(Box.createHorizontalStrut(75));
+		boxKH.add(Box.createHorizontalStrut(30));
+		boxKH.add(lbKH);
+		boxKH.add(Box.createHorizontalStrut(10));
+		boxKH.add(tfKH);
+		boxKH.add(Box.createHorizontalStrut(75));
 
 //		Số Điện thoại Khách
 		JLabel lbSDT = new JLabel("Số ĐT Khách:");
-		lbSDT.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfSDT = new JTextField(20);
-		boxMa.add(Box.createHorizontalStrut(30));
-		boxMa.add(lbSDT);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfSDT);
-		boxMa.add(Box.createHorizontalStrut(56));
+//		lbSDT.setPreferredSize(lbTong.getPreferredSize());
+		JTextField tfSDT = new JTextField();
+		tfSDT.setPreferredSize(new Dimension(getWidth(), 30));
+		boxKH.add(Box.createHorizontalStrut(30));
+		boxKH.add(lbSDT);
+		boxKH.add(Box.createHorizontalStrut(10));
+		boxKH.add(tfSDT);
+		boxKH.add(Box.createHorizontalStrut(56));
 
+//		BOX3 Mã Hóa Đơn - Mã NV
+//		Mã Hóa Đơn
+		JLabel lbMaHD = new JLabel("Mã Hóa Đơn:");
+//		lbMaHD.setPreferredSize(lbTong.getPreferredSize());
+		JTextField tfMaHD = new JTextField();
+		tfMaHD.setPreferredSize(new Dimension(getWidth(), 30));
+		boxMa.add(Box.createHorizontalStrut(30));
+		boxMa.add(lbMaHD);
+		boxMa.add(Box.createHorizontalStrut(10));
+		boxMa.add(tfMaHD);
+		boxMa.add(Box.createHorizontalStrut(50));
+		
 //		Mã NV
 		JLabel lbNV = new JLabel("Mã Nhân Viên:");
-		lbNV.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfNV = new JTextField(20);
+//		lbNV.setPreferredSize(lbTong.getPreferredSize());
+		JTextField tfNV = new JTextField();
+		tfNV.setPreferredSize(new Dimension(getWidth(), 30));
 		boxMa.add(Box.createHorizontalStrut(30));
 		boxMa.add(lbNV);
 		boxMa.add(Box.createHorizontalStrut(10));
@@ -192,6 +197,8 @@ public class LapHoaDon_Gui extends JPanel {
 		
 //		ADD Box1, Box2
 		containerBox.add(boxTong);
+		containerBox.add(Box.createVerticalStrut(15));
+		containerBox.add(boxKH);
 		containerBox.add(Box.createVerticalStrut(15));
 		containerBox.add(boxMa);
 		pnEndHD.add(containerBox);
@@ -219,7 +226,6 @@ public class LapHoaDon_Gui extends JPanel {
 
 //		ADD BUTTON
 		pnMain.add(pnSouth, BorderLayout.SOUTH);
-
 //		END
 		add(pnMain);
 	}
