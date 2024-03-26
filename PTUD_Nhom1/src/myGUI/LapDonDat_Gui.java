@@ -5,11 +5,39 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class LapDonDat_Gui extends JPanel{
+import dao.Thuoc_Dao;
+import entity.ChiTietHoaDon;
+import entity.DanhSachThuoc;
+import entity.Thuoc;
+
+public class LapDonDat_Gui extends JPanel implements ActionListener {
+	JButton btnThem;
+	private JTextField tfMaThuoc;
+	private JTextField tfSoLuong;
+	private DefaultTableModel modelHoaDon;
+	private JTable tableHoaDon;
+	private JScrollPane scrollHoaDon;
+	private DefaultTableModel modelThuoc;
+	private JTable tableThuoc;
+	private JScrollPane scrollThuoc;
+	private JTextField tfTong;
+	private JTextField tfNgayLap;
+	private JTextField tfNgayNhan;
+	private JTextField tfMaHD;
+	private JTextField tfMaNV;
+	private JTextField tfTenKH;
+	private JTextField tfSDT;
+	private JButton btnLap;
+
 	public LapDonDat_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
@@ -38,7 +66,7 @@ public class LapDonDat_Gui extends JPanel{
 //		Mã Thuốc
 		JLabel lbMaThuoc = new JLabel("Mã Thuốc: ");
 		lbMaThuoc.setPreferredSize(new Dimension(90, 0));
-		JTextField tfMaThuoc = new JTextField(15);
+		tfMaThuoc = new JTextField(15);
 
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(lbMaThuoc);
@@ -49,7 +77,7 @@ public class LapDonDat_Gui extends JPanel{
 //		Số lượng
 		JLabel lbSoLuong = new JLabel("Số lượng: ");
 		lbSoLuong.setPreferredSize(lbMaThuoc.getPreferredSize());
-		JTextField tfSoLuong = new JTextField(15);
+		tfSoLuong = new JTextField(15);
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(lbSoLuong);
 		boxNhap.add(Box.createHorizontalStrut(10));
@@ -57,7 +85,7 @@ public class LapDonDat_Gui extends JPanel{
 		boxNhap.add(Box.createHorizontalStrut(30));
 
 //		BUTTON Thêm thuốc vào danh sách
-		JButton btnThem = new JButton("Thêm");
+		btnThem = new JButton("Thêm");
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(btnThem);
 		btnThem.setBackground(new Color(0, 160, 255));
@@ -76,9 +104,9 @@ public class LapDonDat_Gui extends JPanel{
 		lbTableHoaDon.setFont(fo16);
 		Box boxTableHoaDon = Box.createVerticalBox();
 		String[] headerHoaDon = "Mã thuốc;Tên thuốc;Loại;Đơn vị;Số lượng;Thành tiền".split(";");
-		DefaultTableModel modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
-		JTable tableHoaDon = new JTable(modelHoaDon);
-		JScrollPane scrollHoaDon = new JScrollPane();
+		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
+		tableHoaDon = new JTable(modelHoaDon);
+		scrollHoaDon = new JScrollPane();
 		scrollHoaDon.setViewportView(tableHoaDon = new JTable(modelHoaDon));
 		tableHoaDon.setRowHeight(20);
 
@@ -94,9 +122,9 @@ public class LapDonDat_Gui extends JPanel{
 		lbTableThuoc.setFont(fo16);
 		Box boxTableThuoc = Box.createVerticalBox();
 		String[] headerThuoc = "Mã thuốc;Tên thuốc;Loại;Đơn vị;Đơn giá;HSD".split(";");
-		DefaultTableModel modelThuoc = new DefaultTableModel(headerThuoc, 0);
-		JTable tableThuoc = new JTable(modelThuoc);
-		JScrollPane scrollThuoc = new JScrollPane();
+		modelThuoc = new DefaultTableModel(headerThuoc, 0);
+		tableThuoc = new JTable(modelThuoc);
+		scrollThuoc = new JScrollPane();
 		scrollThuoc.setViewportView(tableThuoc = new JTable(modelThuoc));
 //		scrollThuoc.setPreferredSize(new Dimension(0, 310));  //SET CHIỀU CAO TABLE
 		tableThuoc.setRowHeight(20);
@@ -111,106 +139,93 @@ public class LapDonDat_Gui extends JPanel{
 		jsplit.add(Box.createHorizontalStrut(30));
 		jsplit.setLeftComponent(pnTableHoaDon);
 		jsplit.setRightComponent(pnTableThuoc);
-		jsplit.setPreferredSize(new Dimension(1000, 350)); // SET CHIỀU CAO TABLE
+		jsplit.setPreferredSize(new Dimension(1000, 330)); // SET CHIỀU CAO TABLE
 
 		pnCenterBot.add(jsplit);
 		pnCenterBot.add(Box.createVerticalStrut(10));
 
 //		TOTAL AND CREATE
 		JPanel pnEndHD = new JPanel();
-		pnEndHD.setLayout(new BoxLayout(pnEndHD, BoxLayout.X_AXIS));
+		pnEndHD.setLayout(new BoxLayout(pnEndHD, BoxLayout.Y_AXIS));
+		pnEndHD.setBorder(BorderFactory.createTitledBorder("Thông Tin Đơn Đặt"));
 
-		Box containerBox = Box.createVerticalBox();
-		
 		Box boxTong = Box.createHorizontalBox();
 		Box boxMa = Box.createHorizontalBox();
+		Box boxKH = Box.createHorizontalBox();
 
-//		BOX1 Tổng - Ngày Lập - Ngày Nhận - Mã Đơn
+//		BOX1 Tổng - Ngày Lập - Ngày Nhận
 //		Tổng thành tiền
 		JLabel lbTong = new JLabel("Tổng thành tiền:");
-		lbTong.setPreferredSize(new Dimension(100, 0));
-		JTextField tfTong = new JTextField();
-		tfTong.setPreferredSize(new Dimension(getWidth(), 25)); // SET ĐỘ RỘNG JTEXTFIELD
+		lbTong.setPreferredSize(new Dimension(100, 30));
+		tfTong = new JTextField(20);
 		tfTong.setEditable(false);
-		boxTong.add(Box.createHorizontalStrut(15));
-		boxTong.add(lbTong);
+		tfTong.setText(0 + "");
 		boxTong.add(Box.createHorizontalStrut(10));
+		boxTong.add(lbTong);
 		boxTong.add(tfTong);
-		boxTong.add(Box.createHorizontalStrut(15));
-		
+
 //		Ngày Lập
 		JLabel lbNgayLap = new JLabel("Ngày Lập HD: ");
-		lbNgayLap.setPreferredSize(new Dimension(90, 0));
-		JTextField tfNgayLap = new JTextField();
+		lbNgayLap.setPreferredSize(new Dimension(100, 30));
+		tfNgayLap = new JTextField(20);
+		tfNgayLap.setText(LocalDate.now().toString());
 		tfNgayLap.setEditable(false);
-		boxTong.add(Box.createHorizontalStrut(15));
+		boxTong.add(Box.createHorizontalStrut(30));
 		boxTong.add(lbNgayLap);
-		boxTong.add(Box.createHorizontalStrut(10));
 		boxTong.add(tfNgayLap);
-		boxTong.add(Box.createHorizontalStrut(15));
-		
+
 //		Ngày Nhận
 		JLabel lbNgayNhan = new JLabel("Ngày Nhận: ");
-		lbNgayNhan.setPreferredSize(new Dimension(80, 0));
-		JTextField tfNgayNhan = new JTextField();
-		boxTong.add(Box.createHorizontalStrut(15));
+		lbNgayNhan.setPreferredSize(new Dimension(100, 30));
+		tfNgayNhan = new JTextField(20);
+		boxTong.add(Box.createHorizontalStrut(30));
 		boxTong.add(lbNgayNhan);
-		boxTong.add(Box.createHorizontalStrut(10));
 		boxTong.add(tfNgayNhan);
-		boxTong.add(Box.createHorizontalStrut(15));
 
+		pnEndHD.add(boxTong);
+		pnEndHD.add(Box.createVerticalStrut(10));
+
+//		BOX2
 //		Mã Đơn Đặt
 		JLabel lbMaHD = new JLabel("Mã Phiếu:");
-		lbTong.setPreferredSize(new Dimension(100, 0));
-		JTextField tfMaHD = new JTextField();
-		boxTong.add(Box.createHorizontalStrut(15));
-		boxTong.add(lbMaHD);
-		boxTong.add(Box.createHorizontalStrut(10));
-		boxTong.add(tfMaHD);
-		boxTong.add(Box.createHorizontalStrut(15));
+		lbMaHD.setPreferredSize(new Dimension(100, 30));
+		tfMaHD = new JTextField(20);
+		boxMa.add(Box.createHorizontalStrut(10));
+		boxMa.add(lbMaHD);
+		boxMa.add(tfMaHD);
 
-//		BOX2 Mã NV - Tên KH - SDT Khách Hàng
+//		Mã NV
+		JLabel lbMaNV = new JLabel("Mã NV: ");
+		lbMaNV.setPreferredSize(new Dimension(100, 30));
+		tfMaNV = new JTextField(20);
+		boxMa.add(Box.createHorizontalStrut(30));
+		boxMa.add(lbMaNV);
+		boxMa.add(tfMaNV);
+		pnEndHD.add(boxMa);
+		pnEndHD.add(Box.createVerticalStrut(10));
+
+//		Box 3
 //		Tên Khách Hàng
 		JLabel lbTenKH = new JLabel("Tên KH: ");
-		lbTenKH.setPreferredSize(new Dimension(55, 0));
-		JTextField tfTenKH = new JTextField();
-		tfTenKH.setPreferredSize(new Dimension(0, 25));
-		boxMa.add(Box.createHorizontalStrut(25));
-		boxMa.add(lbTenKH);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfTenKH);
-		boxMa.add(Box.createHorizontalStrut(20));
+		lbTenKH.setPreferredSize(new Dimension(100, 30));
+		tfTenKH = new JTextField(20);
+		boxKH.add(Box.createHorizontalStrut(10));
+		boxKH.add(lbTenKH);
+		boxKH.add(tfTenKH);
 
 //		Số Điện Thoại KH
 		JLabel lbSDT = new JLabel("Số ĐT Khách:");
-		lbSDT.setPreferredSize(new Dimension(80, 0));
-		JTextField tfSDT = new JTextField();
-		boxMa.add(Box.createHorizontalStrut(20));
-		boxMa.add(lbSDT);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfSDT);
-		boxMa.add(Box.createHorizontalStrut(25));
-		
-//		Mã NV
-		JLabel lbMaNV = new JLabel("Mã NV: ");
-		lbMaNV.setPreferredSize(new Dimension(55, 0));
-		JTextField tfMaNV = new JTextField();
-		boxMa.add(Box.createHorizontalStrut(20));
-		boxMa.add(lbMaNV);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfMaNV);
-		boxMa.add(Box.createHorizontalStrut(20));
+		lbSDT.setPreferredSize(new Dimension(100, 30));
+		tfSDT = new JTextField(20);
+		boxKH.add(Box.createHorizontalStrut(30));
+		boxKH.add(lbSDT);
+		boxKH.add(tfSDT);
+		pnEndHD.add(boxKH);
+		pnEndHD.add(Box.createVerticalStrut(5));
 
-//		add Box1 Box2
-		containerBox.add(boxTong);
-		containerBox.add(Box.createVerticalStrut(15));
-		containerBox.add(boxMa);
-		
-		pnEndHD.add(containerBox);
-		
 //		BUTTON LẬP HÓA ĐƠN
 		JPanel pnSouth = new JPanel();
-		JButton btnLap = new JButton("Lập Phiếu Đặt");
+		btnLap = new JButton("Lập Phiếu Đặt");
 		btnLap.setBackground(new Color(0, 160, 255));
 		btnLap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLap.setPreferredSize(new Dimension(150, 35));
@@ -233,5 +248,57 @@ public class LapDonDat_Gui extends JPanel{
 
 //		END
 		add(pnMain);
+
+//		ADD ACTIONLISTENER
+		btnThem.addActionListener(this);
+		btnLap.addActionListener(this);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
+		if (o == btnThem) {
+			themThuocVaoDon();
+		}
+		if (o == btnLap) {
+			lapHoaDon();
+		}
+
+	}
+
+	public void themThuocVaoDon() {
+		String maThuoc = tfMaThuoc.getText();
+		int soLuong = Integer.parseInt(tfSoLuong.getText());
+		Thuoc_Dao td = new Thuoc_Dao();
+//		Thuoc thuoc = td.timThuocTheoMa(maThuoc); -> Trả về Thuốc
+//		String[] rowData = {thuoc.getMaThuoc, thuoc.getTenThuoc, thuoc.getLoaiThuoc
+//						, thuoc.getDonVi, soLuong+"", thuoc.getGiaBan*soLuong+""};
+//		modelHoaDon.addRow(rowData);
+
+//		Total Price
+		double total = 0;
+		for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
+			total += Double.parseDouble(modelHoaDon.getValueAt(i, 6).toString());
+		}
+		tfTong.setText(total + "");
+	}
+
+	public ChiTietHoaDon lapHoaDon() {
+		ChiTietHoaDon cthd = null;
+		List<DanhSachThuoc> dst = null;
+		for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
+//			Add Thuốc Vào Danh sách Thuốc
+			dst = new ArrayList<>();
+			String ma = modelHoaDon.getValueAt(i, 1).toString();
+			Thuoc t = new Thuoc(ma, "", "", "", null, 0, 0, null);
+			int sl = Integer.parseInt(modelHoaDon.getValueAt(i, 5).toString());
+
+			DanhSachThuoc ds = new DanhSachThuoc(t, sl);
+			dst.add(ds);
+		}
+		
+//		cthd = new ChiTietHoaDon(, dst)
+		return cthd;
 	}
 }

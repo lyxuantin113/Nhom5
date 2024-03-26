@@ -79,7 +79,7 @@ public class ManHinh_GUI extends JFrame {
 		
 		JMenu heThong = new JMenu("<html><body>Hệ Thống <b>&#x25BC;</b></body></html>");
 		heThong.setPreferredSize(new Dimension(163, 50));
-		ImageIcon iconHeThong = new ImageIcon("src//Icon//home.png");
+		ImageIcon iconHeThong = new ImageIcon("src//Icon//heThong.png");
 		Image imageHeThong = iconHeThong.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconHeThong = new ImageIcon(imageHeThong);
 		heThong.setIcon(iconHeThong);
@@ -122,7 +122,7 @@ public class ManHinh_GUI extends JFrame {
 //		Menu Item Đăng Xuất
 		JMenuItem dangXuat = new JMenuItem("Đăng xuất");
 //		ICON ĐĂNG XUẤT
-		ImageIcon iconDX = new ImageIcon("src//Icon//dsHD.png");
+		ImageIcon iconDX = new ImageIcon("src//Icon//dangXuat.png");
 		Image imageDX = iconDX.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDX = new ImageIcon(imageDX);
 		dangXuat.setIcon(iconDX);
@@ -130,14 +130,13 @@ public class ManHinh_GUI extends JFrame {
 //		Menu Item Thoát
 		JMenuItem thoat = new JMenuItem("Thoát");
 //		ICON Thoát
-		ImageIcon iconThoat = new ImageIcon("src//Icon//dsHD.png");
+		ImageIcon iconThoat = new ImageIcon("src//Icon//exit.png");
 		Image imageThoat = iconThoat.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconThoat = new ImageIcon(imageThoat);
 		thoat.setIcon(iconThoat);
 		
 //		Menu Item Danh Sách Khách Hàng
 		JMenuItem dsKhach = new JMenuItem("Quản Lý Khách Hàng");
-//		ICON DS Nhân Viên
 		ImageIcon iconDSKH = new ImageIcon("src//Icon//dsHD.png");
 		Image imageDSKH = iconDSKH.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDSKH = new ImageIcon(imageDSKH);
@@ -145,19 +144,17 @@ public class ManHinh_GUI extends JFrame {
 		
 //		Menu Item Tìm Kiếm Khách Hàng
 		JMenuItem timKhach = new JMenuItem("Tìm Kiếm Khách Hàng");
-//		ICON TÌM
-		ImageIcon iconTim = new ImageIcon("src//Icon//lapHD.png");
+		ImageIcon iconTim = new ImageIcon("src//Icon//iconTim.png");
 		Image imageTim = iconTim.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconTim = new ImageIcon(imageTim);
 		timKhach.setIcon(iconTim);
 
 //		Menu Item Danh Sách Nhân Viên
 		JMenuItem dsNhanVien = new JMenuItem("Quản Lý Nhân Viên");
-//		ICON DS Nhân Viên
-		ImageIcon iconDSNV = new ImageIcon("src//Icon//dsHD.png");
-		Image imageDSNV = iconDSNV.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
-		iconDSNV = new ImageIcon(imageDSNV);
-		dsNhanVien.setIcon(iconDSNV);
+		ImageIcon iconQL = new ImageIcon("src//Icon//iconQL.png");
+		Image imageQL = iconQL.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconQL = new ImageIcon(imageQL);
+		dsNhanVien.setIcon(iconQL);
 		
 //		Menu Item Tìm Kiếm Nhân Viên
 		JMenuItem timNhanVien = new JMenuItem("Tìm Kiếm Nhân Viên");
@@ -165,8 +162,7 @@ public class ManHinh_GUI extends JFrame {
 		
 //		Menu Item Danh Sách Thuốc
 		JMenuItem dsThuoc = new JMenuItem("Quản Lý Thuốc");
-//		ICON DS Nhân Viên
-		ImageIcon iconDSThuoc = new ImageIcon("src//Icon//dsHD.png");
+		ImageIcon iconDSThuoc = new ImageIcon("src//Icon//dsThuoc.png");
 		Image imageDSThuoc = iconDSThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDSThuoc = new ImageIcon(imageDSThuoc);
 		dsThuoc.setIcon(iconDSThuoc);
@@ -193,7 +189,7 @@ public class ManHinh_GUI extends JFrame {
 
 //		Menu Item Đơn Đặt
 		JMenuItem dsDonDat = new JMenuItem("Quản Lý Phiếu Đặt");
-		dsDonDat.setIcon(iconDS);
+		dsDonDat.setIcon(iconQL);
 
 		JMenuItem lapDonDat = new JMenuItem("Lập Phiếu Đặt");
 		ImageIcon iconDonDat = new ImageIcon("src//Icon//gioHang.png");

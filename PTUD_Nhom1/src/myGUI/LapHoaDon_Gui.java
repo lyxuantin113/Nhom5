@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.time.LocalDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -112,7 +113,7 @@ public class LapHoaDon_Gui extends JPanel {
 		jsplit.add(Box.createHorizontalStrut(30));
 		jsplit.setLeftComponent(pnTableHoaDon);
 		jsplit.setRightComponent(pnTableThuoc);
-		jsplit.setPreferredSize(new Dimension(1000, 350)); // SET CHIỀU CAO TABLE
+		jsplit.setPreferredSize(new Dimension(1000, 330)); // SET CHIỀU CAO TABLE
 
 		pnCenterBot.add(jsplit);
 		pnCenterBot.add(Box.createVerticalStrut(10));
@@ -121,87 +122,74 @@ public class LapHoaDon_Gui extends JPanel {
 		JPanel pnEndHD = new JPanel();
 		pnEndHD.setLayout(new BoxLayout(pnEndHD, BoxLayout.X_AXIS));
 
-		Box containerBox = Box.createVerticalBox();
+		JPanel pnBox = new JPanel();
+		pnBox.setLayout(new BoxLayout(pnBox, BoxLayout.Y_AXIS));
+		pnBox.setBorder(BorderFactory.createTitledBorder("Thông Tin Hóa Đơn"));
 		Box boxTong = Box.createHorizontalBox();
-		Box boxNgay = Box.createHorizontalBox();
 		Box boxMa = Box.createHorizontalBox();
 		Box boxKH = Box.createHorizontalBox();
 		
 //		BOX1 Tổng - Ngày Lập
 //		Tổng thành tiền
 		JLabel lbTong = new JLabel("Tổng thành tiền:");
-		lbTong.setPreferredSize(new Dimension(100, 0));
-		JTextField tfTong = new JTextField();
-		tfTong.setPreferredSize(new Dimension(getWidth(), 30)); // SET ĐỘ RỘNG JTEXTFIELD
+		lbTong.setPreferredSize(new Dimension(100, 30));
+		JTextField tfTong = new JTextField(20);
 		tfTong.setEditable(false);
+		boxTong.add(Box.createHorizontalStrut(10));
 		boxTong.add(lbTong);
 		boxTong.add(tfTong);
 		
 //		Ngày Lập
 		JLabel lbNgayLap = new JLabel("Ngày Lập HD: ");
-//		lbNgayLap.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfNgayLap = new JTextField();
-		tfNgayLap.setPreferredSize(new Dimension(getWidth(), 30));
+		lbNgayLap.setPreferredSize(new Dimension(100, 30));
+		JTextField tfNgayLap = new JTextField(20);
+		tfNgayLap.setText(LocalDate.now().toString());
 		tfNgayLap.setEditable(false);
 		boxTong.add(Box.createHorizontalStrut(30));
 		boxTong.add(lbNgayLap);
-		boxTong.add(Box.createHorizontalStrut(10));
 		boxTong.add(tfNgayLap);
-		boxTong.add(Box.createHorizontalStrut(30));
+
+		pnBox.add(boxTong);
+		pnBox.add(Box.createVerticalStrut(10));
 
 //		BOX2 Tên KH - SDT Khách Hàng
 //		Tên Khách Hàng
 		JLabel lbKH = new JLabel("Tên Khách: ");
-//		lbKH.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfKH = new JTextField();
-		tfKH.setPreferredSize(new Dimension(getWidth(), 30)); // SET ĐỘ RỘNG JTEXTFIELD
-		boxKH.add(Box.createHorizontalStrut(30));
-		boxKH.add(lbKH);
+		lbKH.setPreferredSize(new Dimension(100, 30));
+		JTextField tfKH = new JTextField(20);
 		boxKH.add(Box.createHorizontalStrut(10));
+		boxKH.add(lbKH);
 		boxKH.add(tfKH);
-		boxKH.add(Box.createHorizontalStrut(75));
 
 //		Số Điện thoại Khách
 		JLabel lbSDT = new JLabel("Số ĐT Khách:");
-//		lbSDT.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfSDT = new JTextField();
-		tfSDT.setPreferredSize(new Dimension(getWidth(), 30));
+		lbSDT.setPreferredSize(new Dimension(100, 30));
+		JTextField tfSDT = new JTextField(20);
 		boxKH.add(Box.createHorizontalStrut(30));
 		boxKH.add(lbSDT);
-		boxKH.add(Box.createHorizontalStrut(10));
 		boxKH.add(tfSDT);
-		boxKH.add(Box.createHorizontalStrut(56));
+		pnBox.add(boxKH);
+		pnBox.add(Box.createVerticalStrut(10));
 
 //		BOX3 Mã Hóa Đơn - Mã NV
 //		Mã Hóa Đơn
 		JLabel lbMaHD = new JLabel("Mã Hóa Đơn:");
-//		lbMaHD.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfMaHD = new JTextField();
-		tfMaHD.setPreferredSize(new Dimension(getWidth(), 30));
-		boxMa.add(Box.createHorizontalStrut(30));
-		boxMa.add(lbMaHD);
+		lbMaHD.setPreferredSize(new Dimension(100, 30));
+		JTextField tfMaHD = new JTextField(20);
 		boxMa.add(Box.createHorizontalStrut(10));
+		boxMa.add(lbMaHD);
 		boxMa.add(tfMaHD);
-		boxMa.add(Box.createHorizontalStrut(50));
 		
 //		Mã NV
 		JLabel lbNV = new JLabel("Mã Nhân Viên:");
-//		lbNV.setPreferredSize(lbTong.getPreferredSize());
-		JTextField tfNV = new JTextField();
-		tfNV.setPreferredSize(new Dimension(getWidth(), 30));
+		lbNV.setPreferredSize(new Dimension(100, 30));
+		JTextField tfNV = new JTextField(20);
 		boxMa.add(Box.createHorizontalStrut(30));
 		boxMa.add(lbNV);
-		boxMa.add(Box.createHorizontalStrut(10));
 		boxMa.add(tfNV);
-		boxMa.add(Box.createHorizontalStrut(50));
-		
-//		ADD Box1, Box2
-		containerBox.add(boxTong);
-		containerBox.add(Box.createVerticalStrut(15));
-		containerBox.add(boxKH);
-		containerBox.add(Box.createVerticalStrut(15));
-		containerBox.add(boxMa);
-		pnEndHD.add(containerBox);
+		pnBox.add(boxMa);
+		pnBox.add(Box.createHorizontalStrut(10));
+		pnBox.add(Box.createVerticalStrut(10));
 
 
 //		BUTTON LẬP HÓA ĐƠN
@@ -217,7 +205,7 @@ public class LapHoaDon_Gui extends JPanel {
 		pnCenter.add(pnCenterTop, BorderLayout.NORTH);
 		pnCenter.add(Box.createVerticalStrut(10));
 		pnCenter.add(pnCenterBot, BorderLayout.CENTER);
-		pnCenter.add(pnEndHD, BorderLayout.SOUTH);
+		pnCenter.add(pnBox, BorderLayout.SOUTH);
 		pnCenter.add(Box.createVerticalStrut(15));
 
 //		ADD TOP

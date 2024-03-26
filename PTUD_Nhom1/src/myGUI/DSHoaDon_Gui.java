@@ -4,11 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class DSHoaDon_Gui extends JPanel {
+import dao.HoaDon_Dao;
+import entity.HoaDon;
+
+public class DSHoaDon_Gui extends JPanel implements ActionListener {
+	DefaultTableModel model;
+	private HoaDon_Dao dshd = new HoaDon_Dao();
 	
 	public DSHoaDon_Gui() {
 //		JPANEL
@@ -28,7 +35,7 @@ public class DSHoaDon_Gui extends JPanel {
 		
 		Box box = Box.createVerticalBox();
 		String[] headerTable = "Mã hóa đơn;Mã nhân viên;Tên khách hàng; Số điện thoại KH;Ngày xuất đơn;Tổng thành tiền".split(";");
-		DefaultTableModel model = new DefaultTableModel(headerTable, 0);
+		model = new DefaultTableModel(headerTable, 0);
 		JTable table = new JTable(model);
 		JScrollPane scroll = new JScrollPane();
 		scroll.setViewportView(table = new JTable(model));
@@ -46,6 +53,24 @@ public class DSHoaDon_Gui extends JPanel {
 		pnMain.add(pnCenter, BorderLayout.CENTER);
 		
 		add(pnMain);
+		
+//		Show All HoaDon in Table
+//		dshd.readFromTable();
+//		showTable();
+	}
+	
+//	Show Table
+	private void showTable() {
+		for (HoaDon hd : dshd.getDSHD()) {
+			String[] dataRow = {hd.getMaHD(), hd.getNgayLap()+"", hd.getKhachHang()+"", hd.getMaNV()+""};
+			model.addRow(dataRow);
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -75,6 +75,7 @@ public class DSKhachHang_Gui extends JPanel{
 		JPanel pnFooter = new JPanel();
 		JLabel lblTimKiem = new JLabel("Tìm kiếm: ");
 		JTextField txtTimKiem = new JTextField(20);
+		txtTimKiem.setPreferredSize(new Dimension(getWidth(), 30));
 		JButton btnTim = new JButton("Tìm");
 		JButton btnXoa = new JButton("Xóa");
 		
