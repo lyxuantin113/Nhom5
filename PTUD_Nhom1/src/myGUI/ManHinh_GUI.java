@@ -53,6 +53,7 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel.add(new LapHoaDon_Gui(), "Lập Hóa Đơn");
 		cardPanel.add(new DSHoaDon_Gui(), "Danh Sách Hóa Đơn");
 		cardPanel.add(new TimHoaDon_Gui(), "Tìm Kiếm Hóa Đơn");
+		cardPanel.add(new LapHoaDon2_Gui(),"Lập Hóa Đơn 2");
 
 
 
@@ -184,6 +185,12 @@ public class ManHinh_GUI extends JFrame {
 		iconLap = new ImageIcon(imageLap);
 		lapHoaDon.setIcon(iconLap);
 		
+		JMenuItem lapHoaDon2 = new JMenuItem("Lập Hóa Đơn 2");
+		ImageIcon iconLap2 = new ImageIcon("src//Icon//lapHD.png");
+		Image imageLap2 = iconLap.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconLap = new ImageIcon(imageLap);
+		lapHoaDon.setIcon(iconLap);
+		
 		JMenuItem timHoaDon = new JMenuItem("Tìm Kiếm Hóa Đơn");
 		timHoaDon.setIcon(iconTim);
 
@@ -251,6 +258,9 @@ public class ManHinh_GUI extends JFrame {
 
 		qlHoaDon.add(timHoaDon);
 		timHoaDon.setPreferredSize(new Dimension(180, 50));
+		
+		qlHoaDon.add(lapHoaDon2);
+		lapHoaDon2.setPreferredSize(new Dimension(180, 50));
 
 //		add Menu Item Thống Kê
 		qlThongKe.add(xemThongKe);
@@ -379,6 +389,12 @@ public class ManHinh_GUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(cardPanel, "Tìm Kiếm Hóa Đơn");
+			}
+		});
+		lapHoaDon2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(cardPanel, "Lập Hóa Đơn 2");
 			}
 		});
 
