@@ -47,6 +47,4 @@ public class HoaDon_Dao {
 	public List<HoaDon> getDSHD() {
 		return dshd;
 	}
-	
-	
 }

@@ -1,7 +1,6 @@
 package entity;
 
 import java.sql.Date;
-import java.time.LocalDate;
 
 public class Thuoc {
 	private String maThuoc, tenThuoc, loaiThuoc, donVi;
@@ -14,14 +13,14 @@ public class Thuoc {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, Date date, double giaBan,
+	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, Date hSD, double giaBan,
 			int soLuongTon, NhaCungCap ncc) {
 		super();
 		this.maThuoc = maThuoc;
 		this.tenThuoc = tenThuoc;
 		this.loaiThuoc = loaiThuoc;
 		this.donVi = donVi;
-		HSD = date;
+		HSD = hSD;
 		this.giaBan = giaBan;
 		this.soLuongTon = soLuongTon;
 		this.ncc = ncc;
