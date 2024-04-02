@@ -50,10 +50,8 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
 
 //		Hóa đơn
-		cardPanel.add(new LapHoaDon_Gui(), "Lập Hóa Đơn");
-		cardPanel.add(new DSHoaDon_Gui(), "Danh Sách Hóa Đơn");
-		cardPanel.add(new TimHoaDon_Gui(), "Tìm Kiếm Hóa Đơn");
-		cardPanel.add(new LapHoaDon2_Gui(),"Lập Hóa Đơn 2");
+		cardPanel.add(new TimHoaDon_Gui(), "Quản Lý Hóa Đơn");
+		cardPanel.add(new LapHoaDon_Gui(),"Lập Hóa Đơn");
 
 
 
@@ -173,26 +171,17 @@ public class ManHinh_GUI extends JFrame {
 		timThuoc.setIcon(iconTim);
 		
 //		Menu Item Hóa Đơn
-		JMenuItem dsHoaDon = new JMenuItem("Danh Sách Hóa Đơn");
-		ImageIcon iconDS = new ImageIcon("src//Icon//dsHD.png");
-		Image imageDS = iconDS.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
-		iconDS = new ImageIcon(imageDS);
-		dsHoaDon.setIcon(iconDS);
-
 		JMenuItem lapHoaDon = new JMenuItem("Lập Hóa Đơn");
 		ImageIcon iconLap = new ImageIcon("src//Icon//lapHD.png");
 		Image imageLap = iconLap.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconLap = new ImageIcon(imageLap);
 		lapHoaDon.setIcon(iconLap);
 		
-		JMenuItem lapHoaDon2 = new JMenuItem("Lập Hóa Đơn 2");
-		ImageIcon iconLap2 = new ImageIcon("src//Icon//lapHD.png");
-		Image imageLap2 = iconLap.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
-		iconLap = new ImageIcon(imageLap);
-		lapHoaDon.setIcon(iconLap);
-		
-		JMenuItem timHoaDon = new JMenuItem("Tìm Kiếm Hóa Đơn");
-		timHoaDon.setIcon(iconTim);
+		JMenuItem timHoaDon = new JMenuItem("Quản Lý Hóa Đơn");
+		ImageIcon iconDS = new ImageIcon("src//Icon//dsHD.png");
+		Image imageDS = iconDS.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconDS = new ImageIcon(imageDS);
+		timHoaDon.setIcon(iconDS);
 
 //		Menu Item Đơn Đặt
 		JMenuItem dsDonDat = new JMenuItem("Quản Lý Phiếu Đặt");
@@ -250,17 +239,11 @@ public class ManHinh_GUI extends JFrame {
 		
 		
 //		add Menu Item Hóa Đơn
-		qlHoaDon.add(dsHoaDon);
-		dsHoaDon.setPreferredSize(new Dimension(180, 50));
+		qlHoaDon.add(timHoaDon);
+		timHoaDon.setPreferredSize(new Dimension(180, 50));
 
 		qlHoaDon.add(lapHoaDon);
 		lapHoaDon.setPreferredSize(new Dimension(180, 50));
-
-		qlHoaDon.add(timHoaDon);
-		timHoaDon.setPreferredSize(new Dimension(180, 50));
-		
-		qlHoaDon.add(lapHoaDon2);
-		lapHoaDon2.setPreferredSize(new Dimension(180, 50));
 
 //		add Menu Item Thống Kê
 		qlThongKe.add(xemThongKe);
@@ -371,13 +354,6 @@ public class ManHinh_GUI extends JFrame {
 		});
 
 //		HÓA ĐƠN
-		dsHoaDon.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Danh Sách Hóa Đơn");
-			}
-		});
-
 		lapHoaDon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -388,13 +364,7 @@ public class ManHinh_GUI extends JFrame {
 		timHoaDon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Tìm Kiếm Hóa Đơn");
-			}
-		});
-		lapHoaDon2.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Lập Hóa Đơn 2");
+				cardLayout.show(cardPanel, "Quản Lý Hóa Đơn");
 			}
 		});
 
