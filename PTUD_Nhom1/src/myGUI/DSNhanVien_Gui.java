@@ -21,7 +21,6 @@ public class DSNhanVien_Gui extends JPanel {
 	private Component comboBox;
 
 	public DSNhanVien_Gui() {
-
 //				JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
@@ -34,20 +33,18 @@ public class DSNhanVien_Gui extends JPanel {
 		lbHead.setFont(fo24);
 		lbHead.setForeground(Color.blue);
 		pnHead.add(lbHead);
-
-//				CENTER
-		JPanel pnCenter = new JPanel();
-		pnCenter.setLayout(new BoxLayout(pnCenter, BoxLayout.Y_AXIS));
+//		WEST
+		JPanel pnWest = new JPanel();
+		pnWest.setLayout(new BoxLayout(pnWest, BoxLayout.X_AXIS));
 
 		Box containerBox = Box.createVerticalBox();
 
-		Box boxMa = Box.createHorizontalBox();
-		Box boxChucVu = Box.createHorizontalBox();
 //				MÃ NHÂN VIÊN
+		Box boxMa = Box.createHorizontalBox();
 		JLabel lbMaNV = new JLabel("Mã Nhân Viên:");
-		lbMaNV.setPreferredSize(new Dimension(100, 0));
-		JTextField tfMaNV = new JTextField();
-		tfMaNV.setPreferredSize(new Dimension(getWidth(), 25)); // SET ĐỘ RỘNG JTEXTFIELD
+		lbMaNV.setPreferredSize(new Dimension(100, -10));
+		JTextField tfMaNV = new JTextField(20);
+		tfMaNV.setPreferredSize(new Dimension(0, 10));
 		boxMa.add(Box.createHorizontalStrut(15));
 		boxMa.add(lbMaNV);
 		boxMa.add(Box.createHorizontalStrut(10));
@@ -55,52 +52,69 @@ public class DSNhanVien_Gui extends JPanel {
 		boxMa.add(Box.createHorizontalStrut(15));
 
 //				TÊN NHÂN VIÊN
+		Box boxChucVu = Box.createHorizontalBox();
 		JLabel lbChucVu = new JLabel("Chức Vụ: ");
-		lbChucVu.setPreferredSize(new Dimension(90, 0));
-		JTextField tfChucVu = new JTextField();
-		boxMa.add(Box.createHorizontalStrut(15));
-		boxMa.add(lbChucVu);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfChucVu);
-		boxMa.add(Box.createHorizontalStrut(15));
+		lbChucVu.setPreferredSize(new Dimension(100, -10));
+		JTextField tfChucVu = new JTextField(20);
+		tfChucVu.setPreferredSize(new Dimension(0, 10));
+		boxChucVu.add(Box.createHorizontalStrut(15));
+		boxChucVu.add(lbChucVu);
+		boxChucVu.add(Box.createHorizontalStrut(10));
+		boxChucVu.add(tfChucVu);
+		boxChucVu.add(Box.createHorizontalStrut(15));
 
 //		 		SĐT NHÂN VIÊN
+		Box boxSDT = Box.createHorizontalBox();
 		JLabel lbSdtNV = new JLabel("SĐT NV: ");
-		lbSdtNV.setPreferredSize(new Dimension(80, 0));
-		JTextField tfSdtNV = new JTextField();
-		boxMa.add(Box.createHorizontalStrut(15));
-		boxMa.add(lbSdtNV);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(tfSdtNV);
-		boxMa.add(Box.createHorizontalStrut(15));
+		lbSdtNV.setPreferredSize(new Dimension(100, -10));
+		JTextField tfSdtNV = new JTextField(20);
+		tfSdtNV.setPreferredSize(new Dimension(0, 10));
+		boxSDT.add(Box.createHorizontalStrut(15));
+		boxSDT.add(lbSdtNV);
+		boxSDT.add(Box.createHorizontalStrut(10));
+		boxSDT.add(tfSdtNV);
+		boxSDT.add(Box.createHorizontalStrut(15));
 
-//				CHỨC VỤ
+//				TEN NV
+		Box boxTen = Box.createHorizontalBox();
 		JLabel lbTenNV = new JLabel("Tên NV: ");
-		lbTenNV.setPreferredSize(new Dimension(55, 0));
-		JTextField tfTenNV = new JTextField();
-		tfChucVu.setPreferredSize(new Dimension(0, 25));
-		boxChucVu.add(Box.createHorizontalStrut(25));
-		boxChucVu.add(lbTenNV);
-		boxChucVu.add(Box.createHorizontalStrut(10));
-		boxChucVu.add(tfTenNV);
-		boxChucVu.add(Box.createHorizontalStrut(20));
+		lbTenNV.setPreferredSize(new Dimension(100, -10));
+		JTextField tfTenNV = new JTextField(20);
+		boxTen.setPreferredSize(new Dimension(0, 10));
+		boxTen.add(Box.createHorizontalStrut(15));
+		boxTen.add(lbTenNV);
+		boxTen.add(Box.createHorizontalStrut(10));
+		boxTen.add(tfTenNV);
+		boxTen.add(Box.createHorizontalStrut(15));
 
 //				EMAIL
+		Box boxEmail = Box.createHorizontalBox();
 		JLabel lbEmail = new JLabel("Email:");
-		lbEmail.setPreferredSize(new Dimension(80, 0));
-		JTextField tfEmail = new JTextField();
-		boxChucVu.add(Box.createHorizontalStrut(20));
-		boxChucVu.add(lbEmail);
-		boxChucVu.add(Box.createHorizontalStrut(10));
-		boxChucVu.add(tfEmail);
-		boxChucVu.add(Box.createHorizontalStrut(25));
+		lbEmail.setPreferredSize(new Dimension(100, -10));
+		JTextField tfEmail = new JTextField(20);
+		tfEmail.setPreferredSize(new Dimension(0, 10));
+		boxEmail.add(Box.createHorizontalStrut(15));
+		boxEmail.add(lbEmail);
+		boxEmail.add(Box.createHorizontalStrut(10));
+		boxEmail.add(tfEmail);
+		boxEmail.add(Box.createHorizontalStrut(15));
 
 //				add Box1 Box2
 		containerBox.add(boxMa);
-		containerBox.add(Box.createVerticalStrut(15));
+		containerBox.add(Box.createVerticalStrut(60));
 		containerBox.add(boxChucVu);
-		containerBox.add(Box.createVerticalStrut(15));
-		pnCenter.add(containerBox);
+		containerBox.add(Box.createVerticalStrut(60));
+		containerBox.add(boxSDT);
+		containerBox.add(Box.createVerticalStrut(60));
+		containerBox.add(boxTen);
+		containerBox.add(Box.createVerticalStrut(60));
+		containerBox.add(boxEmail);
+		pnWest.setBorder(BorderFactory.createTitledBorder("Nhap thong tin NV"));
+		pnWest.add(containerBox);
+
+//		CENTER
+		JPanel pnCenter = new JPanel();
+		pnCenter.setLayout(new BoxLayout(pnCenter, BoxLayout.X_AXIS));
 
 		Box boxTableNhanVien = Box.createVerticalBox();
 		String[] headerNhanVien = "Mã NV;Tên NV;Sđt NV;Chức vụ;Email".split(";");
@@ -108,12 +122,12 @@ public class DSNhanVien_Gui extends JPanel {
 		JTable tableNhanVien = new JTable(modelNhanVien);
 		JScrollPane scrollNhanVien = new JScrollPane();
 		scrollNhanVien.setViewportView(tableNhanVien = new JTable(modelNhanVien));
-		scrollNhanVien.setPreferredSize(new Dimension(700, 330)); // SET CHIỀU CAO TABLE
+		scrollNhanVien.setPreferredSize(new Dimension(700, 450)); // SET CHIỀU CAO TABLE
 		tableNhanVien.setRowHeight(20);
 
 		boxTableNhanVien.add(scrollNhanVien);
-		boxTableNhanVien.add(Box.createVerticalStrut(10));
-
+//		boxTableNhanVien.add(Box.createVerticalStrut(20));
+		pnCenter.add(Box.createHorizontalStrut(10));
 		pnCenter.add(boxTableNhanVien);
 
 //				FOOTER		
@@ -131,11 +145,11 @@ public class DSNhanVien_Gui extends JPanel {
 		boxC1.add(bntLuu = new JButton("Luu"));
 		pnFoot.add(boxC1);
 
+		pnMain.add(pnWest, BorderLayout.WEST);
 		pnMain.add(pnCenter, BorderLayout.CENTER);
 		pnMain.add(pnHead, BorderLayout.NORTH);
 		pnMain.add(pnFoot, BorderLayout.SOUTH);
 
 		add(pnMain);
-
 	}
 }
