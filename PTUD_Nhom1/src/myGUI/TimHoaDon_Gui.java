@@ -1,4 +1,4 @@
-package myGUI;
+					package myGUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -94,18 +94,21 @@ public class TimHoaDon_Gui extends JPanel{
 //		SOUTH
 		JPanel pnSouth = new JPanel();
 		
-		Box boxTim = Box.createHorizontalBox();
 		JTextField tfTim = new JTextField(17);
 		tfTim.setPreferredSize(new Dimension(0,35));
 		JButton btnTim = new JButton("Tìm kiếm");
 		btnTim.setBackground(new Color(0,160,255));
 		btnTim.setPreferredSize(new Dimension(100, 35));
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boxTim.add(tfTim);
-		boxTim.add(btnTim);
+		
+		JButton btnIn = new JButton("In hóa đơn");
+		btnIn.setBackground(new Color(0,160,255));
+		btnIn.setPreferredSize(new Dimension(100, 35));
+		btnIn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
 		pnSouth.add(tfTim);
-		pnSouth.add(btnTim);		
+		pnSouth.add(btnTim);
+		
 		
 //		ADD Center Panel
 		pnCenter.add(Box.createVerticalStrut(10));

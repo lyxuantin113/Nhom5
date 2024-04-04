@@ -47,15 +47,12 @@ public class DSDonDat_Gui extends JPanel {
 //		SOUTH
 		JPanel pnSouth = new JPanel();
 		
-		Box boxTim = Box.createHorizontalBox();
 		JTextField tfTim = new JTextField(17);
 		tfTim.setPreferredSize(new Dimension(0,35));
 		JButton btnTim = new JButton("Tìm kiếm");
 		btnTim.setBackground(new Color(0,160,255));
 		btnTim.setPreferredSize(new Dimension(100, 35));
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boxTim.add(tfTim);
-		boxTim.add(btnTim);
 		
 		JButton btnHoanThanh = new JButton("Hoàn Thành Đơn");
 		btnHoanThanh.setBackground(new Color(0,160,255));

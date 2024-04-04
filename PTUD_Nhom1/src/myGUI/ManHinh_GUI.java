@@ -50,7 +50,7 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
 
 //		Hóa đơn
-		cardPanel.add(new TimHoaDon_Gui(), "Quản Lý Hóa Đơn");
+		cardPanel.add(new TimHoaDon_Gui(), "Tìm Kiếm Hóa Đơn");
 		cardPanel.add(new LapHoaDon_Gui(),"Lập Hóa Đơn");
 
 
@@ -177,11 +177,8 @@ public class ManHinh_GUI extends JFrame {
 		iconLap = new ImageIcon(imageLap);
 		lapHoaDon.setIcon(iconLap);
 		
-		JMenuItem timHoaDon = new JMenuItem("Quản Lý Hóa Đơn");
-		ImageIcon iconDS = new ImageIcon("src//Icon//dsHD.png");
-		Image imageDS = iconDS.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
-		iconDS = new ImageIcon(imageDS);
-		timHoaDon.setIcon(iconDS);
+		JMenuItem timHoaDon = new JMenuItem("Tìm Kiếm Hóa Đơn");
+		timHoaDon.setIcon(iconTim);
 
 //		Menu Item Đơn Đặt
 		JMenuItem dsDonDat = new JMenuItem("Quản Lý Phiếu Đặt");
@@ -223,12 +220,12 @@ public class ManHinh_GUI extends JFrame {
 		
 		qlNhanVien.add(timNhanVien);
 		timNhanVien.setPreferredSize(new Dimension(180, 50));
-//		add Menu Item Đơn Đặt Thuốc
-		qlNhanVien.add(dsDonDat);
-		dsDonDat.setPreferredSize(new Dimension(210, 50));
-
+//		add Menu Item Đơn Đặt Thuốc		
 		qlNhanVien.add(lapDonDat);
 		lapDonDat.setPreferredSize(new Dimension(210, 50));
+		
+		qlNhanVien.add(dsDonDat);
+		dsDonDat.setPreferredSize(new Dimension(210, 50));
 		
 //		add Menu Item Thuốc
 		qlThuoc.add(dsThuoc);
@@ -239,11 +236,11 @@ public class ManHinh_GUI extends JFrame {
 		
 		
 //		add Menu Item Hóa Đơn
-		qlHoaDon.add(timHoaDon);
-		timHoaDon.setPreferredSize(new Dimension(180, 50));
-
 		qlHoaDon.add(lapHoaDon);
 		lapHoaDon.setPreferredSize(new Dimension(180, 50));
+
+		qlHoaDon.add(timHoaDon);
+		timHoaDon.setPreferredSize(new Dimension(180, 50));
 
 //		add Menu Item Thống Kê
 		qlThongKe.add(xemThongKe);
@@ -364,7 +361,7 @@ public class ManHinh_GUI extends JFrame {
 		timHoaDon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Quản Lý Hóa Đơn");
+				cardLayout.show(cardPanel, "Tìm Kiếm Hóa Đơn");
 			}
 		});
 
