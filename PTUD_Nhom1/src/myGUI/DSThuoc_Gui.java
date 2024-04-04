@@ -42,7 +42,7 @@ public class DSThuoc_Gui extends JPanel{
 		Box b4 = Box.createHorizontalBox();
 		// Nhà cung cấp
 		JLabel lblNCC = new JLabel("Nhà cung cấp: ");
-		lblNCC.setPreferredSize(new Dimension(90, 20));
+		lblNCC.setPreferredSize(new Dimension(90, 25));
 		JComboBox<String> cbbNCC = new JComboBox<String>();
 		cbbNCC.addItem("Nhà thuốc A");
 		cbbNCC.addItem("Nhà thuốc B");
@@ -56,14 +56,14 @@ public class DSThuoc_Gui extends JPanel{
 		
 		// Mã thuốc
 		JLabel lblMa = new JLabel("Mã thuốc: ");
-		lblMa.setPreferredSize(new Dimension(90, 20));
+		lblMa.setPreferredSize(new Dimension(90, 25));
 		JTextField txtMa = new JTextField(20);
 		b1.add(Box.createHorizontalStrut(10));
 		b1.add(lblMa);
 		b1.add(txtMa);
 		// Tên Thuốc
 		JLabel lblTen = new JLabel("Tên thuốc: ");
-		lblTen.setPreferredSize(new Dimension(90, 20));
+		lblTen.setPreferredSize(new Dimension(90, 25));
 		JTextField txtTen = new JTextField(20);
 		b1.add(Box.createHorizontalStrut(10));
 		b1.add(lblTen);
@@ -72,30 +72,37 @@ public class DSThuoc_Gui extends JPanel{
 		pnCenterTop.add(Box.createVerticalStrut(5));
 		// Loại thuốc
 		JLabel lblLoai = new JLabel("Loại thuốc: ");
-		lblLoai.setPreferredSize(new Dimension(90, 20));
-		JTextField txtLoai = new JTextField(17);
+		lblLoai.setPreferredSize(new Dimension(90, 25));
+//		JTextField txtLoai = new JTextField(17);
+		JComboBox<String> cbbLoai = new JComboBox<String>();
+		cbbLoai.setPreferredSize(new Dimension(395, 25));
+		cbbLoai.addItem("Thuốc cảm");
+		cbbLoai.addItem("Thuốc hạ sốt");
+		cbbLoai.addItem("Thực phẩm chức năng");
+		
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblLoai);
-		b2.add(txtLoai);
+		b2.add(cbbLoai);
+//		b2.add(txtLoai);
 		// HSD
 		JLabel lblHSD = new JLabel("HSD: ");
-		lblHSD.setPreferredSize(new Dimension(90, 20));
-		JTextField txtHSD = new JTextField(17);
-		b2.add(Box.createHorizontalStrut(10));
+		lblHSD.setPreferredSize(new Dimension(90, 25));
+		JTextField txtHSD = new JTextField(20);
+		b2.add(Box.createHorizontalStrut(12));
 		b2.add(lblHSD);
 		b2.add(txtHSD);
 		pnCenterTop.add(b2);
 		pnCenterTop.add(Box.createVerticalStrut(5));
 		// Giá bán
 		JLabel lblGiaBan = new JLabel("Giá bán: ");
-		lblGiaBan.setPreferredSize(new Dimension(90, 20));
+		lblGiaBan.setPreferredSize(new Dimension(90, 25));
 		JTextField txtGiaBan = new JTextField(20);
 		b3.add(Box.createHorizontalStrut(10));
 		b3.add(lblGiaBan);
 		b3.add(txtGiaBan);
 		// Số lượng
 		JLabel lblSoLuong = new JLabel("Số lượng: ");
-		lblSoLuong.setPreferredSize(new Dimension(90, 20));
+		lblSoLuong.setPreferredSize(new Dimension(90, 25));
 		JTextField txtSoLuong = new JTextField(20);
 		b3.add(Box.createHorizontalStrut(10));
 		b3.add(lblSoLuong);
@@ -103,17 +110,24 @@ public class DSThuoc_Gui extends JPanel{
 		pnCenterTop.add(b3);
 		pnCenterTop.add(Box.createVerticalStrut(5));
 		// Đơn vị
-		JLabel lblDonVi = new JLabel("Đơn vị: ");
-		lblDonVi.setPreferredSize(new Dimension(90, 20));
+		JLabel lblDonVi = new JLabel("Đơn vị:");
+		lblDonVi.setPreferredSize(new Dimension(90, 25));
 		JComboBox<String> cbbDonVi = new JComboBox<String>();
+		cbbDonVi.setPreferredSize(new Dimension(395, 25));
 		cbbDonVi.addItem("Viên");
 		cbbDonVi.addItem("Chai");
 		cbbDonVi.addItem("Hộp");
 		cbbDonVi.addItem("Gói");
 		cbbDonVi.addItem("Lọ");
-		b4.add(Box.createHorizontalStrut(5));
+		JLabel lblXuatXu = new JLabel("Xuất xứ: ");
+		lblXuatXu.setPreferredSize(new Dimension(90, 25));
+		JTextField txtXuatXu = new JTextField(20);
+		b4.add(Box.createHorizontalStrut(10));
 		b4.add(lblDonVi);
 		b4.add(cbbDonVi);
+		b4.add(Box.createHorizontalStrut(12));
+		b4.add(lblXuatXu);
+		b4.add(txtXuatXu);
 		pnCenterTop.add(b4);
 		
 		// BUTTON
