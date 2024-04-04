@@ -49,6 +49,8 @@ public class ManHinh_GUI extends JFrame {
 //		Thuốc
 		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
+		cardPanel.add(new NhapThuoc_Gui(), "Nhập Thuốc");
+		cardPanel.add(new ThemNCC_Gui(), "Thêm Nhà Cung Cấp");
 
 //		Thống kê
 		cardPanel.add(new XemThongKe_Gui(), "Xem Thống Kê");
@@ -165,6 +167,22 @@ public class ManHinh_GUI extends JFrame {
 		JMenuItem timThuoc = new JMenuItem("Tìm Kiếm Thuốc");
 		timThuoc.setIcon(iconTim);
 		
+//		Menu Iten Nhập thuốc
+		JMenuItem nhapThuoc = new JMenuItem("Nhập Thuốc");
+		ImageIcon iconNhapThuoc = new ImageIcon("src//Icon//dsThuoc.png");
+		Image imageNhapThuoc = iconNhapThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconNhapThuoc = new ImageIcon(imageNhapThuoc);
+		nhapThuoc.setIcon(iconNhapThuoc);
+		
+//		Menu Item Thêm Nhà Cung Cấp
+		JMenuItem themNCC = new JMenuItem("Thêm Nhà Cung Cấp");
+		ImageIcon iconThemNCC = new ImageIcon("src//Icon//themNCC.png");
+		Image imageThemNCC = iconThemNCC.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconThemNCC = new ImageIcon(imageThemNCC);
+		themNCC.setIcon(iconThemNCC);
+		
+		
+		
 //		Menu Item Hóa Đơn
 //		JMenuItem lapHoaDon = new JMenuItem("Lập Hóa Đơn");
 		ImageIcon iconDonDat = new ImageIcon("src//Icon//gioHang.png");
@@ -221,6 +239,12 @@ public class ManHinh_GUI extends JFrame {
 		
 		qlThuoc.add(timThuoc);
 		timThuoc.setPreferredSize(new Dimension(165, 50));
+		
+		qlThuoc.add(nhapThuoc);
+		nhapThuoc.setPreferredSize(new Dimension(165, 50));
+		
+		qlThuoc.add(themNCC);
+		themNCC.setPreferredSize(new Dimension(165, 50));
 		
 		
 //		add Menu Item Hóa Đơn
@@ -343,6 +367,21 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Tìm Kiếm Thuốc");
 			}
 		});
+		
+		nhapThuoc.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(cardPanel, "Nhập Thuốc");
+			}
+		});
+		
+		themNCC.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "Thêm Nhà Cung Cấp");
+            }
+        });
 
 //		HÓA ĐƠN		
 		timHoaDon.addActionListener(new ActionListener() {

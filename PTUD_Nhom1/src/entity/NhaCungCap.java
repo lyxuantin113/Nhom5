@@ -16,6 +16,10 @@ public class NhaCungCap {
 		this.sdtNCC = sdtNCC;
 	}
 
+	public NhaCungCap(String maNCC2) {
+		this.maNCC = maNCC2;
+	}
+
 	public String getMaNCC() {
 		return maNCC;
 	}

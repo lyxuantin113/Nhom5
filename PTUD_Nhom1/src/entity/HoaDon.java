@@ -4,33 +4,31 @@ import java.sql.Date;
 import java.util.List;
 
 public class HoaDon {
-	private String maHD;
+	private String maHoaDon;
+	private KhachHang maKH;
+	private NhanVien maNV;
 	private Date ngayLap;
 	private Date ngayNhan;
-	private KhachHang khachHang;
-	private NhanVien maNV;
 	private List<ChiTietHoaDon> cthd;
 
 	public HoaDon() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public HoaDon(String maHD, Date ngayLap, Date ngayNhan, KhachHang khachHang, NhanVien maNV, List<ChiTietHoaDon> cthd) {
+	public HoaDon(String maHoaDon) {
 		super();
-		this.maHD = maHD;
+		this.maHoaDon = maHoaDon;
+	}
+
+	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, Date ngayLap, Date ngayNhan,
+			List<ChiTietHoaDon> cthd) {
+		super();
+		this.maHoaDon = maHoaDon;
+		this.maKH = maKH;
+		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
-		this.khachHang = khachHang;
-		this.maNV = maNV;
 		this.cthd = cthd;
-	}
-
-	public String getMaHD() {
-		return maHD;
-	}
-
-	public void setMaHD(String maHD) {
-		this.maHD = maHD;
 	}
 
 	public Date getNgayLap() {
@@ -39,14 +37,6 @@ public class HoaDon {
 
 	public void setNgayLap(Date ngayLap) {
 		this.ngayLap = ngayLap;
-	}
-
-	public KhachHang getKhachHang() {
-		return khachHang;
-	}
-
-	public void setKhachHang(KhachHang khachHang) {
-		this.khachHang = khachHang;
 	}
 
 	public NhanVien getMaNV() {
@@ -73,10 +63,26 @@ public class HoaDon {
 		this.cthd = cthd;
 	}
 
+	public String getMaHoaDon() {
+		return maHoaDon;
+	}
+
+	public void setMaHoaDon(String maHoaDon) {
+		this.maHoaDon = maHoaDon;
+	}
+
+	public KhachHang getMaKH() {
+		return maKH;
+	}
+
+	public void setMaKH(KhachHang maKH) {
+		this.maKH = maKH;
+	}
+
 	@Override
 	public String toString() {
-		return "HoaDon [maHD=" + maHD + ", ngayLap=" + ngayLap + ", ngayNhan=" + ngayNhan + ", khachHang=" + khachHang
-				+ ", maNV=" + maNV + ", cthd=" + cthd + "]";
+		return "HoaDon [maHoaDon=" + maHoaDon + ", maKH=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
+				+ ", ngayNhan=" + ngayNhan + ", cthd=" + cthd + "]";
 	}
 
 }

@@ -1,26 +1,23 @@
 package myGUI;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class DSThuoc_Gui extends JPanel{
-	public DSThuoc_Gui() {
+public class NhapThuoc_Gui extends JPanel {
+	public NhapThuoc_Gui() {
 		setSize(1070, 600);
 		setVisible(true);
-		
+
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
-		
+
 //		HEADER
 		JPanel pnHead = new JPanel();
-		JLabel lblHead = new JLabel("Quản lý thuốc");
+		JLabel lblHead = new JLabel("Phiếu nhập thuốc");
 		Font fo20 = new Font("Times New Roman", Font.BOLD, 20);
 		lblHead.setFont(fo20);
 		lblHead.setForeground(Color.blue);
@@ -31,7 +28,8 @@ public class DSThuoc_Gui extends JPanel{
 		JPanel pnCenterTop = new JPanel();
 		pnCenterTop.setLayout(new BoxLayout(pnCenterTop, BoxLayout.Y_AXIS));
 
-		pnCenterTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin thuốc"));
+		pnCenterTop.setBorder(
+				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin phiếu nhập thuốc"));
 		JPanel pnCenterBot = new JPanel();
 		pnCenterBot.setLayout(new BoxLayout(pnCenterBot, BoxLayout.Y_AXIS));
 		// Box
@@ -51,9 +49,10 @@ public class DSThuoc_Gui extends JPanel{
 		b0.add(Box.createHorizontalStrut(10));
 		b0.add(lblNCC);
 		b0.add(cbbNCC);
+		pnCenterTop.add(Box.createVerticalStrut(10));
 		pnCenterTop.add(b0);
 		pnCenterTop.add(Box.createVerticalStrut(5));
-		
+
 		// Mã thuốc
 		JLabel lblMa = new JLabel("Mã thuốc: ");
 		lblMa.setPreferredSize(new Dimension(90, 25));
@@ -70,20 +69,13 @@ public class DSThuoc_Gui extends JPanel{
 		b1.add(txtTen);
 		pnCenterTop.add(b1);
 		pnCenterTop.add(Box.createVerticalStrut(5));
-		// Loại thuốc
-		JLabel lblLoai = new JLabel("Loại thuốc: ");
-		lblLoai.setPreferredSize(new Dimension(90, 25));
-//		JTextField txtLoai = new JTextField(17);
-		JComboBox<String> cbbLoai = new JComboBox<String>();
-		cbbLoai.setPreferredSize(new Dimension(395, 25));
-		cbbLoai.addItem("Thuốc cảm");
-		cbbLoai.addItem("Thuốc hạ sốt");
-		cbbLoai.addItem("Thực phẩm chức năng");
-		
+		// Giá nhập
+		JLabel lblGiaNhap = new JLabel("Giá nhập: ");
+		lblGiaNhap.setPreferredSize(new Dimension(90, 25));
+		JTextField txtGiaNhap = new JTextField(20);
 		b2.add(Box.createHorizontalStrut(10));
-		b2.add(lblLoai);
-		b2.add(cbbLoai);
-//		b2.add(txtLoai);
+		b2.add(lblGiaNhap);
+		b2.add(txtGiaNhap);
 		// HSD
 		JLabel lblHSD = new JLabel("HSD: ");
 		lblHSD.setPreferredSize(new Dimension(90, 25));
@@ -93,13 +85,7 @@ public class DSThuoc_Gui extends JPanel{
 		b2.add(txtHSD);
 		pnCenterTop.add(b2);
 		pnCenterTop.add(Box.createVerticalStrut(5));
-		// Giá bán
-		JLabel lblGiaBan = new JLabel("Giá bán: ");
-		lblGiaBan.setPreferredSize(new Dimension(90, 25));
-		JTextField txtGiaBan = new JTextField(20);
-		b3.add(Box.createHorizontalStrut(10));
-		b3.add(lblGiaBan);
-		b3.add(txtGiaBan);
+
 		// Số lượng
 		JLabel lblSoLuong = new JLabel("Số lượng: ");
 		lblSoLuong.setPreferredSize(new Dimension(90, 25));
@@ -119,17 +105,35 @@ public class DSThuoc_Gui extends JPanel{
 		cbbDonVi.addItem("Hộp");
 		cbbDonVi.addItem("Gói");
 		cbbDonVi.addItem("Lọ");
-		JLabel lblXuatXu = new JLabel("Xuất xứ: ");
-		lblXuatXu.setPreferredSize(new Dimension(90, 25));
-		JTextField txtXuatXu = new JTextField(20);
+		b3.add(Box.createHorizontalStrut(10));
+		b3.add(lblDonVi);
+		b3.add(cbbDonVi);
+		
+		// Thành tiền
+		JLabel lblThanhTien = new JLabel("Thành tiền: ");
+		lblThanhTien.setPreferredSize(new Dimension(90, 25));
+		JTextField txtThanhTien = new JTextField(20);
+		txtThanhTien.setEnabled(false);
+		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
+		lblNgayNhap.setPreferredSize(new Dimension(90, 25));
+		JTextField txtNgayNhap = new JTextField(20);
+		// Lấy ngày hiện tại
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		String strDate = formatter.format(date);
+		txtNgayNhap.setText(strDate);
+		txtNgayNhap.setEnabled(false);
+	
 		b4.add(Box.createHorizontalStrut(10));
-		b4.add(lblDonVi);
-		b4.add(cbbDonVi);
-		b4.add(Box.createHorizontalStrut(12));
-		b4.add(lblXuatXu);
-		b4.add(txtXuatXu);
+		b4.add(lblThanhTien);
+		b4.add(txtThanhTien);
+		b4.add(Box.createHorizontalStrut(10));
+		b4.add(lblNgayNhap);
+		b4.add(txtNgayNhap);
+		
 		pnCenterTop.add(b4);
 		
+
 		// BUTTON
 		JPanel pnButton = new JPanel();
 		JButton btnAdd = new JButton("Thêm");
@@ -138,37 +142,33 @@ public class DSThuoc_Gui extends JPanel{
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
 		// TABLE
-        String[] headers = {"Mã thuốc", "Tên thuốc", "Loại thuốc","Đơn vị", "HSD", "Số lượng", "Giá", "NCC", "Xuất xứ"};
-        DefaultTableModel model = new DefaultTableModel(headers, 0);
-        JTable table = new JTable(model);
-        JScrollPane sp = new JScrollPane(table);
-        table.setPreferredScrollableViewportSize(new java.awt.Dimension(1000, 210));
-        pnCenterBot.add(sp);
-        pnCenter.add(Box.createVerticalStrut(10));
-        // FOOTER
-        JPanel pnFooter = new JPanel();
-        JLabel lblTimKiem = new JLabel("Tìm kiếm: ");
-        JTextField txtTimKiem = new JTextField(20);
-        JButton btnTim = new JButton("Tìm");
-        JButton btnXoa = new JButton("Xóa");
-        pnFooter.add(lblTimKiem);
-        pnFooter.add(txtTimKiem);
-        pnFooter.add(btnTim);
-        pnFooter.add(btnXoa);
-        pnMain.add(pnFooter, BorderLayout.SOUTH);
-        
-		
-		
+		String[] headers = { "NCC", "Mã thuốc", "Tên thuốc", "Giá nhập", "Số lượng", "Đơn vị", "Thành tiền", "Ngày nhập" };
+		DefaultTableModel model = new DefaultTableModel(headers, 0);
+		JTable table = new JTable(model);
+		JScrollPane sp = new JScrollPane(table);
+		table.setPreferredScrollableViewportSize(new java.awt.Dimension(1000, 210));
+		pnCenterBot.add(sp);
+		pnCenter.add(Box.createVerticalStrut(10));
+		// FOOTER
+		JPanel pnFooter = new JPanel();
+		JLabel lblTimKiem = new JLabel("Tìm kiếm: ");
+		JTextField txtTimKiem = new JTextField(20);
+		JButton btnTim = new JButton("Tìm");
+		JButton btnXoa = new JButton("Xóa");
+		pnFooter.add(lblTimKiem);
+		pnFooter.add(txtTimKiem);
+		pnFooter.add(btnTim);
+		pnFooter.add(btnXoa);
+		pnMain.add(pnFooter, BorderLayout.SOUTH);
+
 		pnCenter.add(pnCenterTop);
 		pnCenter.add(pnCenterBot);
 		// ADD TO MAIN
 		pnMain.add(pnCenter, BorderLayout.CENTER);
-		
-		
-		
-		
+
 		pnMain.add(pnHead, BorderLayout.NORTH);
-		
+
 		add(pnMain);
 	}
+
 }

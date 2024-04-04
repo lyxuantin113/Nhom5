@@ -16,7 +16,6 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.Thuoc_Dao;
 import entity.ChiTietHoaDon;
-import entity.DanhSachThuoc;
 import entity.Thuoc;
 
 public class LapDonThuoc_Gui extends JPanel implements ActionListener {
@@ -295,7 +294,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 			themThuocVaoDon();
 		}
 		if (o == btnLapHD) {
-			lapHoaDon();
+			
 		}
 		if (o == btnLapDD) {
 			
@@ -320,21 +319,4 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		tfTong.setText(total + "");
 	}
 
-	public ChiTietHoaDon lapHoaDon() {
-		ChiTietHoaDon cthd = null;
-		List<DanhSachThuoc> dst = null;
-		for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
-//			Add Thuốc Vào Danh sách Thuốc
-			dst = new ArrayList<>();
-			String ma = modelHoaDon.getValueAt(i, 1).toString();
-			Thuoc t = new Thuoc(ma, "", "", "", null, 0, 0, null);
-			int sl = Integer.parseInt(modelHoaDon.getValueAt(i, 5).toString());
-
-			DanhSachThuoc ds = new DanhSachThuoc(t, sl);
-			dst.add(ds);
-		}
-		
-//		cthd = new ChiTietHoaDon(, dst)
-		return cthd;
-	}
 }

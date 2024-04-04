@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.util.List;
 
 public class DonDat {
-	private String maPD;
-	private KhachHang khachHang;
+	private String maDonDat;
+	private KhachHang maKH;
 	private NhanVien maNV;
 	private Date ngayLap, ngayNhan;
 	private List<ChiTietDonDat> ctdd;
@@ -14,30 +14,31 @@ public class DonDat {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, Date ngayLap, Date ngayNhan, List<ChiTietDonDat> ctdd) {
+	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, Date ngayLap, Date ngayNhan,
+			List<ChiTietDonDat> ctdd) {
 		super();
-		this.maPD = maPD;
-		this.khachHang = khachHang;
+		this.maDonDat = maPD;
+		this.maKH = khachHang;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
 		this.ctdd = ctdd;
 	}
 
-	public String getMaPD() {
-		return maPD;
+	public String getMaDonDat() {
+		return maDonDat;
 	}
 
-	public void setMaPD(String maPD) {
-		this.maPD = maPD;
+	public void setMaDonDat(String maDonDat) {
+		this.maDonDat = maDonDat;
 	}
 
-	public KhachHang getKhachHang() {
-		return khachHang;
+	public KhachHang getMaKH() {
+		return maKH;
 	}
 
-	public void setKhachHang(KhachHang khachHang) {
-		this.khachHang = khachHang;
+	public void setMaKH(KhachHang maKH) {
+		this.maKH = maKH;
 	}
 
 	public NhanVien getMaNV() {
@@ -74,7 +75,7 @@ public class DonDat {
 
 	@Override
 	public String toString() {
-		return "DonDat [maPD=" + maPD + ", khachHang=" + khachHang + ", maNV=" + maNV + ", ngayLap=" + ngayLap
+		return "DonDat [maPD=" + maDonDat + ", khachHang=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
 				+ ", ngayNhan=" + ngayNhan + ", ctdd=" + ctdd + "]";
 	}
 

@@ -1,6 +1,7 @@
 package entity;
 
 public class KhachHang {
+	private String maKH;
 	private String soDienThoai;
 	private String hoTen;
 
@@ -8,10 +9,25 @@ public class KhachHang {
 		// TODO Auto-generated constructor stub
 	}
 
-	public KhachHang(String soDienThoai, String hoTen) {
+	public KhachHang(String maKH, String soDienThoai, String hoTen) {
 		super();
+		this.maKH = maKH;
 		this.soDienThoai = soDienThoai;
 		this.hoTen = hoTen;
+	}
+
+	public KhachHang(String maKH, String hoTen) {
+		super();
+		this.maKH = maKH;
+		this.hoTen = hoTen;
+	}
+
+	public String getMaKH() {
+		return maKH;
+	}
+
+	public void setMaKH(String maKH) {
+		this.maKH = maKH;
 	}
 
 	public KhachHang(String sdtKH) {
@@ -36,7 +52,7 @@ public class KhachHang {
 
 	@Override
 	public String toString() {
-		return "KhachHang [soDienThoai=" + soDienThoai + ", hoTen=" + hoTen + "]";
+		return "KhachHang [maKH=" + maKH + ", soDienThoai=" + soDienThoai + ", hoTen=" + hoTen + "]";
 	}
 
 }

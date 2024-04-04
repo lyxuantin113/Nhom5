@@ -56,6 +56,7 @@ public class TimKhachHang_Gui extends JPanel implements ActionListener{
 		
 		pnCenterTop.add(b1);
 		pnCenterTop.add(Box.createVerticalStrut(50));
+		pnCenterTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin tìm kiếm"));
 		pnCenterBot.add(Box.createVerticalStrut(10));
 		pnCenter.add(pnCenterTop);
 		pnCenter.add(pnCenterBot);

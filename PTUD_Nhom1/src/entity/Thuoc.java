@@ -5,25 +5,34 @@ import java.sql.Date;
 public class Thuoc {
 	private String maThuoc, tenThuoc, loaiThuoc, donVi;
 	private Date HSD;
+	private double giaNhap;
 	private double giaBan;
 	private int soLuongTon;
-	private NhaCungCap ncc;
+	private String nuocSanXuat;
+	private NhaCungCap maNCC;
 
 	public Thuoc() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, Date hSD, double giaBan,
-			int soLuongTon, NhaCungCap ncc) {
+	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, Date hSD, double giaNhap,
+			double giaBan, int soLuongTon, String nuocSanXuat, NhaCungCap maNCC) {
 		super();
 		this.maThuoc = maThuoc;
 		this.tenThuoc = tenThuoc;
 		this.loaiThuoc = loaiThuoc;
 		this.donVi = donVi;
 		HSD = hSD;
+		this.giaNhap = giaNhap;
 		this.giaBan = giaBan;
 		this.soLuongTon = soLuongTon;
-		this.ncc = ncc;
+		this.nuocSanXuat = nuocSanXuat;
+		this.maNCC = maNCC;
+	}
+
+	public Thuoc(String maThuoc) {
+		super();
+		this.maThuoc = maThuoc;
 	}
 
 	public String getMaThuoc() {
@@ -82,18 +91,35 @@ public class Thuoc {
 		this.soLuongTon = soLuongTon;
 	}
 
-	public NhaCungCap getNcc() {
-		return ncc;
+	public double getGiaNhap() {
+		return giaNhap;
 	}
 
-	public void setNcc(NhaCungCap ncc) {
-		this.ncc = ncc;
+	public void setGiaNhap(double giaNhap) {
+		this.giaNhap = giaNhap;
+	}
+
+	public String getNuocSanXuat() {
+		return nuocSanXuat;
+	}
+
+	public void setNuocSanXuat(String nuocSanXuat) {
+		this.nuocSanXuat = nuocSanXuat;
+	}
+
+	public NhaCungCap getMaNCC() {
+		return maNCC;
+	}
+
+	public void setMaNCC(NhaCungCap maNCC) {
+		this.maNCC = maNCC;
 	}
 
 	@Override
 	public String toString() {
 		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", loaiThuoc=" + loaiThuoc + ", donVi=" + donVi
-				+ ", HSD=" + HSD + ", giaBan=" + giaBan + ", soLuongTon=" + soLuongTon + ", ncc=" + ncc + "]";
+				+ ", HSD=" + HSD + ", giaNhap=" + giaNhap + ", giaBan=" + giaBan + ", soLuongTon=" + soLuongTon
+				+ ", nuocSanXuat=" + nuocSanXuat + ", maNCC=" + maNCC + "]";
 	}
 
 }

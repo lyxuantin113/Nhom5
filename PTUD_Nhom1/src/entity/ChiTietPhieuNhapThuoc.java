@@ -1,29 +1,27 @@
 package entity;
 
 public class ChiTietPhieuNhapThuoc {
-	private PhieuNhapThuoc maPN;
+	private PhieuNhapThuoc maPhieuNhap;
 	private Thuoc maThuoc;
 	private int soLuong;
-	private double giaGoc;
 
 	public ChiTietPhieuNhapThuoc() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChiTietPhieuNhapThuoc(PhieuNhapThuoc maPN, Thuoc maThuoc, int soLuong, double giaGoc) {
+	public ChiTietPhieuNhapThuoc(PhieuNhapThuoc maPhieuNhap, Thuoc maThuoc, int soLuong) {
 		super();
-		this.maPN = maPN;
+		this.maPhieuNhap = maPhieuNhap;
 		this.maThuoc = maThuoc;
 		this.soLuong = soLuong;
-		this.giaGoc = giaGoc;
 	}
 
-	public PhieuNhapThuoc getMaPN() {
-		return maPN;
+	public PhieuNhapThuoc getMaPhieuNhap() {
+		return maPhieuNhap;
 	}
 
-	public void setMaPN(PhieuNhapThuoc maPN) {
-		this.maPN = maPN;
+	public void setMaPhieuNhap(PhieuNhapThuoc maPhieuNhap) {
+		this.maPhieuNhap = maPhieuNhap;
 	}
 
 	public Thuoc getMaThuoc() {
@@ -42,18 +40,10 @@ public class ChiTietPhieuNhapThuoc {
 		this.soLuong = soLuong;
 	}
 
-	public double getGiaGoc() {
-		return giaGoc;
-	}
-
-	public void setGiaGoc(double giaGoc) {
-		this.giaGoc = giaGoc;
-	}
-
 	@Override
 	public String toString() {
-		return "ChiTietPhieuNhapThuoc [maPN=" + maPN + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong + ", giaGoc="
-				+ giaGoc + "]";
+		return "ChiTietPhieuNhapThuoc [maPhieuNhap=" + maPhieuNhap + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong
+				+ "]";
 	}
 
 }

@@ -30,7 +30,7 @@ public class HoaDon_Dao {
 			while (rs.next()) {
 				String maHD = rs.getString(1);
 				Date ngayLap = rs.getDate(2);
-				Date ngayXuat = rs.getDate(3);
+				Date ngayNhan = rs.getDate(3);
 				String sdtKH = rs.getString(4);
 				KhachHang kh = new KhachHang(sdtKH);
 				String maNV = rs.getString(5);
@@ -39,7 +39,7 @@ public class HoaDon_Dao {
 //				HoaDon gồm các field: String maHD, Date ngayLap, KhachHang khachHang, 
 //				NhanVien maNV, List<ChiTietHoaDon>
 
-				HoaDon hd = new HoaDon(maHD, ngayLap, ngayXuat, kh, nv, list);
+				HoaDon hd = new HoaDon(maHD, kh, nv, ngayLap, ngayNhan, list);
 				dshd.add(hd);
 			}
 

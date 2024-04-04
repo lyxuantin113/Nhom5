@@ -30,14 +30,16 @@ public class Thuoc_Dao {
 				String loaiThuoc = rs.getString(3);
 				String donVi = rs.getString(4);
 				Date hsd = rs.getDate(5);
-				double giaBan = rs.getDouble(6);
-				int slTon = rs.getInt(7);
-				String maNCC = rs.getString(8);
-				NhaCungCap ncc = new NhaCungCap(maNCC, "", "", "");
+				double giaGoc = rs.getDouble(6);
+				double giaBan = rs.getDouble(7);
+				int slTon = rs.getInt(8);
+				String nuocSX = rs.getString(9);
+				String maNCC = rs.getString(10);
+				NhaCungCap ncc = new NhaCungCap(maNCC);
 				
 //				String maThuoc, String tenThuoc, String loaiThuoc, String donVi
 //				, Date hSD, double giaBan, int soLuongTon, NhaCungCap ncc
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaBan, slTon, ncc);
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX, ncc);;
 				dst.add(thuoc);
 			}
 		} catch(Exception e) {
