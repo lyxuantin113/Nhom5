@@ -39,6 +39,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 	private JButton btnLapHD;
 	private JButton btnLapDD;
 	private JButton btnXoa;
+	private JTextField tfTimThuoc;
+	private JButton btnTimThuoc;
 	
 	public LapDonThuoc_Gui() {
 //		JPANEL
@@ -106,6 +108,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		JSplitPane jsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		JPanel pnTableHoaDon = new JPanel();
 		JPanel pnTableThuoc = new JPanel();
+		pnTableThuoc.setLayout(new BoxLayout(pnTableThuoc, BoxLayout.Y_AXIS));
 
 //		Panel Left (Table Đơn Đặt)
 		JLabel lbTableHoaDon = new JLabel("Đơn Thuốc:");
@@ -144,7 +147,19 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		boxTableThuoc.add(scrollThuoc);
 		boxTableThuoc.add(Box.createVerticalStrut(10));
 
+//		Box Tim Kiem Thuoc
+		Box timThuocBox = Box.createHorizontalBox();
+		tfTimThuoc = new JTextField();
+		btnTimThuoc = new JButton("Tìm");
+		timThuocBox.add(Box.createHorizontalStrut(50));
+		timThuocBox.add(tfTimThuoc);
+		timThuocBox.add(Box.createHorizontalStrut(10));
+		timThuocBox.add(btnTimThuoc);
+		timThuocBox.add(Box.createHorizontalStrut(50));
+		
 		pnTableThuoc.add(boxTableThuoc);
+//		pnTableThuoc.add(Box.createVerticalStrut(10));
+		pnTableThuoc.add(timThuocBox);
 
 		jsplit.add(Box.createHorizontalStrut(30));
 		jsplit.setLeftComponent(pnTableHoaDon);

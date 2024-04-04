@@ -44,7 +44,6 @@ public class ManHinh_GUI extends JFrame {
 //		Hóa Đơn
 		cardPanel.add(new LapDonThuoc_Gui(), "Lập Đơn Thuốc");
 		cardPanel.add(new DSDonDat_Gui(), "Danh Sách Đơn Đặt");
-//		cardPanel.add(new LapHoaDon_Gui(),"Lập Hóa Đơn");
 		cardPanel.add(new DSHoaDon(), "Danh Sách Hóa Đơn");
 		
 //		Thuốc
@@ -345,14 +344,7 @@ public class ManHinh_GUI extends JFrame {
 			}
 		});
 
-//		HÓA ĐƠN
-//		lapHoaDon.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				cardLayout.show(cardPanel, "Lập Hóa Đơn");
-//			}
-//		});
-		
+//		HÓA ĐƠN		
 		timHoaDon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
