@@ -3,38 +3,38 @@ package entity;
 import java.util.List;
 
 public class ChiTietHoaDon {
-	private HoaDon maHD;
-	private List<DanhSachThuoc> dsThuoc;
+	private Thuoc maThuoc;
+	private int soLuong;
 
 	public ChiTietHoaDon() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChiTietHoaDon(HoaDon maHD, List<DanhSachThuoc> dsThuoc) {
+	public ChiTietHoaDon(Thuoc maThuoc, int soLuong) {
 		super();
-		this.maHD = maHD;
-		this.dsThuoc = dsThuoc;
+		this.maThuoc = maThuoc;
+		this.soLuong = soLuong;
 	}
 
-	public HoaDon getMaHD() {
-		return maHD;
+	public Thuoc getMaThuoc() {
+		return maThuoc;
 	}
 
-	public void setMaHD(HoaDon maHD) {
-		this.maHD = maHD;
+	public void setMaThuoc(Thuoc maThuoc) {
+		this.maThuoc = maThuoc;
 	}
 
-	public List<DanhSachThuoc> getDsThuoc() {
-		return dsThuoc;
+	public int getSoLuong() {
+		return soLuong;
 	}
 
-	public void setDsThuoc(List<DanhSachThuoc> dsThuoc) {
-		this.dsThuoc = dsThuoc;
+	public void setSoLuong(int soLuong) {
+		this.soLuong = soLuong;
 	}
 
 	@Override
 	public String toString() {
-		return "ChiTietHoaDon [maHD=" + maHD + ", dsThuoc=" + dsThuoc + "]";
+		return "ChiTietHoaDon [maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
 	}
 
 }

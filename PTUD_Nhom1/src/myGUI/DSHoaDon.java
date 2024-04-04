@@ -17,15 +17,15 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class TimHoaDon_Gui extends JPanel{
-	public TimHoaDon_Gui() {
+public class DSHoaDon extends JPanel{
+	public DSHoaDon() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
 
 //		HEADER
 		JPanel headPn = new JPanel();
-		JLabel headLb = new JLabel("Tìm Kiếm Hóa Đơn");
+		JLabel headLb = new JLabel("Danh Sách Hóa Đơn");
 		Font fo24 = new Font("Times New Roman", Font.BOLD, 24);
 		Font fo16 = new Font("Times New Roman", Font.BOLD, 16);
 		headLb.setFont(fo24);
@@ -108,6 +108,8 @@ public class TimHoaDon_Gui extends JPanel{
 		
 		pnSouth.add(tfTim);
 		pnSouth.add(btnTim);
+		pnSouth.add(Box.createHorizontalStrut(100));
+		pnSouth.add(btnIn);
 		
 		
 //		ADD Center Panel

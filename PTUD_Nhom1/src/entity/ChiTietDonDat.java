@@ -1,29 +1,19 @@
 package entity;
 
-public class ChiTietPhieuDatThuoc {
-	private PhieuDatThuoc maPD;
+public class ChiTietDonDat {
 	private Thuoc maThuoc;
 	private int soLuong;
 
-	public ChiTietPhieuDatThuoc() {
+	public ChiTietDonDat() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChiTietPhieuDatThuoc(PhieuDatThuoc maPD, Thuoc maThuoc, int soLuong) {
+	public ChiTietDonDat(Thuoc maThuoc, int soLuong) {
 		super();
-		this.maPD = maPD;
 		this.maThuoc = maThuoc;
 		this.soLuong = soLuong;
 	}
-
-	public PhieuDatThuoc getMaPD() {
-		return maPD;
-	}
-
-	public void setMaPD(PhieuDatThuoc maPD) {
-		this.maPD = maPD;
-	}
-
+	
 	public Thuoc getMaThuoc() {
 		return maThuoc;
 	}
@@ -42,7 +32,7 @@ public class ChiTietPhieuDatThuoc {
 
 	@Override
 	public String toString() {
-		return "ChiTietPhieuDatThuoc [maPD=" + maPD + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
+		return "ChiTietPhieuDatThuoc [maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
 	}
 
 }

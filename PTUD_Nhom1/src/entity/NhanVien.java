@@ -17,6 +17,10 @@ public class NhanVien {
 		this.email = email;
 	}
 
+	public NhanVien(String maNV2) {
+		this.maNV = maNV2;
+	}
+
 	public String getMaNV() {
 		return maNV;
 	}

@@ -40,20 +40,16 @@ public class ManHinh_GUI extends JFrame {
 //		Nhân viên
 		cardPanel.add(new DSNhanVien_Gui(), "Quản Lý Nhân Viên");
 		cardPanel.add(new TimNhanVien_Gui(), "Tìm Kiếm Nhân Viên");
-//		Đơn đặt trong Nhân Viên
-		cardPanel.add(new LapDonDat_Gui(), "Lập Phiếu Đặt");
-		cardPanel.add(new DSDonDat_Gui(), "Quản Lý Phiếu Đặt");
 		
+//		Hóa Đơn
+		cardPanel.add(new LapDonThuoc_Gui(), "Lập Đơn Thuốc");
+		cardPanel.add(new DSDonDat_Gui(), "Danh Sách Đơn Đặt");
+//		cardPanel.add(new LapHoaDon_Gui(),"Lập Hóa Đơn");
+		cardPanel.add(new DSHoaDon(), "Danh Sách Hóa Đơn");
 		
 //		Thuốc
 		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
-
-//		Hóa đơn
-		cardPanel.add(new TimHoaDon_Gui(), "Tìm Kiếm Hóa Đơn");
-		cardPanel.add(new LapHoaDon_Gui(),"Lập Hóa Đơn");
-
-
 
 //		Thống kê
 		cardPanel.add(new XemThongKe_Gui(), "Xem Thống Kê");
@@ -171,24 +167,23 @@ public class ManHinh_GUI extends JFrame {
 		timThuoc.setIcon(iconTim);
 		
 //		Menu Item Hóa Đơn
-		JMenuItem lapHoaDon = new JMenuItem("Lập Hóa Đơn");
-		ImageIcon iconLap = new ImageIcon("src//Icon//lapHD.png");
-		Image imageLap = iconLap.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
-		iconLap = new ImageIcon(imageLap);
-		lapHoaDon.setIcon(iconLap);
-		
-		JMenuItem timHoaDon = new JMenuItem("Tìm Kiếm Hóa Đơn");
-		timHoaDon.setIcon(iconTim);
-
-//		Menu Item Đơn Đặt
-		JMenuItem dsDonDat = new JMenuItem("Quản Lý Phiếu Đặt");
-		dsDonDat.setIcon(iconQL);
-
-		JMenuItem lapDonDat = new JMenuItem("Lập Phiếu Đặt");
+//		JMenuItem lapHoaDon = new JMenuItem("Lập Hóa Đơn");
 		ImageIcon iconDonDat = new ImageIcon("src//Icon//gioHang.png");
 		Image imageDonDat = iconDonDat.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDonDat = new ImageIcon(imageDonDat);
-		lapDonDat.setIcon(iconDonDat);
+//		lapHoaDon.setIcon(iconLap);
+		
+		JMenuItem timHoaDon = new JMenuItem("Danh Sách Hóa Đơn");
+		timHoaDon.setIcon(iconQL);
+
+		JMenuItem dsDonDat = new JMenuItem("Danh Sách Đơn Đặt");
+		dsDonDat.setIcon(iconDonDat);
+
+		JMenuItem lapDonDat = new JMenuItem("Lập Đơn Thuốc");
+		ImageIcon iconLap = new ImageIcon("src//Icon//lapHD.png");
+		Image imageLap = iconLap.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconLap = new ImageIcon(imageLap);
+		lapDonDat.setIcon(iconLap);
 
 //		Menu Item Thống Kê
 		JMenuItem xemThongKe = new JMenuItem("Xem Thống Kê");
@@ -220,12 +215,6 @@ public class ManHinh_GUI extends JFrame {
 		
 		qlNhanVien.add(timNhanVien);
 		timNhanVien.setPreferredSize(new Dimension(180, 50));
-//		add Menu Item Đơn Đặt Thuốc		
-		qlNhanVien.add(lapDonDat);
-		lapDonDat.setPreferredSize(new Dimension(210, 50));
-		
-		qlNhanVien.add(dsDonDat);
-		dsDonDat.setPreferredSize(new Dimension(210, 50));
 		
 //		add Menu Item Thuốc
 		qlThuoc.add(dsThuoc);
@@ -236,11 +225,17 @@ public class ManHinh_GUI extends JFrame {
 		
 		
 //		add Menu Item Hóa Đơn
-		qlHoaDon.add(lapHoaDon);
-		lapHoaDon.setPreferredSize(new Dimension(180, 50));
-
+		qlHoaDon.add(lapDonDat);
+		lapDonDat.setPreferredSize(new Dimension(180, 50));
+		
 		qlHoaDon.add(timHoaDon);
 		timHoaDon.setPreferredSize(new Dimension(180, 50));
+
+		qlHoaDon.add(dsDonDat);
+		dsDonDat.setPreferredSize(new Dimension(180, 50));
+		
+//		qlHoaDon.add(lapHoaDon);
+//		lapHoaDon.setPreferredSize(new Dimension(180, 50));
 
 //		add Menu Item Thống Kê
 		qlThongKe.add(xemThongKe);
@@ -351,32 +346,31 @@ public class ManHinh_GUI extends JFrame {
 		});
 
 //		HÓA ĐƠN
-		lapHoaDon.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Lập Hóa Đơn");
-			}
-		});
+//		lapHoaDon.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				cardLayout.show(cardPanel, "Lập Hóa Đơn");
+//			}
+//		});
 		
 		timHoaDon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Tìm Kiếm Hóa Đơn");
+				cardLayout.show(cardPanel, "Danh Sách Hóa Đơn");
 			}
 		});
 
-//		ĐƠN ĐẶT
 		dsDonDat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Quản Lý Phiếu Đặt");
+				cardLayout.show(cardPanel, "Danh Sách Đơn Đặt");
 			}
 		});
 
 		lapDonDat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Lập Phiếu Đặt");
+				cardLayout.show(cardPanel, "Lập Đơn Thuốc");
 			}
 		});
 

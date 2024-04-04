@@ -19,7 +19,7 @@ import entity.ChiTietHoaDon;
 import entity.DanhSachThuoc;
 import entity.Thuoc;
 
-public class LapDonDat_Gui extends JPanel implements ActionListener {
+public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 	JButton btnThem;
 	private JTextField tfMaThuoc;
 	private JTextField tfSoLuong;
@@ -36,16 +36,18 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 	private JTextField tfMaNV;
 	private JTextField tfTenKH;
 	private JTextField tfSDT;
-	private JButton btnLap;
-
-	public LapDonDat_Gui() {
+	private JButton btnLapHD;
+	private JButton btnLapDD;
+	private JButton btnXoa;
+	
+	public LapDonThuoc_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
 
 //		HEADER
 		JPanel headPn = new JPanel();
-		JLabel headLb = new JLabel("Lập Phiếu Đặt Thuốc");
+		JLabel headLb = new JLabel("Lập Đơn Thuốc");
 		Font fo24 = new Font("Times New Roman", Font.BOLD, 24);
 		Font fo16 = new Font("Times New Roman", Font.BOLD, 16);
 		headLb.setFont(fo24);
@@ -70,7 +72,7 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(lbMaThuoc);
-		boxNhap.add(Box.createHorizontalStrut(10));
+		boxNhap.add(Box.createHorizontalStrut(5));
 		boxNhap.add(tfMaThuoc);
 		boxNhap.add(Box.createHorizontalStrut(30));
 
@@ -80,18 +82,24 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 		tfSoLuong = new JTextField(15);
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(lbSoLuong);
-		boxNhap.add(Box.createHorizontalStrut(10));
+		boxNhap.add(Box.createHorizontalStrut(5));
 		boxNhap.add(tfSoLuong);
 		boxNhap.add(Box.createHorizontalStrut(30));
 
-//		BUTTON Thêm thuốc vào danh sách
+//		BUTTON Thêm, xóa thuốc trong danh sách
 		btnThem = new JButton("Thêm");
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(btnThem);
 		btnThem.setBackground(new Color(0, 160, 255));
 		btnThem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		boxNhap.add(Box.createHorizontalStrut(30));
 
+		btnXoa = new JButton("Xóa");
+		boxNhap.add(Box.createHorizontalStrut(20));
+		boxNhap.add(btnXoa);
+		btnXoa.setBackground(new Color(0, 160, 255));
+		btnXoa.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		boxNhap.add(Box.createHorizontalStrut(30));
+		
 		pnCenterTop.add(boxNhap);
 
 //		TABLES
@@ -109,6 +117,7 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 		scrollHoaDon = new JScrollPane();
 		scrollHoaDon.setViewportView(tableHoaDon = new JTable(modelHoaDon));
 		tableHoaDon.setRowHeight(20);
+		tableHoaDon.setAutoCreateRowSorter(true);
 
 		boxTableHoaDon.add(lbTableHoaDon);
 		boxTableHoaDon.add(Box.createVerticalStrut(10));
@@ -124,6 +133,7 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 		String[] headerThuoc = "Mã thuốc;Tên thuốc;Loại;Đơn vị;Đơn giá;HSD".split(";");
 		modelThuoc = new DefaultTableModel(headerThuoc, 0);
 		tableThuoc = new JTable(modelThuoc);
+		tableThuoc.setAutoCreateRowSorter(true);
 		scrollThuoc = new JScrollPane();
 		scrollThuoc.setViewportView(tableThuoc = new JTable(modelThuoc));
 //		scrollThuoc.setPreferredSize(new Dimension(0, 310));  //SET CHIỀU CAO TABLE
@@ -187,7 +197,7 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 
 //		BOX2
 //		Mã Đơn Đặt
-		JLabel lbMaHD = new JLabel("Mã Phiếu:");
+		JLabel lbMaHD = new JLabel("Mã Đơn:");
 		lbMaHD.setPreferredSize(new Dimension(100, 30));
 		tfMaHD = new JTextField(20);
 		boxMa.add(Box.createHorizontalStrut(10));
@@ -195,7 +205,7 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 		boxMa.add(tfMaHD);
 
 //		Mã NV
-		JLabel lbMaNV = new JLabel("Mã NV: ");
+		JLabel lbMaNV = new JLabel("Mã Nhân Viên: ");
 		lbMaNV.setPreferredSize(new Dimension(100, 30));
 		tfMaNV = new JTextField(20);
 		boxMa.add(Box.createHorizontalStrut(30));
@@ -206,7 +216,7 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 
 //		Box 3
 //		Tên Khách Hàng
-		JLabel lbTenKH = new JLabel("Tên KH: ");
+		JLabel lbTenKH = new JLabel("Tên Khách: ");
 		lbTenKH.setPreferredSize(new Dimension(100, 30));
 		tfTenKH = new JTextField(20);
 		boxKH.add(Box.createHorizontalStrut(10));
@@ -225,11 +235,19 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 
 //		BUTTON LẬP HÓA ĐƠN
 		JPanel pnSouth = new JPanel();
-		btnLap = new JButton("Lập Phiếu Đặt");
-		btnLap.setBackground(new Color(0, 160, 255));
-		btnLap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnLap.setPreferredSize(new Dimension(150, 35));
-		pnSouth.add(btnLap);
+		btnLapDD = new JButton("Lập Hóa Đơn");
+		btnLapDD.setBackground(new Color(0, 160, 255));
+		btnLapDD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnLapDD.setPreferredSize(new Dimension(150, 35));
+		
+		btnLapHD = new JButton("Lập Đơn Đặt");
+		btnLapHD.setBackground(new Color(0, 160, 255));
+		btnLapHD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnLapHD.setPreferredSize(new Dimension(150, 35));
+
+		pnSouth.add(btnLapDD);	
+		pnSouth.add(Box.createHorizontalStrut(100));
+		pnSouth.add(btnLapHD);
 
 //		Add Center
 		pnCenter.add(Box.createVerticalStrut(10));
@@ -251,8 +269,8 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 
 //		ADD ACTIONLISTENER
 		btnThem.addActionListener(this);
-		btnLap.addActionListener(this);
-
+		btnLapHD.addActionListener(this);
+		btnLapDD.addActionListener(this);
 	}
 
 	@Override
@@ -261,8 +279,11 @@ public class LapDonDat_Gui extends JPanel implements ActionListener {
 		if (o == btnThem) {
 			themThuocVaoDon();
 		}
-		if (o == btnLap) {
+		if (o == btnLapHD) {
 			lapHoaDon();
+		}
+		if (o == btnLapDD) {
+			
 		}
 
 	}

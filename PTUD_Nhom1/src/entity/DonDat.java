@@ -1,24 +1,27 @@
 package entity;
 
 import java.sql.Date;
+import java.util.List;
 
-public class PhieuDatThuoc {
+public class DonDat {
 	private String maPD;
 	private KhachHang khachHang;
 	private NhanVien maNV;
 	private Date ngayLap, ngayNhan;
+	private List<ChiTietDonDat> ctdd;
 
-	public PhieuDatThuoc() {
+	public DonDat() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PhieuDatThuoc(String maPD, KhachHang khachHang, NhanVien maNV, Date ngayLap, Date ngayNhan) {
+	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, Date ngayLap, Date ngayNhan, List<ChiTietDonDat> ctdd) {
 		super();
 		this.maPD = maPD;
 		this.khachHang = khachHang;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
+		this.ctdd = ctdd;
 	}
 
 	public String getMaPD() {
@@ -61,10 +64,18 @@ public class PhieuDatThuoc {
 		this.ngayNhan = ngayNhan;
 	}
 
+	public List<ChiTietDonDat> getCtdd() {
+		return ctdd;
+	}
+
+	public void setCtdd(List<ChiTietDonDat> ctdd) {
+		this.ctdd = ctdd;
+	}
+
 	@Override
 	public String toString() {
-		return "PhieuDatThuoc [maPD=" + maPD + ", khachHang=" + khachHang + ", maNV=" + maNV + ", ngayLap=" + ngayLap
-				+ ", ngayNhan=" + ngayNhan + "]";
+		return "DonDat [maPD=" + maPD + ", khachHang=" + khachHang + ", maNV=" + maNV + ", ngayLap=" + ngayLap
+				+ ", ngayNhan=" + ngayNhan + ", ctdd=" + ctdd + "]";
 	}
 
 }

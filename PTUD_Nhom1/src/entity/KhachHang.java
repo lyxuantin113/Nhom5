@@ -14,6 +14,10 @@ public class KhachHang {
 		this.hoTen = hoTen;
 	}
 
+	public KhachHang(String sdtKH) {
+		this.soDienThoai = sdtKH;
+	}
+
 	public String getSoDienThoai() {
 		return soDienThoai;
 	}

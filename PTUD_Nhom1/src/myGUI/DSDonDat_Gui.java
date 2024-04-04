@@ -20,7 +20,7 @@ public class DSDonDat_Gui extends JPanel {
 
 //		HEADER
 		JPanel pnHead = new JPanel();
-		JLabel headLb = new JLabel("Danh Sách Phiếu Đặt");
+		JLabel headLb = new JLabel("Danh Sách Đơn Đặt");
 		Font fo = new Font("Times New Roman", Font.BOLD, 24);
 		headLb.setFont(fo);
 		headLb.setForeground(Color.blue);
@@ -33,6 +33,8 @@ public class DSDonDat_Gui extends JPanel {
 		String[] headerTable = "Mã phiếu đặt;Mã nhân viên;Tên khách hàng; Số điện thoại KH;Ngày lập đơn;Ngày nhận hàng;Tổng thành tiền".split(";");
 		DefaultTableModel model = new DefaultTableModel(headerTable, 0);
 		JTable table = new JTable(model);
+		table.setAutoCreateRowSorter(true);
+		table.setRowHeight(20);
 		JScrollPane scroll = new JScrollPane();
 		scroll.setViewportView(table = new JTable(model));
 		table.setRowHeight(20);
