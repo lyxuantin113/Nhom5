@@ -138,7 +138,7 @@ public class DSThuoc_Gui extends JPanel{
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
 		// TABLE
-        String[] headers = {"Mã thuốc", "Tên thuốc", "Loại thuốc", "HSD", "Số lượng", "Giá", "NCC"};
+        String[] headers = {"Mã thuốc", "Tên thuốc", "Loại thuốc","Đơn vị", "HSD", "Số lượng", "Giá", "NCC", "Xuất xứ"};
         DefaultTableModel model = new DefaultTableModel(headers, 0);
         JTable table = new JTable(model);
         JScrollPane sp = new JScrollPane(table);
