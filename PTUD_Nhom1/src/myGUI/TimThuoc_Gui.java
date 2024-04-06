@@ -61,11 +61,14 @@ public class TimThuoc_Gui extends JPanel{
 		// Button
 		JPanel pnButton = new JPanel();
 		JButton btnTim = new JButton("Tìm");
+		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnTim.setBackground(new Color(0,160,255));
+        
 		pnButton.add(btnTim);
 		b3.add(pnButton);
 		pnCenterTop.add(b3);
 		// Table
-		String[] headers = {"Mã thuốc", "Tên thuốc", "Loại thuốc","Đơn vị", "HSD", "Số lượng tồn", "Giá", "NCC", "Xuất xứ"};
+		String[] headers = {"Mã thuốc", "Tên thuốc", "Loại thuốc","Đơn vị", "HSD", "Số lượng tồn", "Giá bán", "NCC", "Xuất xứ"};
 		DefaultTableModel model = new DefaultTableModel(headers, 0);
 		JTable table = new JTable(model);
 		JScrollPane sp = new JScrollPane(table);

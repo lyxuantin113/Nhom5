@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 
@@ -104,6 +105,7 @@ public class DSThuoc_Gui extends JPanel{
 		JLabel lblSoLuong = new JLabel("Số lượng: ");
 		lblSoLuong.setPreferredSize(new Dimension(90, 25));
 		JTextField txtSoLuong = new JTextField(20);
+		txtSoLuong.setEditable(false);
 		b3.add(Box.createHorizontalStrut(10));
 		b3.add(lblSoLuong);
 		b3.add(txtSoLuong);
@@ -134,6 +136,10 @@ public class DSThuoc_Gui extends JPanel{
 		JPanel pnButton = new JPanel();
 		JButton btnAdd = new JButton("Thêm");
 		JButton btnXoaTrang = new JButton("Xóa trắng");
+		btnAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnAdd.setBackground(new Color(0,160,255));
+		btnXoaTrang.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnXoaTrang.setBackground(new Color(0,160,255));
 		pnButton.add(btnAdd);
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
@@ -151,6 +157,10 @@ public class DSThuoc_Gui extends JPanel{
         JTextField txtTimKiem = new JTextField(20);
         JButton btnTim = new JButton("Tìm");
         JButton btnXoa = new JButton("Xóa");
+        btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnTim.setBackground(new Color(0,160,255));
+        btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnXoa.setBackground(new Color(0,160,255));
         pnFooter.add(lblTimKiem);
         pnFooter.add(txtTimKiem);
         pnFooter.add(btnTim);

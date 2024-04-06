@@ -38,6 +38,7 @@ public class NhapThuoc_Gui extends JPanel {
 		Box b2 = Box.createHorizontalBox();
 		Box b3 = Box.createHorizontalBox();
 		Box b4 = Box.createHorizontalBox();
+		Box b5 = Box.createHorizontalBox();
 		// Nhà cung cấp
 		JLabel lblNCC = new JLabel("Nhà cung cấp: ");
 		lblNCC.setPreferredSize(new Dimension(90, 25));
@@ -109,6 +110,29 @@ public class NhapThuoc_Gui extends JPanel {
 		b3.add(lblDonVi);
 		b3.add(cbbDonVi);
 		
+		// Loại thuốc
+		JLabel lblLoai = new JLabel("Loại thuốc: ");
+		lblLoai.setPreferredSize(new Dimension(90, 25));
+		JComboBox<String> cbbLoai = new JComboBox<String>();
+		cbbLoai.setPreferredSize(new Dimension(395, 25));
+		cbbLoai.addItem("Thuốc cảm");
+		cbbLoai.addItem("Thuốc hạ sốt");
+		cbbLoai.addItem("Thực phẩm chức năng");
+		b4.add(Box.createHorizontalStrut(10));
+		b4.add(lblLoai);
+		b4.add(cbbLoai);
+		
+		
+		JLabel lblXuatXu = new JLabel("Xuất xứ: ");
+		lblXuatXu.setPreferredSize(new Dimension(90, 25));
+		JTextField txtXuatXu = new JTextField(20);
+		b4.add(Box.createHorizontalStrut(10));
+		b4.add(lblXuatXu);
+		b4.add(txtXuatXu);
+		pnCenterTop.add(b4);
+		pnCenterTop.add(Box.createVerticalStrut(5));
+		
+		
 		// Thành tiền
 		JLabel lblThanhTien = new JLabel("Thành tiền: ");
 		lblThanhTien.setPreferredSize(new Dimension(90, 25));
@@ -124,20 +148,24 @@ public class NhapThuoc_Gui extends JPanel {
 		txtNgayNhap.setText(strDate);
 		txtNgayNhap.setEnabled(false);
 	
-		b4.add(Box.createHorizontalStrut(10));
-		b4.add(lblThanhTien);
-		b4.add(txtThanhTien);
-		b4.add(Box.createHorizontalStrut(10));
-		b4.add(lblNgayNhap);
-		b4.add(txtNgayNhap);
+		b5.add(Box.createHorizontalStrut(10));
+		b5.add(lblThanhTien);
+		b5.add(txtThanhTien);
+		b5.add(Box.createHorizontalStrut(10));
+		b5.add(lblNgayNhap);
+		b5.add(txtNgayNhap);
 		
-		pnCenterTop.add(b4);
+		pnCenterTop.add(b5);
 		
 
 		// BUTTON
 		JPanel pnButton = new JPanel();
 		JButton btnAdd = new JButton("Thêm");
 		JButton btnXoaTrang = new JButton("Xóa trắng");
+		btnAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnAdd.setBackground(new Color(0,160,255));
+		btnXoaTrang.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnXoaTrang.setBackground(new Color(0,160,255));
 		pnButton.add(btnAdd);
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
@@ -155,6 +183,10 @@ public class NhapThuoc_Gui extends JPanel {
 		JTextField txtTimKiem = new JTextField(20);
 		JButton btnTim = new JButton("Tìm");
 		JButton btnXoa = new JButton("Xóa");
+		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnTim.setBackground(new Color(0,160,255));
+        btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnXoa.setBackground(new Color(0,160,255));
 		pnFooter.add(lblTimKiem);
 		pnFooter.add(txtTimKiem);
 		pnFooter.add(btnTim);

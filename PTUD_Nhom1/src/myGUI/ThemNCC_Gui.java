@@ -2,6 +2,7 @@ package myGUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 
@@ -84,6 +85,10 @@ public class ThemNCC_Gui extends JPanel{
 		JPanel pnButton = new JPanel();
 		JButton btnThem = new JButton("Thêm");
 		JButton btnXoaTrang = new JButton("Xóa trắng");
+		btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnThem.setBackground(new Color(0,160,255));
+		btnXoaTrang.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnXoaTrang.setBackground(new Color(0,160,255));
 		pnButton.add(btnThem);
 		pnButton.add(btnXoaTrang);
 		b3.add(pnButton);
@@ -106,6 +111,10 @@ public class ThemNCC_Gui extends JPanel{
 		JTextField txtTimKiem = new JTextField(20);
 		JButton btnTim = new JButton("Tìm");
 		JButton btnXoa = new JButton("Xóa");
+		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnTim.setBackground(new Color(0,160,255));
+        btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnXoa.setBackground(new Color(0,160,255));
 		pnFoot.add(lblTimKiem);
 		pnFoot.add(txtTimKiem);
 		pnFoot.add(btnTim);

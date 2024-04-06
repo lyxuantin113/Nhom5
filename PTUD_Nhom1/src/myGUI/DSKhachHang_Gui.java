@@ -1,6 +1,7 @@
 package myGUI;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -66,6 +67,10 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		JPanel pnButton = new JPanel();
 		btnThem = new JButton("Thêm");
 		btnXoaTrang = new JButton("Xóa trắng");
+		btnThem.setBackground(new Color(0,160,255));
+		btnXoaTrang.setBackground(new Color(0,160,255));
+		btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnXoaTrang.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		pnButton.add(btnThem);
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
@@ -88,6 +93,10 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		txtTimKiem.setPreferredSize(new Dimension(getWidth(), 30));
 		JButton btnTim = new JButton("Tìm");
 		btnXoa = new JButton("Xóa");
+		btnXoa.setBackground(new Color(0,160,255));
+		btnTim.setBackground(new Color(0,160,255));
+		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		pnFooter.add(lblTimKiem);
 		pnFooter.add(txtTimKiem);
@@ -112,7 +121,7 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnXoaTrang)) {
 			txtSDT.setText("");
 			txtTen.setText("");
-			txtTen.requestFocus();
+			txtSDT.requestFocus();
 		}
 		if (o.equals(btnThem)) {
 			themKhachHang();

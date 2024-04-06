@@ -45,6 +45,8 @@ public class TimKhachHang_Gui extends JPanel implements ActionListener{
 		b1.add(lblSDT);
 		b1.add(txtSDT);
 		btnTim = new JButton("Tìm");
+		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnTim.setBackground(new Color(0,160,255));
 		b1.add(btnTim);
 		// Table
 		String[] headers = {"Tên khách hàng", "SĐT"};
