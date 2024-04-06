@@ -2,11 +2,16 @@ package myGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class TimThuoc_Gui extends JPanel{
+public class TimThuoc_Gui extends JPanel implements ActionListener{
+	private JButton btnTim;
+	private JTextField txtThongTin;
+
 	public TimThuoc_Gui() {
 		setSize(1070, 600);
 		setVisible(true);
@@ -52,7 +57,7 @@ public class TimThuoc_Gui extends JPanel{
 		// Thông tin tìm kiếm
 		JLabel lblThongTin = new JLabel("Thông tin: ");
 		lblThongTin.setPreferredSize(new Dimension(90, 25));
-		JTextField txtThongTin = new JTextField(20);
+		txtThongTin = new JTextField(20);
 		b2.add(lblThongTin);
 		b2.add(txtThongTin);
 		pnCenterTop.add(Box.createVerticalStrut(10));
@@ -60,7 +65,7 @@ public class TimThuoc_Gui extends JPanel{
 		pnCenterTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin tìm kiếm"));
 		// Button
 		JPanel pnButton = new JPanel();
-		JButton btnTim = new JButton("Tìm");
+		btnTim = new JButton("Tìm");
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnTim.setBackground(new Color(0,160,255));
         
@@ -83,5 +88,29 @@ public class TimThuoc_Gui extends JPanel{
 		
 		
 		add(pnMain);
+		// Action
+		btnTim.addActionListener(this);
+		txtThongTin.addActionListener(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
+			if (o.equals(btnTim)) {
+				timThuoc();
+			}
+	}
+
+	private void timThuoc() {
+		String thongTin = txtThongTin.getText();
+		if (thongTin.equals("") || thongTin == null) {
+			JOptionPane.showMessageDialog(null, "Vui lòng nhập thông tin tìm kiếm");
+			txtThongTin.requestFocus();
+			return;
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Tìm thuốc thành công: " + thongTin);
+		}
+		
 	}
 }
