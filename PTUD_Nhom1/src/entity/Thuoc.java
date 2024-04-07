@@ -1,22 +1,21 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Thuoc {
 	private String maThuoc, tenThuoc, loaiThuoc, donVi;
-	private Date HSD;
+	private LocalDate HSD;
 	private double giaNhap;
 	private double giaBan;
 	private int soLuongTon;
 	private String nuocSanXuat;
-	private NhaCungCap maNCC;
+	private String tenNCC;
 
-	public Thuoc() {
-		// TODO Auto-generated constructor stub
-	}
+	
 
-	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, Date hSD, double giaNhap,
-			double giaBan, int soLuongTon, String nuocSanXuat, NhaCungCap maNCC) {
+	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, LocalDate hSD, double giaNhap,
+			double giaBan, int soLuongTon, String nuocSanXuat, String tenNCC) {
 		super();
 		this.maThuoc = maThuoc;
 		this.tenThuoc = tenThuoc;
@@ -27,7 +26,7 @@ public class Thuoc {
 		this.giaBan = giaBan;
 		this.soLuongTon = soLuongTon;
 		this.nuocSanXuat = nuocSanXuat;
-		this.maNCC = maNCC;
+		this.tenNCC = tenNCC;
 	}
 
 	public Thuoc(String maThuoc) {
@@ -67,11 +66,13 @@ public class Thuoc {
 		this.donVi = donVi;
 	}
 
-	public Date getHSD() {
+	
+
+	public LocalDate getHSD() {
 		return HSD;
 	}
 
-	public void setHSD(Date hSD) {
+	public void setHSD(LocalDate hSD) {
 		HSD = hSD;
 	}
 
@@ -107,19 +108,21 @@ public class Thuoc {
 		this.nuocSanXuat = nuocSanXuat;
 	}
 
-	public NhaCungCap getMaNCC() {
-		return maNCC;
+	
+
+	public String getTenNCC() {
+		return tenNCC;
 	}
 
-	public void setMaNCC(NhaCungCap maNCC) {
-		this.maNCC = maNCC;
+	public void setTenNCC(String tenNCC) {
+		this.tenNCC = tenNCC;
 	}
 
 	@Override
 	public String toString() {
 		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", loaiThuoc=" + loaiThuoc + ", donVi=" + donVi
 				+ ", HSD=" + HSD + ", giaNhap=" + giaNhap + ", giaBan=" + giaBan + ", soLuongTon=" + soLuongTon
-				+ ", nuocSanXuat=" + nuocSanXuat + ", maNCC=" + maNCC + "]";
+				+ ", nuocSanXuat=" + nuocSanXuat + ", tenNCC=" + tenNCC + "]";
 	}
 
 }

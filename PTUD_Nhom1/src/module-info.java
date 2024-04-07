@@ -10,4 +10,5 @@ module nhom11111 {
 	requires java.sql;
 	requires junit;
 	requires itextpdf;
+	requires jdatepicker;
 }
