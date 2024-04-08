@@ -7,14 +7,22 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Console;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import dao.ChiTietDonDat_Dao;
+import dao.ChiTietHoaDon_Dao;
+import dao.DonDat_Dao;
+import dao.HoaDon_Dao;
 import dao.Thuoc_Dao;
+import entity.ChiTietDonDat;
 import entity.ChiTietHoaDon;
 import entity.Thuoc;
 
@@ -40,7 +48,13 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 	private JButton btnXoa;
 	private JTextField tfTimThuoc;
 	private JButton btnTimThuoc;
-	
+	private JComboBox<String> cbbTimThuoc;
+	private Thuoc_Dao thuocDao;
+	private HoaDon_Dao hoaDonDao;
+	private DonDat_Dao donDatDao;
+	private ChiTietHoaDon_Dao cthdDao;
+	private ChiTietDonDat_Dao ctddDao;
+
 	public LapDonThuoc_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
@@ -100,7 +114,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		btnXoa.setBackground(new Color(0, 160, 255));
 		btnXoa.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		boxNhap.add(Box.createHorizontalStrut(30));
-		
+
 		pnCenterTop.add(boxNhap);
 
 //		TABLES
@@ -113,7 +127,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		JLabel lbTableHoaDon = new JLabel("Đơn Thuốc:");
 		lbTableHoaDon.setFont(fo16);
 		Box boxTableHoaDon = Box.createVerticalBox();
-		String[] headerHoaDon = "Mã thuốc;Tên thuốc;Loại;Đơn vị;Số lượng;Thành tiền".split(";");
+		String[] headerHoaDon = "Mã thuốc;Tên thuốc;Loại;Đơn giá;Đơn vị;Số lượng;Thành tiền".split(";");
 		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
 		tableHoaDon = new JTable(modelHoaDon);
 		scrollHoaDon = new JScrollPane();
@@ -148,14 +162,25 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 
 //		Box Tim Kiem Thuoc
 		Box timThuocBox = Box.createHorizontalBox();
+
+		cbbTimThuoc = new JComboBox<String>();
+		cbbTimThuoc.addItem("Mã thuốc");
+		cbbTimThuoc.addItem("Tên thuốc");
+		cbbTimThuoc.addItem("Loại thuốc");
+		cbbTimThuoc.addItem("Nhà cung cấp");
+
 		tfTimThuoc = new JTextField();
 		btnTimThuoc = new JButton("Tìm");
-		timThuocBox.add(Box.createHorizontalStrut(50));
+		btnTimThuoc.setBackground(new Color(0, 160, 255));
+
+		timThuocBox.add(Box.createHorizontalStrut(10));
+		timThuocBox.add(cbbTimThuoc);
+		timThuocBox.add(Box.createHorizontalStrut(10));
 		timThuocBox.add(tfTimThuoc);
 		timThuocBox.add(Box.createHorizontalStrut(10));
 		timThuocBox.add(btnTimThuoc);
-		timThuocBox.add(Box.createHorizontalStrut(50));
-		
+		timThuocBox.add(Box.createHorizontalStrut(10));
+
 		pnTableThuoc.add(boxTableThuoc);
 //		pnTableThuoc.add(Box.createVerticalStrut(10));
 		pnTableThuoc.add(timThuocBox);
@@ -253,13 +278,13 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		btnLapDD.setBackground(new Color(0, 160, 255));
 		btnLapDD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLapDD.setPreferredSize(new Dimension(150, 35));
-		
+
 		btnLapHD = new JButton("Lập Đơn Đặt");
 		btnLapHD.setBackground(new Color(0, 160, 255));
 		btnLapHD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLapHD.setPreferredSize(new Dimension(150, 35));
 
-		pnSouth.add(btnLapDD);	
+		pnSouth.add(btnLapDD);
 		pnSouth.add(Box.createHorizontalStrut(100));
 		pnSouth.add(btnLapHD);
 
@@ -285,38 +310,87 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		btnThem.addActionListener(this);
 		btnLapHD.addActionListener(this);
 		btnLapDD.addActionListener(this);
+
+		thuocDao = new Thuoc_Dao();
+		hoaDonDao = new HoaDon_Dao();
+		donDatDao = new DonDat_Dao();
+		cthdDao = new ChiTietHoaDon_Dao();
+		ctddDao = new ChiTietDonDat_Dao();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
+		Map<Thuoc, Integer> listChiTiet = null;
 		if (o == btnThem) {
-			themThuocVaoDon();
+			if (this.checkQuatity())
+				listChiTiet = this.addOrderDetail();
+			else
+				JOptionPane.showMessageDialog(this, "Lưu ý: Số thuốc vượt quá thuốc tồn kho!");
+		}
+		if (o == btnXoa) {
+			listChiTiet = this.deleteOrderDetail(listChiTiet);
 		}
 		if (o == btnLapHD) {
 			
 		}
 		if (o == btnLapDD) {
-			
+
 		}
 
 	}
 
-	public void themThuocVaoDon() {
+	public boolean checkQuatity() {
+//		Thuoc thuoc = thuocDao.findById(tfMaThuoc.getText()); //Tim Thuoc
+//		if(thuoc.getSoLuong() < Integer.parseInt(tfSoLuong.getText())) 
+//			return false;
+		return true;
+	}
+
+	public Map<Thuoc, Integer> addOrderDetail() {
+//		Mở hết comment
+		Map<Thuoc, Integer> listChiTiet = null;
 		String maThuoc = tfMaThuoc.getText();
+//		Thuoc thuoc = thuocDao.findById(maThuoc); //Tim Thuoc
 		int soLuong = Integer.parseInt(tfSoLuong.getText());
-		Thuoc_Dao td = new Thuoc_Dao();
-//		Thuoc thuoc = td.timThuocTheoMa(maThuoc); -> Trả về Thuốc
+
+//		Add OrderDetail vao' Map
+//		if (listChiTiet.containsKey(thuoc)) {
+//            int value = listChiTiet.get(thuoc);
+//            int newValue = value + soLuong;
+//		}
+//		listChiTiet.put(thuoc, soLuong)
 //		String[] rowData = {thuoc.getMaThuoc, thuoc.getTenThuoc, thuoc.getLoaiThuoc
-//						, thuoc.getDonVi, soLuong+"", thuoc.getGiaBan*soLuong+""};
+//						, thuoc.getGiaBan, thuoc.getDonVi, soLuong+"", thuoc.getGiaBan*soLuong+""};
 //		modelHoaDon.addRow(rowData);
 
 //		Total Price
 		double total = 0;
 		for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
-			total += Double.parseDouble(modelHoaDon.getValueAt(i, 6).toString());
+			total += Double.parseDouble(modelHoaDon.getValueAt(i, 7).toString());
 		}
 		tfTong.setText(total + "");
+
+		return listChiTiet;
+	}
+
+	public Map<Thuoc, Integer> deleteOrderDetail(Map<Thuoc, Integer> listChiTiet) {
+		int selectedRow = tableHoaDon.getSelectedRow();
+		if (selectedRow != -1) {
+			String maThuoc = (String) tableHoaDon.getValueAt(selectedRow, 0);
+
+			// Tìm thuốc trong listChiTiet có mã là maThuoc và xóa nó nếu tồn tại
+			Iterator<Map.Entry<Thuoc, Integer>> iterator = listChiTiet.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry<Thuoc, Integer> entry = iterator.next();
+				Thuoc thuoc = entry.getKey();
+				if (thuoc.getMaThuoc().equals(maThuoc))
+					iterator.remove();
+			}
+		} else
+			JOptionPane.showMessageDialog(null, "Lưu ý: Chưa có cột được chọn!");
+
+		return listChiTiet;
 	}
 
 }

@@ -1,20 +1,21 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class DonDat {
 	private String maDonDat;
 	private KhachHang maKH;
 	private NhanVien maNV;
-	private Date ngayLap, ngayNhan;
+	private LocalDate ngayLap, ngayNhan;
 	private List<ChiTietDonDat> ctdd;
 
 	public DonDat() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, Date ngayLap, Date ngayNhan,
+	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
 			List<ChiTietDonDat> ctdd) {
 		super();
 		this.maDonDat = maPD;
@@ -49,19 +50,19 @@ public class DonDat {
 		this.maNV = maNV;
 	}
 
-	public Date getNgayLap() {
+	public LocalDate getNgayLap() {
 		return ngayLap;
 	}
 
-	public void setNgayLap(Date ngayLap) {
+	public void setNgayLap(LocalDate ngayLap) {
 		this.ngayLap = ngayLap;
 	}
 
-	public Date getNgayNhan() {
+	public LocalDate getNgayNhan() {
 		return ngayNhan;
 	}
 
-	public void setNgayNhan(Date ngayNhan) {
+	public void setNgayNhan(LocalDate ngayNhan) {
 		this.ngayNhan = ngayNhan;
 	}
 

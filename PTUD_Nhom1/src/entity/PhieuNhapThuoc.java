@@ -1,19 +1,20 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class PhieuNhapThuoc {
 	private String maPhieuNhap;
 	private NhaCungCap maNCC;
 	private NhanVien maNV;
-	private Date ngayGui;
-	private Date ngayNhan;
+	private LocalDate ngayGui;
+	private LocalDate ngayNhan;
 
 	public PhieuNhapThuoc() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PhieuNhapThuoc(String maPhieuNhap, NhaCungCap maNCC, NhanVien maNV, Date ngayGui, Date ngayNhan) {
+	public PhieuNhapThuoc(String maPhieuNhap, NhaCungCap maNCC, NhanVien maNV, LocalDate ngayGui, LocalDate ngayNhan) {
 		super();
 		this.maPhieuNhap = maPhieuNhap;
 		this.maNCC = maNCC;
@@ -46,19 +47,19 @@ public class PhieuNhapThuoc {
 		this.maNV = maNV;
 	}
 
-	public Date getNgayGui() {
+	public LocalDate getNgayGui() {
 		return ngayGui;
 	}
 
-	public void setNgayGui(Date ngayGui) {
+	public void setNgayGui(LocalDate ngayGui) {
 		this.ngayGui = ngayGui;
 	}
 
-	public Date getNgayNhan() {
+	public LocalDate getNgayNhan() {
 		return ngayNhan;
 	}
 
-	public void setNgayNhan(Date ngayNhan) {
+	public void setNgayNhan(LocalDate ngayNhan) {
 		this.ngayNhan = ngayNhan;
 	}
 

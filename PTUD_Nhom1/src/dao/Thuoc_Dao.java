@@ -39,7 +39,7 @@ public class Thuoc_Dao {
 				
 //				String maThuoc, String tenThuoc, String loaiThuoc, String donVi
 //				, Date hSD, double giaBan, int soLuongTon, NhaCungCap ncc
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX, ncc);;
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd.toLocalDate(), giaGoc, giaBan, slTon, nuocSX, ncc);;
 				dst.add(thuoc);
 			}
 		} catch(Exception e) {

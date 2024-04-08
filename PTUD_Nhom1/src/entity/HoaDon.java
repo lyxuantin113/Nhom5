@@ -1,14 +1,15 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class HoaDon {
 	private String maHoaDon;
 	private KhachHang maKH;
 	private NhanVien maNV;
-	private Date ngayLap;
-	private Date ngayNhan;
+	private LocalDate ngayLap;
+	private LocalDate ngayNhan;
 	private List<ChiTietHoaDon> cthd;
 
 	public HoaDon() {
@@ -20,7 +21,7 @@ public class HoaDon {
 		this.maHoaDon = maHoaDon;
 	}
 
-	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, Date ngayLap, Date ngayNhan,
+	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
 			List<ChiTietHoaDon> cthd) {
 		super();
 		this.maHoaDon = maHoaDon;
@@ -31,11 +32,11 @@ public class HoaDon {
 		this.cthd = cthd;
 	}
 
-	public Date getNgayLap() {
+	public LocalDate getNgayLap() {
 		return ngayLap;
 	}
 
-	public void setNgayLap(Date ngayLap) {
+	public void setNgayLap(LocalDate ngayLap) {
 		this.ngayLap = ngayLap;
 	}
 
@@ -47,11 +48,11 @@ public class HoaDon {
 		this.maNV = maNV;
 	}
 
-	public Date getNgayNhan() {
+	public LocalDate getNgayNhan() {
 		return ngayNhan;
 	}
 
-	public void setNgayNhan(Date ngayNhan) {
+	public void setNgayNhan(LocalDate ngayNhan) {
 		this.ngayNhan = ngayNhan;
 	}
 

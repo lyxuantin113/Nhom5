@@ -1,10 +1,11 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Thuoc {
 	private String maThuoc, tenThuoc, loaiThuoc, donVi;
-	private Date HSD;
+	private LocalDate HSD;
 	private double giaNhap;
 	private double giaBan;
 	private int soLuongTon;
@@ -15,7 +16,7 @@ public class Thuoc {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, Date hSD, double giaNhap,
+	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, LocalDate hSD, double giaNhap,
 			double giaBan, int soLuongTon, String nuocSanXuat, NhaCungCap maNCC) {
 		super();
 		this.maThuoc = maThuoc;
@@ -67,11 +68,11 @@ public class Thuoc {
 		this.donVi = donVi;
 	}
 
-	public Date getHSD() {
+	public LocalDate getHSD() {
 		return HSD;
 	}
 
-	public void setHSD(Date hSD) {
+	public void setHSD(LocalDate hSD) {
 		HSD = hSD;
 	}
 
