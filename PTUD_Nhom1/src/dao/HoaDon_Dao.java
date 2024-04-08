@@ -66,12 +66,13 @@ public class HoaDon_Dao {
 			
 			n = pstmt.executeUpdate();
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 		return n > 0;
 	}
 
+//	ID
 	public List<HoaDon> findByID(String maHoaDon) {
 		List<HoaDon> dshd = null;
 		String query = "select * from HoaDon where maHoaDon = ?";
@@ -98,6 +99,35 @@ public class HoaDon_Dao {
 		return dshd;
 	}
 	
+//	NHÂN VIÊN
+	public List<HoaDon> findByNhanVien(String maNV) {
+		List<HoaDon> dshd = null;
+		String query = "select * from HoaDon where maNV = ?";
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nv = (NhanVien) nvDao.getNhanVien(maNV);
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setObject(1, nv);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			String maHD = rs.getString(1);
+			KhachHang kh = (KhachHang) rs.getObject(2);
+			Date ngayLap = rs.getDate(4);
+			Date ngayNhan = rs.getDate(5);
+			List<ChiTietHoaDon> cthd = (List<ChiTietHoaDon>) rs.getArray(6);
+
+			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate(), cthd));
+			return dshd;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dshd;
+	}
+	
+//	NGÀY LẬP
 	public List<HoaDon> findByNgayLap(Date ngayLap) {
 		List<HoaDon> dshd = null;
 		String query = "select * from HoaDon where ngayLap = ?";
@@ -126,6 +156,7 @@ public class HoaDon_Dao {
 		return dshd;
 	}
 	
+//	NGÀY NHẬN
 	public List<HoaDon> findByNgayNhan(Date ngayNhan) {
 		List<HoaDon> dshd = null;
 		String query = "select * from HoaDon where ngayNhan = ?";
@@ -154,6 +185,7 @@ public class HoaDon_Dao {
 		return dshd;
 	}
 
+//	DANH SÁCH
 	public List<HoaDon> getDSHD() {
 		return dshd;
 	}

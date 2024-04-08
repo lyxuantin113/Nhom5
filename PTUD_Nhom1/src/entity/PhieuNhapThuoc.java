@@ -5,23 +5,11 @@ import java.time.LocalDate;
 
 public class PhieuNhapThuoc {
 	private String maPhieuNhap;
-	private NhaCungCap maNCC;
-	private NhanVien maNV;
-	private LocalDate ngayGui;
-	private LocalDate ngayNhan;
-
-	public PhieuNhapThuoc() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public PhieuNhapThuoc(String maPhieuNhap, NhaCungCap maNCC, NhanVien maNV, LocalDate ngayGui, LocalDate ngayNhan) {
-		super();
-		this.maPhieuNhap = maPhieuNhap;
-		this.maNCC = maNCC;
-		this.maNV = maNV;
-		this.ngayGui = ngayGui;
-		this.ngayNhan = ngayNhan;
-	}
+	private String maNCC;
+	private String maNV;
+	private ChiTietPhieuNhapThuoc chiTietPhieuNhapThuoc;
+	private Double tongTien;
+	private Boolean trangThai;
 
 	public String getMaPhieuNhap() {
 		return maPhieuNhap;
@@ -31,42 +19,67 @@ public class PhieuNhapThuoc {
 		this.maPhieuNhap = maPhieuNhap;
 	}
 
-	public NhaCungCap getMaNCC() {
+	public String getMaNCC() {
 		return maNCC;
 	}
 
-	public void setMaNCC(NhaCungCap maNCC) {
+	public void setMaNCC(String maNCC) {
 		this.maNCC = maNCC;
 	}
 
-	public NhanVien getMaNV() {
+	public String getMaNV() {
 		return maNV;
 	}
 
-	public void setMaNV(NhanVien maNV) {
+	public void setMaNV(String maNV) {
 		this.maNV = maNV;
 	}
 
-	public LocalDate getNgayGui() {
-		return ngayGui;
+	public ChiTietPhieuNhapThuoc getChiTietPhieuNhapThuoc() {
+		return chiTietPhieuNhapThuoc;
 	}
 
-	public void setNgayGui(LocalDate ngayGui) {
-		this.ngayGui = ngayGui;
+	public void setChiTietPhieuNhapThuoc(ChiTietPhieuNhapThuoc chiTietPhieuNhapThuoc) {
+		this.chiTietPhieuNhapThuoc = chiTietPhieuNhapThuoc;
 	}
 
-	public LocalDate getNgayNhan() {
-		return ngayNhan;
+	public Double getTongTien() {
+		return tongTien;
 	}
 
-	public void setNgayNhan(LocalDate ngayNhan) {
-		this.ngayNhan = ngayNhan;
+	public void setTongTien(Double tongTien) {
+		this.tongTien = tongTien;
+	}
+
+	public Boolean getTrangThai() {
+		return trangThai;
+	}
+
+	public void setTrangThai(Boolean trangThai) {
+		this.trangThai = trangThai;
+	}
+
+	public PhieuNhapThuoc(String maPhieuNhap, String maNCC, String maNV, ChiTietPhieuNhapThuoc chiTietPhieuNhapThuoc,
+			Double tongTien, Boolean trangThai) {
+		super();
+		this.maPhieuNhap = maPhieuNhap;
+		this.maNCC = maNCC;
+		this.maNV = maNV;
+		this.chiTietPhieuNhapThuoc = chiTietPhieuNhapThuoc;
+		this.tongTien = tongTien;
+		this.trangThai = trangThai;
+	}
+
+	public PhieuNhapThuoc() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public String toString() {
-		return "PhieuNhapThuoc [maPhieuNhap=" + maPhieuNhap + ", maNCC=" + maNCC + ", maNV=" + maNV + ", ngayGui="
-				+ ngayGui + ", ngayNhan=" + ngayNhan + "]";
+		return "PhieuNhapThuoc [maPhieuNhap=" + maPhieuNhap + ", maNCC=" + maNCC + ", maNV=" + maNV
+				+ ", chiTietPhieuNhapThuoc=" + chiTietPhieuNhapThuoc + ", tongTien=" + tongTien + ", trangThai="
+				+ trangThai + "]";
 	}
 
 }

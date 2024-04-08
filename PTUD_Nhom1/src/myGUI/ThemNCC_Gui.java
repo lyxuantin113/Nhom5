@@ -5,26 +5,45 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class ThemNCC_Gui extends JPanel{
+import dao.NhaCungCap_Dao;
+import db.ConnectDB;
+import entity.NhaCungCap;
+
+public class ThemNCC_Gui extends JPanel implements ActionListener {
+	private JTextField txtMa;
+	private JTextField txtTen;
+	private JTextField txtDiaChi;
+	private JTextField txtSDT;
+	private JButton btnThem;
+	private JButton btnXoaTrang;
+	private JTable table;
+	private JButton btnTim;
+	private JButton btnXoa;
+	private JTextField txtTimKiem;
+
 	public ThemNCC_Gui() {
 		setSize(1070, 600);
 		setVisible(true);
-		
+
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
-		
+
 		// HEADER
 		JPanel pnHead = new JPanel();
 		JLabel lblHead = new JLabel("Thêm nhà cung cấp");
@@ -33,7 +52,7 @@ public class ThemNCC_Gui extends JPanel{
 		lblHead.setForeground(Color.blue);
 		pnHead.add(lblHead);
 //		pnHead.add(Box.createVerticalStrut(30));
-		
+
 		pnMain.add(pnHead, BorderLayout.NORTH);
 		// CENTER
 		JPanel pnCenter = new JPanel();
@@ -46,81 +65,185 @@ public class ThemNCC_Gui extends JPanel{
 		Box b1 = Box.createHorizontalBox();
 		Box b2 = Box.createHorizontalBox();
 		Box b3 = Box.createHorizontalBox();
-		
+
 		// Mã NCC
 		JLabel lblMa = new JLabel("Mã NCC: ");
 		lblMa.setPreferredSize(new Dimension(90, 25));
-		JTextField txtMa = new JTextField(20);
+		txtMa = new JTextField(20);
 		b1.add(Box.createHorizontalStrut(10));
 		b1.add(lblMa);
 		b1.add(txtMa);
 		// Tên NCC
 		JLabel lblTen = new JLabel("Tên NCC: ");
 		lblTen.setPreferredSize(new Dimension(90, 25));
-		JTextField txtTen = new JTextField(20);
+		txtTen = new JTextField(20);
 		b1.add(Box.createHorizontalStrut(10));
 		b1.add(lblTen);
 		b1.add(txtTen);
-		
+
 		pnCenterTop.add(b1);
 		pnCenterTop.add(Box.createVerticalStrut(5));
 		// Địa chỉ
 		JLabel lblDiaChi = new JLabel("Địa chỉ: ");
 		lblDiaChi.setPreferredSize(new Dimension(90, 25));
-		JTextField txtDiaChi = new JTextField(20);
+		txtDiaChi = new JTextField(20);
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblDiaChi);
 		b2.add(txtDiaChi);
 		// SĐT
 		JLabel lblSDT = new JLabel("SĐT: ");
 		lblSDT.setPreferredSize(new Dimension(90, 25));
-		JTextField txtSDT = new JTextField(20);
+		txtSDT = new JTextField(20);
 		b2.add(Box.createHorizontalStrut(10));
-			
+
 		b2.add(lblSDT);
 		b2.add(txtSDT);
 		pnCenterTop.add(b2);
-		pnCenterTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin nhà cung cấp"));
+		pnCenterTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
+				"Thông tin nhà cung cấp"));
 		// Button
 		JPanel pnButton = new JPanel();
-		JButton btnThem = new JButton("Thêm");
-		JButton btnXoaTrang = new JButton("Xóa trắng");
+		btnThem = new JButton("Thêm");
+		btnXoaTrang = new JButton("Xóa trắng");
 		btnThem.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnThem.setBackground(new Color(0,160,255));
+		btnThem.setBackground(new Color(0, 160, 255));
 		btnXoaTrang.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnXoaTrang.setBackground(new Color(0,160,255));
+		btnXoaTrang.setBackground(new Color(0, 160, 255));
 		pnButton.add(btnThem);
 		pnButton.add(btnXoaTrang);
 		b3.add(pnButton);
 		pnCenterTop.add(b3);
 		// Table
-		String[] headers = {"Mã NCC", "Tên NCC", "Địa chỉ", "SĐT"};
+		String[] headers = { "Mã NCC", "Tên NCC", "Địa chỉ", "SĐT" };
 		DefaultTableModel model = new DefaultTableModel(headers, 0);
-		JTable table = new JTable(model);
+		table = new JTable(model);
 		JScrollPane sp = new JScrollPane(table);
 		table.setPreferredScrollableViewportSize(new Dimension(1000, 300));
 		pnCenterBot.add(sp);
 		pnCenter.add(Box.createVerticalStrut(10));
-		
+
 		pnCenter.add(pnCenterTop);
 		pnCenter.add(pnCenterBot);
 		pnMain.add(pnCenter, BorderLayout.CENTER);
 		// FOOTER
 		JPanel pnFoot = new JPanel();
 		JLabel lblTimKiem = new JLabel("Tìm kiếm: ");
-		JTextField txtTimKiem = new JTextField(20);
-		JButton btnTim = new JButton("Tìm");
-		JButton btnXoa = new JButton("Xóa");
+		txtTimKiem = new JTextField(20);
+		btnTim = new JButton("Tìm");
+		btnXoa = new JButton("Xóa");
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnTim.setBackground(new Color(0,160,255));
-        btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnXoa.setBackground(new Color(0,160,255));
+		btnTim.setBackground(new Color(0, 160, 255));
+		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnXoa.setBackground(new Color(0, 160, 255));
 		pnFoot.add(lblTimKiem);
 		pnFoot.add(txtTimKiem);
 		pnFoot.add(btnTim);
 		pnFoot.add(btnXoa);
 		pnMain.add(pnFoot, BorderLayout.SOUTH);
-		
+
 		add(pnMain);
+		// Action
+		btnThem.addActionListener(this);
+		btnXoaTrang.addActionListener(this);
+		btnTim.addActionListener(this);
+		btnXoa.addActionListener(this);
+		table.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				int row = table.rowAtPoint(evt.getPoint());
+				txtMa.setText(table.getValueAt(row, 0).toString());
+				txtTen.setText(table.getValueAt(row, 1).toString());
+				txtDiaChi.setText(table.getValueAt(row, 2).toString());
+				txtSDT.setText(table.getValueAt(row, 3).toString());
+			}
+		});
+		ConnectDB.connect();
+		hienThiDanhSachNCC();
+
 	}
+
+	private void hienThiDanhSachNCC() {
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		model.setRowCount(0);
+		List<NhaCungCap> dsNCC = new NhaCungCap_Dao().readFromTable();
+		for (NhaCungCap ncc : dsNCC) {
+			model.addRow(new Object[] { ncc.getMaNCC(), ncc.getTenNCC(), ncc.getDiaChiNCC(), ncc.getSdtNCC() });
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
+		if (o.equals(btnThem)) {
+			themNCC();
+		}
+		if (o.equals(btnXoaTrang)) {
+			xoaTrang();
+		}
+		if (o.equals(btnTim)) {
+			tim();
+		}
+		if (o.equals(btnXoa)) {
+			xoa();
+		}
+
+	}
+
+	private void xoa() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void tim() {
+		String maNCC = txtTimKiem.getText();
+
+		int rowCount = table.getRowCount();
+		for (int row = 0; row < rowCount; row++) {
+			String rowData = table.getValueAt(row, 0).toString();
+			if (rowData.equals(maNCC)) {
+				JOptionPane.showMessageDialog(null, "Đã tìm thấy");
+				table.setRowSelectionInterval(row, row);
+				return;
+			}
+
+		}
+		table.clearSelection();
+		JOptionPane.showMessageDialog(null, "Không tìm thấy");
+
+	}
+
+	private void xoaTrang() {
+		txtMa.setText("");
+		txtTen.setText("");
+		txtDiaChi.setText("");
+		txtSDT.setText("");
+		txtMa.requestFocus();
+
+	}
+
+	private void themNCC() {
+		String ma = txtMa.getText();
+		String ten = txtTen.getText();
+		String diaChi = txtDiaChi.getText();
+		String sdt = txtSDT.getText();
+		NhaCungCap ncc = new NhaCungCap(ma, ten, diaChi, sdt);
+		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+		if (ma.equals("") || ten.equals("") || diaChi.equals("") || sdt.equals("")) {
+			JOptionPane.showMessageDialog(null, "Vui lòng nhập đủ thông tin");
+			return;
+		}
+		if (!nccDao.searchNCC(ma)) {
+			JOptionPane.showMessageDialog(null, "Thêm nhà cung cấp thành công");
+			nccDao.addNCC(ncc);
+			xoaTrang();
+			hienThiDanhSachNCC();
+			
+		} else {
+			JOptionPane.showMessageDialog(null, "Mã nhà cung cấp đã tồn tại");
+		}
+		
+		
+	}
+
 }

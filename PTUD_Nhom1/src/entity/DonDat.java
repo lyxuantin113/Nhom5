@@ -3,8 +3,12 @@ package entity;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DonDat {
+	private static final String PREFIX = "DD";
+    private static final AtomicInteger counter = new AtomicInteger(0);
+    
 	private String maDonDat;
 	private KhachHang maKH;
 	private NhanVien maNV;
@@ -13,6 +17,16 @@ public class DonDat {
 
 	public DonDat() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public DonDat(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan, List<ChiTietDonDat> ctdd) {
+		super();
+		this.maDonDat = PREFIX + counter.incrementAndGet();
+		this.maKH = maKH;
+		this.maNV = maNV;
+		this.ngayLap = ngayLap;
+		this.ngayNhan = ngayNhan;
+		this.ctdd = ctdd;
 	}
 
 	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
