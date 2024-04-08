@@ -120,7 +120,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
-			Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
+			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
 					thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(), thuoc.getSoLuongTon(),
 					thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
@@ -157,7 +157,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					model.setRowCount(0);
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getMaThuoc().equals(thongTin)) {
-							Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
@@ -175,7 +175,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					model.setRowCount(0);
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getTenThuoc().contains(thongTin)) {
-							Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
@@ -192,7 +192,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					model.setRowCount(0);
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getLoaiThuoc().contains(thongTin)) {
-							Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
@@ -208,8 +208,8 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
 					for (Thuoc thuoc : dsThuoc) {
-						if (thuoc.getTenNCC().contains(thongTin)) {
-							Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+						if (thuoc.getMaNCC().contains(thongTin)) {
+							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);

@@ -10,12 +10,12 @@ public class Thuoc {
 	private double giaBan;
 	private int soLuongTon;
 	private String nuocSanXuat;
-	private String tenNCC;
+	private String maNCC;
 
 	
 
 	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, LocalDate hSD, double giaNhap,
-			double giaBan, int soLuongTon, String nuocSanXuat, String tenNCC) {
+			double giaBan, int soLuongTon, String nuocSanXuat, String maNCC) {
 		super();
 		this.maThuoc = maThuoc;
 		this.tenThuoc = tenThuoc;
@@ -26,7 +26,7 @@ public class Thuoc {
 		this.giaBan = giaBan;
 		this.soLuongTon = soLuongTon;
 		this.nuocSanXuat = nuocSanXuat;
-		this.tenNCC = tenNCC;
+		this.maNCC = maNCC;
 	}
 
 	public Thuoc(String maThuoc) {
@@ -110,19 +110,19 @@ public class Thuoc {
 
 	
 
-	public String getTenNCC() {
-		return tenNCC;
+	public String getMaNCC() {
+		return maNCC;
 	}
 
-	public void setTenNCC(String tenNCC) {
-		this.tenNCC = tenNCC;
+	public void setMaNCC(String maNCC) {
+		this.maNCC = maNCC;
 	}
 
 	@Override
 	public String toString() {
 		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", loaiThuoc=" + loaiThuoc + ", donVi=" + donVi
 				+ ", HSD=" + HSD + ", giaNhap=" + giaNhap + ", giaBan=" + giaBan + ", soLuongTon=" + soLuongTon
-				+ ", nuocSanXuat=" + nuocSanXuat + ", tenNCC=" + tenNCC + "]";
+				+ ", nuocSanXuat=" + nuocSanXuat + ", maNCC=" + maNCC + "]";
 	}
 
 }

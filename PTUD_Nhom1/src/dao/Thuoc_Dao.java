@@ -63,7 +63,7 @@ public class Thuoc_Dao {
 			String query = "insert into Thuoc values ('" + thuoc.getMaThuoc() + "', '" + thuoc.getTenThuoc() + "', '"
 					+ thuoc.getLoaiThuoc() + "', '" + thuoc.getDonVi() + "', '" + thuoc.getHSD() + "', "
 					+ thuoc.getGiaNhap() + ", " + thuoc.getGiaBan() + ", " + thuoc.getSoLuongTon() + ", '"
-					+ thuoc.getNuocSanXuat() + "', '" + thuoc.getTenNCC() + "')";
+					+ thuoc.getNuocSanXuat() + "', '" + thuoc.getMaNCC() + "')";
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			dsThuoc.add(thuoc);
@@ -107,7 +107,7 @@ public class Thuoc_Dao {
 					+ thuoc.getLoaiThuoc() + "', donVi = '" + thuoc.getDonVi() + "', HSD = '" + thuoc.getHSD()
 					+ "', giaNhap = " + thuoc.getGiaNhap() + ", giaBan = " + thuoc.getGiaBan() + ", soLuongTon = "
 					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat() + "', tenNCC = '"
-					+ thuoc.getTenNCC() + "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
+					+ thuoc.getMaNCC() + "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			for (Thuoc t : dsThuoc) {
@@ -120,7 +120,7 @@ public class Thuoc_Dao {
 					t.setGiaBan(thuoc.getGiaBan());
 					t.setSoLuongTon(thuoc.getSoLuongTon());
 					t.setNuocSanXuat(thuoc.getNuocSanXuat());
-					t.setTenNCC(thuoc.getTenNCC());
+					t.setMaNCC(thuoc.getMaNCC());
 					break;
 				}
 			}
@@ -210,4 +210,59 @@ public class Thuoc_Dao {
 		}
 		return false;
 	}
+	// Lấy danh sách theo nhà cung cấp
+	public List<Thuoc> getDSTByNCC(String ncc) {
+		List<Thuoc> ds = new ArrayList<Thuoc>();
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return null;
+			}
+			String query = "select * from Thuoc where tenNCC = '" + ncc + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			while (rs.next()) {
+				String maThuoc = rs.getString(1);
+				String tenThuoc = rs.getString(2);
+				String loaiThuoc = rs.getString(3);
+				String donVi = rs.getString(4);
+				LocalDate hsd = rs.getDate(5).toLocalDate();
+				double giaGoc = rs.getDouble(6);
+				double giaBan = rs.getDouble(7);
+				int slTon = rs.getInt(8);
+				String nuocSX = rs.getString(9);
+				String tenNCC = rs.getString(10);
+
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
+						tenNCC);
+				ds.add(thuoc);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ds;
+	}
+
+	public void updateTTThuoc(Thuoc thuoc) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return;
+			}
+			// Update số lượng tồn, giá nhận, hsd, đơn vị
+			String query = "update Thuoc set soLuongTon = '" + thuoc.getSoLuongTon() + "', giaNhap = '"
+					+ thuoc.getGiaNhap() + "', HSD = '" + thuoc.getHSD() + "', donVi = '" + thuoc.getDonVi()
+					+ "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
+			Statement stm = con.createStatement();
+			stm.executeUpdate(query);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	
+	
 }

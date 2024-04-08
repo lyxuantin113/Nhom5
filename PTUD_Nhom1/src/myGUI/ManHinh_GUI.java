@@ -50,7 +50,7 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
 		cardPanel.add(new NhapThuoc_Gui(), "Nhập Thuốc");
-		
+		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(), "Danh sách phiếu nhập thuốc");
 		cardPanel.add(new ThemNCC_Gui(), "Thêm Nhà Cung Cấp");
 		
 
@@ -176,6 +176,14 @@ public class ManHinh_GUI extends JFrame {
 		iconNhapThuoc = new ImageIcon(imageNhapThuoc);
 		nhapThuoc.setIcon(iconNhapThuoc);
 		
+//		Menu Item Danh sách phiếu nhập thuốc
+		JMenuItem dsPhieuNhapThuoc = new JMenuItem("Danh sách phiếu nhập thuốc");
+		ImageIcon iconPhieuNhapThuoc = new ImageIcon("src//Icon//dsThuoc.png");
+		Image imagePhieuNhapThuoc = iconPhieuNhapThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconPhieuNhapThuoc = new ImageIcon(imagePhieuNhapThuoc);
+		dsPhieuNhapThuoc.setIcon(iconPhieuNhapThuoc);
+		
+		
 //		Menu Item Thêm Nhà Cung Cấp
 		JMenuItem themNCC = new JMenuItem("Thêm Nhà Cung Cấp");
 		ImageIcon iconThemNCC = new ImageIcon("src//Icon//themNCC.png");
@@ -244,6 +252,9 @@ public class ManHinh_GUI extends JFrame {
 		
 		qlThuoc.add(nhapThuoc);
 		nhapThuoc.setPreferredSize(new Dimension(165, 50));
+		
+		qlThuoc.add(dsPhieuNhapThuoc);
+		dsPhieuNhapThuoc.setPreferredSize(new Dimension(165, 50));
 		
 		qlThuoc.add(themNCC);
 		themNCC.setPreferredSize(new Dimension(165, 50));
@@ -375,6 +386,14 @@ public class ManHinh_GUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(cardPanel, "Nhập Thuốc");
+			}
+		});
+		
+		dsPhieuNhapThuoc.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(cardPanel, "Danh sách phiếu nhập thuốc");
 			}
 		});
 		

@@ -277,7 +277,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		ConnectDB.connect();
 	}
 
-	private void hienTable() {
+	void hienTable() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.setRowCount(0);
 		// Lấy danh sách thuốc từ database
@@ -285,7 +285,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
-			Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 					thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(),
 					thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
@@ -294,7 +294,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
 		List<NhaCungCap> dsNCC = nccDao.readFromTable();
 		for (NhaCungCap ncc : dsNCC) {
-			cbbNCC.addItem(ncc.getTenNCC());
+			cbbNCC.addItem(ncc.getMaNCC());
 		}
 	}
 
@@ -330,9 +330,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		double giaBan = Double.parseDouble(txtGiaBan.getText());
 		int soLuongTon = Integer.parseInt(txtSoLuong.getText());
 		String nuocSX = txtXuatXu.getText();
-		String tenNCC = cbbNCC.getSelectedItem().toString();
+		String maNCC = cbbNCC.getSelectedItem().toString();
 
-		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, tenNCC);
+		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn sửa không?", "Chú ý",
 				JOptionPane.YES_NO_OPTION);
@@ -388,9 +388,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		double giaBan = Double.parseDouble(txtGiaBan.getText());
 		int soLuongTon = Integer.parseInt(txtSoLuong.getText());
 		String nuocSX = txtXuatXu.getText();
-		String tenNCC = cbbNCC.getSelectedItem().toString();
+		String maNCC = cbbNCC.getSelectedItem().toString();
 		
-		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, tenNCC);
+		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		thuocDao.addThuoc(thuoc);
 		xoaTrang();
