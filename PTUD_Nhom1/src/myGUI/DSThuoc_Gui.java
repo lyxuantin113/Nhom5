@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 
 
 import dao.KhachHang_Dao;
+import dao.NhaCungCap_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.KhachHang;
@@ -281,16 +282,20 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		model.setRowCount(0);
 		// Lấy danh sách thuốc từ database
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
 			Object[] rowData = { thuoc.getTenNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 					thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(),
 					thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
-			// Thêm nhà cung cấp vào combobox
-			cbbNCC.addItem(thuoc.getTenNCC());
 		}
-	
+		// add combobox
+		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+		List<NhaCungCap> dsNCC = nccDao.readFromTable();
+		for (NhaCungCap ncc : dsNCC) {
+			cbbNCC.addItem(ncc.getTenNCC());
+		}
 	}
 
 	@Override

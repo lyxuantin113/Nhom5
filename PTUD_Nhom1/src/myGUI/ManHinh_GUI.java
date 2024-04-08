@@ -50,7 +50,9 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
 		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
 		cardPanel.add(new NhapThuoc_Gui(), "Nhập Thuốc");
+		
 		cardPanel.add(new ThemNCC_Gui(), "Thêm Nhà Cung Cấp");
+		
 
 //		Thống kê
 		cardPanel.add(new XemThongKe_Gui(), "Xem Thống Kê");

@@ -14,11 +14,11 @@ import entity.Thuoc;
 
 public class Thuoc_Dao {
 	private List<Thuoc> dsThuoc;
-	
+
 	public Thuoc_Dao() {
 		dsThuoc = new ArrayList<Thuoc>();
 	}
-	
+
 	public List<Thuoc> readFromTable() {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
@@ -36,21 +36,22 @@ public class Thuoc_Dao {
 				int slTon = rs.getInt(8);
 				String nuocSX = rs.getString(9);
 				String tenNCC = rs.getString(10);
-				
-				
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX, tenNCC);;
+
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
+						tenNCC);
+				;
 				dsThuoc.add(thuoc);
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return dsThuoc;
 	}
-	
+
 	public List<Thuoc> getDST() {
 		return dsThuoc;
 	}
-	
+
 	// Thêm thuốc vào database
 	public void addThuoc(Thuoc thuoc) {
 		try {
@@ -66,12 +67,12 @@ public class Thuoc_Dao {
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			dsThuoc.add(thuoc);
-			
-	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	// Xóa thuốc trong database
 	public boolean deleteThuoc(String maThuoc) {
 		try {
@@ -126,7 +127,87 @@ public class Thuoc_Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
+	}
+
+	// Tìm thuốc theo mã
+	public Boolean timTheoMa(String ma) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+                System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+                return false;
+            }
+			String query = "select * from Thuoc where maThuoc = '" + ma + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+			            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	// Tìm thuốc theo tên
+	public Boolean timTheoTen(String ten) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
+			String query = "select * from Thuoc where tenThuoc = '" + ten + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	// Tìm thuốc theo loại
+	public Boolean timTheoLoai(String loai) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
+			String query = "select * from Thuoc where loaiThuoc = '" + loai + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	// Tìm thuốc theo ncc
+	public Boolean timTheoNCC(String ncc) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
+			String query = "select * from Thuoc where tenNCC = '" + ncc + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
