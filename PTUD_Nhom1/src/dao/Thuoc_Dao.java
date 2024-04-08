@@ -35,6 +35,7 @@ public class Thuoc_Dao {
 				double giaBan = rs.getDouble(7);
 				int slTon = rs.getInt(8);
 				String nuocSX = rs.getString(9);
+
 				String tenNCC = rs.getString(10);
 
 				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
@@ -135,21 +136,22 @@ public class Thuoc_Dao {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
-                System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
-                return false;
-            }
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
 			String query = "select * from Thuoc where maThuoc = '" + ma + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			if (rs.next()) {
 				return true;
 			}
-			            
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
+
 	// Tìm thuốc theo tên
 	public Boolean timTheoTen(String ten) {
 		try {
@@ -170,6 +172,7 @@ public class Thuoc_Dao {
 		}
 		return false;
 	}
+
 	// Tìm thuốc theo loại
 	public Boolean timTheoLoai(String loai) {
 		try {
@@ -190,6 +193,7 @@ public class Thuoc_Dao {
 		}
 		return false;
 	}
+
 	// Tìm thuốc theo ncc
 	public Boolean timTheoNCC(String ncc) {
 		try {

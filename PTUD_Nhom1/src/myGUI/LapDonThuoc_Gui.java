@@ -7,18 +7,31 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.Console;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import dao.ChiTietDonDat_Dao;
+import dao.ChiTietHoaDon_Dao;
+import dao.DonDat_Dao;
+import dao.HoaDon_Dao;
+import dao.KhachHang_Dao;
+import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
+import entity.ChiTietDonDat;
 import entity.ChiTietHoaDon;
+import entity.HoaDon;
 import entity.Thuoc;
 
-public class LapDonThuoc_Gui extends JPanel implements ActionListener {
+public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseListener {
 	JButton btnThem;
 	private JTextField tfMaThuoc;
 	private JTextField tfSoLuong;
@@ -40,7 +53,15 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 	private JButton btnXoa;
 	private JTextField tfTimThuoc;
 	private JButton btnTimThuoc;
-	
+	private JComboBox<String> cbbTimThuoc;
+	private Thuoc_Dao thuocDao;
+	private NhanVien_Dao nhanVienDao;
+	private KhachHang_Dao khachHangDao;
+	private HoaDon_Dao hoaDonDao;
+	private DonDat_Dao donDatDao;
+	private ChiTietHoaDon_Dao cthdDao;
+	private ChiTietDonDat_Dao ctddDao;
+
 	public LapDonThuoc_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
@@ -100,7 +121,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		btnXoa.setBackground(new Color(0, 160, 255));
 		btnXoa.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		boxNhap.add(Box.createHorizontalStrut(30));
-		
+
 		pnCenterTop.add(boxNhap);
 
 //		TABLES
@@ -113,7 +134,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		JLabel lbTableHoaDon = new JLabel("Đơn Thuốc:");
 		lbTableHoaDon.setFont(fo16);
 		Box boxTableHoaDon = Box.createVerticalBox();
-		String[] headerHoaDon = "Mã thuốc;Tên thuốc;Loại;Đơn vị;Số lượng;Thành tiền".split(";");
+		String[] headerHoaDon = "Mã thuốc;Tên thuốc;Loại;Đơn giá;Đơn vị;Số lượng;Thành tiền".split(";");
 		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
 		tableHoaDon = new JTable(modelHoaDon);
 		scrollHoaDon = new JScrollPane();
@@ -148,14 +169,25 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 
 //		Box Tim Kiem Thuoc
 		Box timThuocBox = Box.createHorizontalBox();
+
+		cbbTimThuoc = new JComboBox<String>();
+		cbbTimThuoc.addItem("Mã thuốc");
+		cbbTimThuoc.addItem("Tên thuốc");
+		cbbTimThuoc.addItem("Loại thuốc");
+		cbbTimThuoc.addItem("Nhà cung cấp");
+
 		tfTimThuoc = new JTextField();
 		btnTimThuoc = new JButton("Tìm");
-		timThuocBox.add(Box.createHorizontalStrut(50));
+		btnTimThuoc.setBackground(new Color(0, 160, 255));
+
+		timThuocBox.add(Box.createHorizontalStrut(10));
+		timThuocBox.add(cbbTimThuoc);
+		timThuocBox.add(Box.createHorizontalStrut(10));
 		timThuocBox.add(tfTimThuoc);
 		timThuocBox.add(Box.createHorizontalStrut(10));
 		timThuocBox.add(btnTimThuoc);
-		timThuocBox.add(Box.createHorizontalStrut(50));
-		
+		timThuocBox.add(Box.createHorizontalStrut(10));
+
 		pnTableThuoc.add(boxTableThuoc);
 //		pnTableThuoc.add(Box.createVerticalStrut(10));
 		pnTableThuoc.add(timThuocBox);
@@ -253,13 +285,13 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		btnLapDD.setBackground(new Color(0, 160, 255));
 		btnLapDD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLapDD.setPreferredSize(new Dimension(150, 35));
-		
+
 		btnLapHD = new JButton("Lập Đơn Đặt");
 		btnLapHD.setBackground(new Color(0, 160, 255));
 		btnLapHD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLapHD.setPreferredSize(new Dimension(150, 35));
 
-		pnSouth.add(btnLapDD);	
+		pnSouth.add(btnLapDD);
 		pnSouth.add(Box.createHorizontalStrut(100));
 		pnSouth.add(btnLapHD);
 
@@ -285,30 +317,97 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 		btnThem.addActionListener(this);
 		btnLapHD.addActionListener(this);
 		btnLapDD.addActionListener(this);
+		tableThuoc.addMouseListener(this);
+		tableHoaDon.addMouseListener(this);
+
+		thuocDao = new Thuoc_Dao();
+		nhanVienDao = new NhanVien_Dao();
+		khachHangDao = new KhachHang_Dao();
+		hoaDonDao = new HoaDon_Dao();
+		donDatDao = new DonDat_Dao();
+		cthdDao = new ChiTietHoaDon_Dao();
+		ctddDao = new ChiTietDonDat_Dao();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
+		Map<Thuoc, Integer> listChiTiet = null;
 		if (o == btnThem) {
-			themThuocVaoDon();
+			if (this.checkQuatity()) {
+				listChiTiet = this.addOrderDetail();
+				xoaTrangThuoc();
+			}
+			else
+				JOptionPane.showMessageDialog(this, "Lưu ý: Số thuốc vượt quá thuốc tồn kho!");
+		}
+		if (o == btnXoa) {
+			listChiTiet = this.deleteOrderDetail(listChiTiet);
 		}
 		if (o == btnLapHD) {
-			
+//			Check isValid();
+			if(lapHoaDon(listChiTiet)) {
+				listChiTiet = null;
+				xoaTrangTatCa();		
+			}
+			else JOptionPane.showConfirmDialog(this, "Lập Hóa Đơn thất bại!");
 		}
 		if (o == btnLapDD) {
-			
+//			Check ngày lập và nhận
+			if(lapDonDat(listChiTiet)) {
+				listChiTiet = null;
+				xoaTrangTatCa();				
+			}
+			else JOptionPane.showConfirmDialog(this, "Lập Đơn Đặt thất bại!");
 		}
 
 	}
+	
+	public void xoaTrangThuoc() {
+		tfMaThuoc.setText("");
+		tfSoLuong.setText("");
+		tfMaThuoc.requestFocus();
+	}
+	
+	public void xoaTrangTatCa() {
+		tfMaThuoc.setText("");
+		tfSoLuong.setText("");
+		tfMaHD.setText("");
+		tfMaNV.setText("");
+		tfTenKH.setText("");
+		tfSDT.setText("");
+		tfMaThuoc.requestFocus();
+	}
 
-	public void themThuocVaoDon() {
+	//	KIỂM TRA VIỆC THÊM XÓA THUỐC VÀO ĐƠN
+	public boolean checkQuatity() {
+//		Thuoc thuoc = thuocDao.findById(tfMaThuoc.getText()); //Tim Thuoc
+//		if(thuoc.getSoLuong() < Integer.parseInt(tfSoLuong.getText())) 
+//			return false;
+		return true;
+	}
+
+	public Map<Thuoc, Integer> addOrderDetail() {
+//		Mở hết comment
+		Map<Thuoc, Integer> listChiTiet = null;
 		String maThuoc = tfMaThuoc.getText();
+//		Thuoc thuoc = thuocDao.findById(maThuoc); //Tim Thuoc
 		int soLuong = Integer.parseInt(tfSoLuong.getText());
-		Thuoc_Dao td = new Thuoc_Dao();
-//		Thuoc thuoc = td.timThuocTheoMa(maThuoc); -> Trả về Thuốc
+
+//		Add OrderDetail vao' Map
+//		if (listChiTiet.containsKey(thuoc)) {
+//      	int value = listChiTiet.get(thuoc);
+//          int newValue = value + soLuong;
+//			listChiTiet.put(thuoc, newValue)
+//		}
+//		else listChiTiet.put(thuoc, soLuong)
+//		
+//		Trừ đi số lương tồn
+//		int updateTonKho = thuoc.getSoLuongTon() - soLuong;
+//		thuoc.setSoLuongTon(updateTonKho);
+		
 //		String[] rowData = {thuoc.getMaThuoc, thuoc.getTenThuoc, thuoc.getLoaiThuoc
-//						, thuoc.getDonVi, soLuong+"", thuoc.getGiaBan*soLuong+""};
+//						, thuoc.getGiaBan, thuoc.getDonVi, soLuong+"", thuoc.getGiaBan*soLuong+""};
 //		modelHoaDon.addRow(rowData);
 
 //		Total Price
@@ -317,6 +416,153 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener {
 			total += Double.parseDouble(modelHoaDon.getValueAt(i, 6).toString());
 		}
 		tfTong.setText(total + "");
+
+		return listChiTiet;
 	}
 
+	public Map<Thuoc, Integer> deleteOrderDetail(Map<Thuoc, Integer> listChiTiet) {
+		int selectedRow = tableHoaDon.getSelectedRow();
+		if (selectedRow != -1) {
+			String maThuoc = (String) tableHoaDon.getValueAt(selectedRow, 0);
+			int soLuong = (int) tableHoaDon.getValueAt(selectedRow, 5);
+			// Tìm thuốc trong listChiTiet có mã là maThuoc và xóa nó nếu tồn tại
+			Iterator<Map.Entry<Thuoc, Integer>> iterator = listChiTiet.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry<Thuoc, Integer> entry = iterator.next();
+				Thuoc thuoc = entry.getKey();
+				if (thuoc.getMaThuoc().equals(maThuoc)) {
+					iterator.remove();
+					int updateTonKho = thuoc.getSoLuongTon()+soLuong;
+					thuoc.setSoLuongTon(updateTonKho);
+					
+					modelHoaDon.removeRow(selectedRow);
+				}
+			}
+		} else
+			JOptionPane.showMessageDialog(null, "Lưu ý: Chưa có cột được chọn!");
+
+		return listChiTiet;
+	}
+
+//	LẬP HÓA ĐƠN
+	private boolean lapHoaDon(Map<Thuoc, Integer> listChiTiet) {
+		String tenKH = tfTenKH.getText();
+		String sdtKH = tfSDT.getText();
+//		KhachHang kh = new KhachHang(tenKH, sdtKH);
+//		if(!khachHangDao.getDSKH().contains(kh))
+//			khachHangDao.addKhachHang(kh);
+		
+		String maNV = tfMaNV.getText();
+//		NhanVien nv = nhanVienDao.findById(maNV);
+		
+		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
+		LocalDate ngayNhanHD = ngayLapHD;
+		
+//		HoaDon hoaDon = new HoaDon(kh, nv, ngayLapHD, ngayNhanHD, null);
+		
+////		Tạo List<ChiTietHoaDon>
+//		List<ChiTietHoaDon> listChiTietHoaDon = new ArrayList<>();
+//        
+//        // Duyệt qua mỗi cặp key-value trong mapChiTiet
+//        for (Map.Entry<Thuoc, Integer> entry : listChiTiet.entrySet()) {
+//        	Thuoc thuoc = entry.getKey();
+//            int soLuong = entry.getValue();
+//       
+//            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, soLuong);
+//            chiTietHoaDon.setMaThuoc(thuoc);
+//            chiTietHoaDon.setSoLuong(soLuong);
+//            listChiTietHoaDon.add(chiTietHoaDon);
+//        }
+//        
+//        hoaDon.setCthd(listChiTietHoaDon);
+		
+//		if(hoaDonDao.addOne(hoaDon)) {
+//			int rowCount = modelHoaDon.getRowCount();
+//	        for (int i = rowCount - 1; i >= 0; i--) {
+//	            modelHoaDon.removeRow(i);
+//        	}
+//			return true;
+//		}
+			
+		return false;
+	}
+	
+//	LẬP ĐƠN ĐẶT
+	private boolean lapDonDat(Map<Thuoc, Integer> listChiTiet) {
+		String tenKH = tfTenKH.getText();
+		String sdtKH = tfSDT.getText();
+//		KhachHang kh = new KhachHang(tenKH, sdtKH);
+//		if(!khachHangDao.getDSKH().contains(kh))
+//			khachHangDao.addKhachHang(kh);
+		
+		String maNV = tfMaNV.getText();
+//		NhanVien nv = nhanVienDao.findById(maNV);
+		
+		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
+		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());;
+		
+//		DonDat donDat = new DonDat(kh, nv, ngayLapHD, ngayNhanHD, null);
+		
+////		Tạo List<ChiTietDonDat>
+//		List<ChiTietDonDat> listChiTietDonDat = new ArrayList<>();
+//        
+//        // Duyệt qua mỗi cặp key-value trong mapChiTiet
+//        for (Map.Entry<Thuoc, Integer> entry : listChiTiet.entrySet()) {
+//        	Thuoc thuoc = entry.getKey();
+//            int soLuong = entry.getValue();
+//       
+//            ChiTietDonDat chiTietDonDat = new ChiTietDonDat(donDat, thuoc, soLuong);
+//            chiTietDonDat.setMaThuoc(thuoc);
+//            chiTietDonDat.setSoLuong(soLuong);
+//            listChiTietDonDat.add(chiTietDonDat);
+//        }
+//        
+//        donDat.setCtdd(listChiTietDonDat);
+		
+//		if(donDatDao.addOne(donDat)) return true;
+		return false;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+//		Bắt sự kiện Mouse cho Danh Sách Thuốc
+		int rowSelectedThuoc = tableThuoc.getSelectedRow();
+		int rowSelectedDon = tableHoaDon.getSelectedRow();
+		
+		if(rowSelectedThuoc != -1) {
+			tfMaThuoc.setText((String) tableThuoc.getValueAt(rowSelectedThuoc, 0));
+		}
+		
+		if(rowSelectedDon != -1) {
+			tfMaThuoc.setText((String) tableHoaDon.getValueAt(rowSelectedDon, 0));
+			tfSoLuong.setText((String) tableHoaDon.getValueAt(rowSelectedDon, 5));
+		}
+		
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

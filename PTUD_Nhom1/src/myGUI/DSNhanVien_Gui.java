@@ -178,7 +178,6 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 		btnSua.addActionListener(this);
 		tableNhanVien.addMouseListener(this);
 		ConnectDB.connect();
-		dsNV.docTuBang();
 
 		hienTable();
 	}
@@ -255,7 +254,7 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 			if (check() == true) {
 				if (dsNV.createNhanVien(n)) {
 							String taiKhoan = n.getMaNV();
-							String matKhau = taiKhoan.substring(2, 5);
+							String matKhau = taiKhoan.substring(2, 8);
 							TaiKhoan tk = new TaiKhoan(taiKhoan, matKhau, n);
 							dsTK.createTaiKhoan(tk);
 					String[] row = { n.getMaNV() + "", n.getTenNV() + "", n.getSdtNV() + "", n.getChucVu() + "",

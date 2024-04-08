@@ -23,11 +23,16 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import dao.NhanVien_Dao;
+import db.ConnectDB;
+import entity.NhanVien;
+
 public class TimNhanVien_Gui extends JPanel implements ActionListener {
 	private JButton bntXoaRong;
 	private JButton bntTim;
 	private JTable tableNhanVien;
-
+	private DefaultTableModel modelNhanVien;
+	private NhanVien_Dao dsNV = new NhanVien_Dao();
 	public TimNhanVien_Gui() {
 //				JPANEL
 		JPanel pnMain = new JPanel();
@@ -54,7 +59,7 @@ public class TimNhanVien_Gui extends JPanel implements ActionListener {
 
 		Box boxTableNhanVien = Box.createVerticalBox();
 		String[] headerNhanVien = "Mã NV;Tên NV;Sđt NV;Chức vụ;Email".split(";");
-		DefaultTableModel modelNhanVien = new DefaultTableModel(headerNhanVien, 0);
+		modelNhanVien = new DefaultTableModel(headerNhanVien, 0);
 		tableNhanVien = new JTable(modelNhanVien);
 		JScrollPane scrollNhanVien = new JScrollPane();
 		scrollNhanVien.setViewportView(tableNhanVien = new JTable(modelNhanVien));
@@ -84,6 +89,10 @@ public class TimNhanVien_Gui extends JPanel implements ActionListener {
 		add(pnMain);
 
 		bntTim.addActionListener(this);
+		bntXoaRong.addActionListener(this);
+		ConnectDB.connect();
+
+		hienTable();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -91,9 +100,18 @@ public class TimNhanVien_Gui extends JPanel implements ActionListener {
 		if (o.equals(bntTim)) {
 			timAction();
 		}
+		if (o.equals(bntXoaRong)) {
+			tableNhanVien.clearSelection(); 
+		}
 
 	}
-
+	private void hienTable() {
+		modelNhanVien.setRowCount(0);
+		for (NhanVien n : dsNV.docTuBang()) {
+			String[] dataRow = { n.getMaNV(), n.getTenNV(), n.getSdtNV(), n.getChucVu(), n.getEmail() };
+			modelNhanVien.addRow(dataRow);
+		}
+	}
 	private void timAction() {
 		String searchName = JOptionPane.showInputDialog(this, "Nhập mã nhân viên cần tìm kiếm:");
 
@@ -102,16 +120,16 @@ public class TimNhanVien_Gui extends JPanel implements ActionListener {
 			return;
 		}
 		for (int i = 0; i < tableNhanVien.getRowCount(); i++) {
-			String countryName = (String) tableNhanVien.getValueAt(i, 0);
+			String maNV = (String) tableNhanVien.getValueAt(i, 0);
 
-			if (countryName.equalsIgnoreCase(searchName)) {
+			if (maNV.equalsIgnoreCase(searchName)) {
 				tableNhanVien.setRowSelectionInterval(i, i);
 				tableNhanVien.scrollRectToVisible(tableNhanVien.getCellRect(i, 0, true));
 				return;
 			}
 		}
 
-		JOptionPane.showMessageDialog(this, "Không tìm thấy tên country: " + searchName);
+		JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên: " + searchName);
 
 	}
 }

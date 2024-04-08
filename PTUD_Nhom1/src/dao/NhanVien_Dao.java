@@ -74,48 +74,50 @@ public class NhanVien_Dao {
 		PreparedStatement stmt = null;
 		int n = 0;
 		try {
-	        // Kiểm tra xem Mã nhân viên đã tồn tại hay chưa
-	        if (maNhanVienDaTonTai(nv.getMaNV())) {
-	            return false;
-	        }
-	        
-	        // Nếu Mã nhân viên chưa tồn tại, tiến hành thêm mới
-	        stmt = con.prepareStatement("insert into NhanVien values(?, ?, ?, ?, ?)");
-	        stmt.setString(1, nv.getMaNV());
-	        stmt.setString(2, nv.getTenNV());
-	        stmt.setString(3, nv.getSdtNV());
-	        stmt.setString(4, nv.getChucVu());
-	        stmt.setString(5, nv.getEmail());
-	        n = stmt.executeUpdate();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return n > 0;
+			// Kiểm tra xem Mã nhân viên đã tồn tại hay chưa
+			if (maNhanVienDaTonTai(nv.getMaNV())) {
+				return false;
+			}
+
+			// Nếu Mã nhân viên chưa tồn tại, tiến hành thêm mới
+			stmt = con.prepareStatement("insert into NhanVien values(?, ?, ?, ?, ?)");
+			stmt.setString(1, nv.getMaNV());
+			stmt.setString(2, nv.getTenNV());
+			stmt.setString(3, nv.getSdtNV());
+			stmt.setString(4, nv.getChucVu());
+			stmt.setString(5, nv.getEmail());
+			n = stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return n > 0;
 	}
+
 	public boolean maNhanVienDaTonTai(String maNV) {
-	    Connection con = ConnectDB.getInstance().getConnection();
-	    PreparedStatement stmt = null;
-	    ResultSet rs = null;
-	    try {
-	        stmt = con.prepareStatement("SELECT COUNT(*) FROM NhanVien WHERE MaNV = ?");
-	        stmt.setString(1, maNV);
-	        rs = stmt.executeQuery();
-	        if (rs.next()) {
-	            int count = rs.getInt(1);
-	            return count > 0; // Trả về true nếu Mã nhân viên đã tồn tại, ngược lại trả về false
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return false; // Trả về false nếu có lỗi xảy ra hoặc không tìm thấy kết quả
+		Connection con = ConnectDB.getInstance().getConnection();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = con.prepareStatement("SELECT COUNT(*) FROM NhanVien WHERE MaNV = ?");
+			stmt.setString(1, maNV);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				int count = rs.getInt(1);
+				return count > 0; // Trả về true nếu Mã nhân viên đã tồn tại, ngược lại trả về false
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false; // Trả về false nếu có lỗi xảy ra hoặc không tìm thấy kết quả
 	}
+
 	public boolean updateNhanVien(NhanVien nv) {
 		Connection con = ConnectDB.getInstance().getConnection();
 		PreparedStatement stmt = null;
 		int n = 0;
 		try {
-			stmt = con
-					.prepareStatement("update NhanVien set  tenNV = ?, sdtNV = ?, chucVu = ?, email = ? WHERE maNV = ?");
+			stmt = con.prepareStatement(
+					"update NhanVien set  tenNV = ?, sdtNV = ?, chucVu = ?, email = ? WHERE maNV = ?");
 
 			stmt.setString(1, nv.getTenNV());
 			stmt.setString(2, nv.getSdtNV());
@@ -145,10 +147,10 @@ public class NhanVien_Dao {
 //	        stmtddh = con.prepareStatement("DELETE FROM HoaDon WHERE maNV = ?");
 //	        stmtddh.setString(1, maNV);
 //	        n += stmtddh.executeUpdate();
-			
+
 			stmttk = con.prepareStatement("DELETE FROM TaiKhoan WHERE maNV = ?");
 			stmttk.setString(1, maNV);
-	        n += stmttk.executeUpdate();
+			n += stmttk.executeUpdate();
 			con.commit();
 		} catch (Exception e) {
 			try {

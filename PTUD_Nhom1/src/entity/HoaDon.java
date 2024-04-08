@@ -1,26 +1,26 @@
 package entity;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HoaDon {
+	private static final String PREFIX = "HD";
+	private static final AtomicInteger counter = new AtomicInteger(0);
+
 	private String maHoaDon;
 	private KhachHang maKH;
 	private NhanVien maNV;
-	private Date ngayLap;
-	private Date ngayNhan;
+	private LocalDate ngayLap;
+	private LocalDate ngayNhan;
 	private List<ChiTietHoaDon> cthd;
 
 	public HoaDon() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public HoaDon(String maHoaDon) {
-		super();
-		this.maHoaDon = maHoaDon;
-	}
-
-	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, Date ngayLap, Date ngayNhan,
+	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
 			List<ChiTietHoaDon> cthd) {
 		super();
 		this.maHoaDon = maHoaDon;
@@ -31,11 +31,21 @@ public class HoaDon {
 		this.cthd = cthd;
 	}
 
-	public Date getNgayLap() {
+	public HoaDon(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan, List<ChiTietHoaDon> cthd) {
+		super();
+		this.maHoaDon = PREFIX + counter.incrementAndGet();
+		this.maKH = maKH;
+		this.maNV = maNV;
+		this.ngayLap = ngayLap;
+		this.ngayNhan = ngayNhan;
+		this.cthd = cthd;
+	}
+
+	public LocalDate getNgayLap() {
 		return ngayLap;
 	}
 
-	public void setNgayLap(Date ngayLap) {
+	public void setNgayLap(LocalDate ngayLap) {
 		this.ngayLap = ngayLap;
 	}
 
@@ -47,11 +57,11 @@ public class HoaDon {
 		this.maNV = maNV;
 	}
 
-	public Date getNgayNhan() {
+	public LocalDate getNgayNhan() {
 		return ngayNhan;
 	}
 
-	public void setNgayNhan(Date ngayNhan) {
+	public void setNgayNhan(LocalDate ngayNhan) {
 		this.ngayNhan = ngayNhan;
 	}
 
@@ -65,10 +75,6 @@ public class HoaDon {
 
 	public String getMaHoaDon() {
 		return maHoaDon;
-	}
-
-	public void setMaHoaDon(String maHoaDon) {
-		this.maHoaDon = maHoaDon;
 	}
 
 	public KhachHang getMaKH() {

@@ -1,6 +1,8 @@
 package myGUI;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
@@ -10,10 +12,22 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class DangNhap_Gui extends JFrame {
+import dao.TaiKhoan_Dao;
+import db.ConnectDB;
+
+
+public class DangNhap_Gui extends JFrame implements ActionListener {
 	public static void main(String[] args) {
 		new DangNhap_Gui();
 	}
+
+	private JButton btnDangNhap;
+	private JButton btnThoat;
+	private JPasswordField tfMatKhau;
+	private JTextField tfTaiKhoan;
+	private JLabel lbThongBao;
+	
+	private TaiKhoan_Dao dstk = new TaiKhoan_Dao();
 	
 	public DangNhap_Gui() {
 		super("Màn Hình Đăng Nhập");
@@ -53,7 +67,7 @@ public class DangNhap_Gui extends JFrame {
 		iconUser = new ImageIcon(imageUser);
 		lbTaiKhoan.setIcon(iconUser);
 		
-		JTextField tfTaiKhoan = new JTextField();
+		tfTaiKhoan = new JTextField();
 		tfTaiKhoan.setPreferredSize(new Dimension(0,30));
 		
 		JLabel lbMatKhau = new JLabel("Mật khẩu:");
@@ -62,8 +76,12 @@ public class DangNhap_Gui extends JFrame {
 		iconPass = new ImageIcon(imagePass);
 		lbMatKhau.setIcon(iconPass);
 		
-		JTextField tfMatKhau = new JTextField();
+		tfMatKhau = new JPasswordField();
 		tfMatKhau.setPreferredSize(new Dimension(0,30));
+		
+		lbThongBao = new JLabel();
+		lbThongBao.setPreferredSize(new Dimension(0,30));
+        lbThongBao.setForeground(Color.RED);
 		
 		loginBox.add(lbDN);
 		loginBox.add(Box.createVerticalStrut(15));
@@ -75,12 +93,15 @@ public class DangNhap_Gui extends JFrame {
 		loginBox.add(Box.createVerticalStrut(10));
 		loginBox.add(tfMatKhau);
 		loginBox.add(Box.createVerticalStrut(15));
+		loginBox.add(lbThongBao);
+		loginBox.add(Box.createVerticalStrut(10));
 		
 //		BUTTON ĐĂNG NHẬP
 		JPanel dnBtnPn = new JPanel();
 		Box btnBox = Box.createHorizontalBox();
-		JButton btnDangNhap = new JButton("Đăng Nhập");
-		JButton btnThoat = new JButton("Thoát");
+		btnDangNhap = new JButton("Đăng Nhập");
+		btnThoat = new JButton("Thoát");
+		
 		btnBox.add(btnDangNhap);
 		btnBox.add(Box.createHorizontalStrut(50));
 		btnBox.add(btnThoat);
@@ -92,7 +113,35 @@ public class DangNhap_Gui extends JFrame {
 		containerBox.add(loginBox);
 		containerBox.add(dnBtnPn);
 		pn.add(containerBox);
-		add(pn);
 		
+		
+		// Đăng ký sự kiện cho các nút
+        btnDangNhap.addActionListener(this);
+        btnThoat.addActionListener(this);
+        
+
+		add(pn);
+		ConnectDB.connect();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnDangNhap) {
+            String taiKhoan = tfTaiKhoan.getText();
+            String matKhau = new String(tfMatKhau.getPassword());
+
+            // Kiểm tra đăng nhập
+            if (dstk.kiemTraDangNhap(taiKhoan, matKhau)) {
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+                // Mở cửa sổ mới sau khi đăng nhập thành công
+                new ManHinh_GUI();
+                // Đóng cửa sổ đăng nhập
+                dispose();
+            } else {
+            	 lbThongBao.setText("Tài khoản hoặc mật khẩu không đúng.");
+            }
+        } else if (e.getSource() == btnThoat) {
+            System.exit(0);
+        }
 	}
 }
