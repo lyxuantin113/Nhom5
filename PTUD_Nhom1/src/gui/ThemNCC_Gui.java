@@ -1,4 +1,4 @@
-package myGUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -261,6 +261,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 			nccDao.addNCC(ncc);
 			xoaTrang();
 			hienThiDanhSachNCC();
+			
 			
 		} else {
 			JOptionPane.showMessageDialog(null, "Mã nhà cung cấp đã tồn tại");

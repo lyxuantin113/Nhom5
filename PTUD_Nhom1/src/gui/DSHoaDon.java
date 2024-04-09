@@ -1,4 +1,4 @@
-package myGUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -10,9 +10,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import dao.ChiTietDonDat_Dao;
@@ -23,37 +31,34 @@ import dao.KhachHang_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
 import entity.DonDat;
-import entity.Thuoc;
+import entity.HoaDon;
 
-public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListener {
-
+public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 	private JComboBox<String> cbbTim;
-	private JButton btnReset;
-	private JButton btnHoanThanh;
+	private JTable tableThuoc;
+	private JTable tableHoaDon;
 	private JButton btnTim;
-	private JTable tableDonDat;
-	private JTable tblThuoc;
+	private JButton btnIn;
+	private JButton btnReset;
 	private Thuoc_Dao thuocDao;
 	private NhanVien_Dao nhanVienDao;
 	private KhachHang_Dao khachHangDao;
-	private DonDat_Dao donDatDao;
-	private ChiTietDonDat_Dao ctddDao;
+	private HoaDon_Dao hoaDonDao;
+	private ChiTietHoaDon_Dao cthdDao;
 
-//	Nút Chuyển Qua DS Hóa Đơn ????????????????
-
-	public DSDonDat_Gui() {
+	public DSHoaDon() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
 
 //		HEADER
-		JPanel pnHead = new JPanel();
-		JLabel headLb = new JLabel("Danh Sách Đơn Đặt");
-		Font fo = new Font("Times New Roman", Font.BOLD, 24);
+		JPanel headPn = new JPanel();
+		JLabel headLb = new JLabel("Danh Sách Hóa Đơn");
+		Font fo24 = new Font("Times New Roman", Font.BOLD, 24);
 		Font fo16 = new Font("Times New Roman", Font.BOLD, 16);
-		headLb.setFont(fo);
+		headLb.setFont(fo24);
 		headLb.setForeground(Color.blue);
-		pnHead.add(headLb);
+		headPn.add(headLb);
 
 //		CENTER
 		JPanel pnCenter = new JPanel();
@@ -65,48 +70,48 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 
 //		TABLES
 		JSplitPane jsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		JPanel pnTableDonDat = new JPanel();
+		JPanel pnTableHoaDon = new JPanel();
 		JPanel pnTableThuoc = new JPanel();
 
 //		Panel Right (Table Các Loại Thuốc Trong Đơn Đang Chọn)
-		JLabel lblTableDSThuoc = new JLabel("Danh Sách Thuốc Trong Đơn:");
-		lblTableDSThuoc.setFont(fo16);
+		JLabel lbTableDSThuoc = new JLabel("Danh Sách Thuốc Trong Đơn:");
+		lbTableDSThuoc.setFont(fo16);
 		Box boxTableDSThuoc = Box.createVerticalBox();
 		String[] headerThuoc = "Mã thuốc;Tên thuốc;Loại;Đơn giá;Đơn vị;Số lượng;Thành tiền".split(";");
 		DefaultTableModel modelThuoc = new DefaultTableModel(headerThuoc, 0);
-		tblThuoc = new JTable(modelThuoc);
+		tableThuoc = new JTable(modelThuoc);
 		JScrollPane scrollThuoc = new JScrollPane();
-		scrollThuoc.setViewportView(tblThuoc = new JTable(modelThuoc));
-		tblThuoc.setRowHeight(20);
+		scrollThuoc.setViewportView(tableThuoc = new JTable(modelThuoc));
+		tableThuoc.setRowHeight(20);
 
-		boxTableDSThuoc.add(lblTableDSThuoc);
+		boxTableDSThuoc.add(lbTableDSThuoc);
 		boxTableDSThuoc.add(Box.createVerticalStrut(10));
 		boxTableDSThuoc.add(scrollThuoc);
 		boxTableDSThuoc.add(Box.createVerticalStrut(10));
 
-		pnTableDonDat.add(boxTableDSThuoc);
+		pnTableHoaDon.add(boxTableDSThuoc);
 
 //		Panel Left (Table Danh Sách Hóa Đơn Tìm Được)
-		JLabel lblTableDonDat = new JLabel("Danh Sách Đơn Đặt:");
-		lblTableDonDat.setFont(fo16);
-		Box boxTableDonDat = Box.createVerticalBox();
-		String[] headerDonDat = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận".split(";");
-		DefaultTableModel modelDonDat = new DefaultTableModel(headerDonDat, 0);
-		tableDonDat = new JTable(modelDonDat);
-		JScrollPane scrollDonDat = new JScrollPane();
-		scrollDonDat.setViewportView(tableDonDat = new JTable(modelDonDat));
+		JLabel lbTableHoaDon = new JLabel("Danh Sách Hóa Đơn:");
+		lbTableHoaDon.setFont(fo16);
+		Box boxTableHoaDon = Box.createVerticalBox();
+		String[] headerHoaDon = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận".split(";");
+		DefaultTableModel modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
+		tableHoaDon = new JTable(modelHoaDon);
+		JScrollPane scrollHoaDon = new JScrollPane();
+		scrollHoaDon.setViewportView(tableHoaDon = new JTable(modelHoaDon));
 //		scrollThuoc.setPreferredSize(new Dimension(0, 310));  //SET CHIỀU CAO TABLE
-		tableDonDat.setRowHeight(20);
+		tableHoaDon.setRowHeight(20);
 
-		boxTableDonDat.add(lblTableDonDat);
-		boxTableDonDat.add(Box.createVerticalStrut(10));
-		boxTableDonDat.add(scrollDonDat);
-		boxTableDonDat.add(Box.createVerticalStrut(10));
+		boxTableHoaDon.add(lbTableHoaDon);
+		boxTableHoaDon.add(Box.createVerticalStrut(10));
+		boxTableHoaDon.add(scrollHoaDon);
+		boxTableHoaDon.add(Box.createVerticalStrut(10));
 
-		pnTableThuoc.add(boxTableDonDat);
+		pnTableThuoc.add(boxTableHoaDon);
 
 		jsplit.add(Box.createHorizontalStrut(30));
-		jsplit.setRightComponent(pnTableDonDat);
+		jsplit.setRightComponent(pnTableHoaDon);
 		jsplit.setLeftComponent(pnTableThuoc);
 		jsplit.setSize(1500, 470);
 		jsplit.setPreferredSize(new Dimension(950, 470)); // SET CHIỀU CAO TABLE
@@ -130,100 +135,104 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		btnTim.setBackground(new Color(0, 160, 255));
 		btnTim.setPreferredSize(new Dimension(100, 35));
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-		btnHoanThanh = new JButton("Hoàn Thành Đơn");
-		btnHoanThanh.setBackground(new Color(0, 160, 255));
-		btnHoanThanh.setPreferredSize(new Dimension(150, 35));
-		btnHoanThanh.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
+		
 		btnReset = new JButton("Reset");
 		btnReset.setBackground(new Color(0, 160, 255));
-		btnReset.setPreferredSize(new Dimension(150, 35));
+		btnReset.setPreferredSize(new Dimension(100, 35));
 		btnReset.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		btnIn = new JButton("In hóa đơn");
+		btnIn.setBackground(new Color(0, 160, 255));
+		btnIn.setPreferredSize(new Dimension(100, 35));
+		btnIn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		pnSouth.add(cbbTim);
 		pnSouth.add(tfTim);
 		pnSouth.add(btnTim);
 		pnSouth.add(btnReset);
 		pnSouth.add(Box.createHorizontalStrut(100));
-		pnSouth.add(btnHoanThanh);
+		pnSouth.add(btnIn);
 
-//		End
+//		ADD Center Panel
 		pnCenter.add(Box.createVerticalStrut(10));
 		pnCenter.add(pnCenterTop, BorderLayout.NORTH);
 		pnCenter.add(Box.createVerticalStrut(10));
 		pnCenter.add(pnCenterBot, BorderLayout.CENTER);
 
-		pnMain.add(pnHead, BorderLayout.NORTH);
+//		ADD TOP
+		pnMain.add(headPn, BorderLayout.NORTH);
 		pnMain.add(pnCenter, BorderLayout.CENTER);
+
+//		ADD BUTTON
 		pnMain.add(pnSouth, BorderLayout.SOUTH);
+
+//		END
 		add(pnMain);
 		
 		thuocDao = new Thuoc_Dao();
 		nhanVienDao = new NhanVien_Dao();
 		khachHangDao = new KhachHang_Dao();
-		donDatDao = new DonDat_Dao();
-		ctddDao = new ChiTietDonDat_Dao();
+		hoaDonDao = new HoaDon_Dao();
+		cthdDao = new ChiTietHoaDon_Dao();
 		
-		tblThuoc.addMouseListener(this);
-		tableDonDat.addMouseListener(this);
+		tableHoaDon.addMouseListener(this);
+		tableThuoc.addMouseListener(this);
 		btnTim.addActionListener(this);
 		btnReset.addActionListener(this);
-		btnHoanThanh.addActionListener(this);
+		btnIn.addActionListener(this);
+		
+		hienTableHoaDon();
 
-		hienTableDonDat();
 	}
 
-	private void hienTableDonDat() {
-		DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
+	private void hienTableHoaDon() {
+		DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
 		model.setRowCount(0);
 
-		List<DonDat> listDonDat = donDatDao.getDSPDT();
-		if (listDonDat != null) {
-			for (DonDat donDat : listDonDat) {
-				Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(), donDat.getMaKH().getHoTen()
-						, donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(), donDat.getNgayNhan()}; // Tạo dữ liệu hàng mới
+		List<HoaDon> listHoaDon = hoaDonDao.getDSHD();
+		if (listHoaDon != null) {
+			for (HoaDon hoaDon : listHoaDon) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen()
+						, hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan()}; // Tạo dữ liệu hàng mới
 
 				model.addRow(rowData); // Thêm hàng vào model
 			}
 		}
-
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Object o = e.getSource();
-
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
 }
