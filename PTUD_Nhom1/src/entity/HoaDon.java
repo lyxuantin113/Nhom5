@@ -3,11 +3,11 @@ package entity;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HoaDon {
 	private static final String PREFIX = "HD";
-	private static final AtomicInteger counter = new AtomicInteger(0);
 
 	private String maHoaDon;
 	private KhachHang maKH;
@@ -30,7 +30,7 @@ public class HoaDon {
 
 	public HoaDon(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan) {
 		super();
-		this.maHoaDon = PREFIX + counter.incrementAndGet();
+		this.maHoaDon = PREFIX + generateRandomCode(5);
 		this.maKH = maKH;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
@@ -71,6 +71,17 @@ public class HoaDon {
 
 	public void setMaKH(KhachHang maKH) {
 		this.maKH = maKH;
+	}
+
+	public static String generateRandomCode(int length) {
+		String characters = "0123456789"; // Các ký tự được chấp nhận
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+		for (int i = 0; i < length; i++) {
+			int index = random.nextInt(characters.length());
+			sb.append(characters.charAt(index));
+		}
+		return sb.toString();
 	}
 
 	@Override
