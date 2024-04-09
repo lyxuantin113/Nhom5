@@ -107,9 +107,12 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		lblLoai.setPreferredSize(new Dimension(90, 25));
 		cbbLoai = new JComboBox<String>();
 		cbbLoai.setPreferredSize(new Dimension(395, 25));
-		cbbLoai.addItem("Thuốc cảm");
-		cbbLoai.addItem("Thuốc hạ sốt");
-		cbbLoai.addItem("Thực phẩm chức năng");
+		cbbLoai.addItem("Thuoc cam");
+		cbbLoai.addItem("Thuoc ha sot");
+		cbbLoai.addItem("Thuoc giam dau");
+		cbbLoai.addItem("Thuoc khang sinh");
+		cbbLoai.addItem("Thuoc an than");
+		cbbLoai.addItem("Thuc pham chuc nang");
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblLoai);
 		b2.add(cbbLoai);
@@ -119,11 +122,11 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		lblDonVi.setPreferredSize(new Dimension(90, 25));
 		cbbDonVi = new JComboBox<String>();
 		cbbDonVi.setPreferredSize(new Dimension(395, 25));
-		cbbDonVi.addItem("Viên");
+		cbbDonVi.addItem("Vien");
+		cbbDonVi.addItem("Vi");
+		cbbDonVi.addItem("Hop");
+		cbbDonVi.addItem("Goi");
 		cbbDonVi.addItem("Chai");
-		cbbDonVi.addItem("Hộp");
-		cbbDonVi.addItem("Gói");
-		cbbDonVi.addItem("Lọ");
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblDonVi);
 		b2.add(cbbDonVi);
@@ -262,6 +265,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
 				int row = table.rowAtPoint(evt.getPoint());
 				txtMa.setText(table.getValueAt(row, 1).toString());
+				txtMa.setEditable(false);
 				txtTen.setText(table.getValueAt(row, 2).toString());
 				cbbLoai.setSelectedItem(table.getValueAt(row, 3).toString());
 				cbbDonVi.setSelectedItem(table.getValueAt(row, 4).toString());
@@ -320,6 +324,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	}
 
 	private void updateThuoc() {
+		
+		
+		
 		String maThuoc = txtMa.getText();
 		String tenThuoc = txtTen.getText();
 		String loaiThuoc = cbbLoai.getSelectedItem().toString();
@@ -332,6 +339,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String nuocSX = txtXuatXu.getText();
 		String maNCC = cbbNCC.getSelectedItem().toString();
 
+		
 		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn sửa không?", "Chú ý",
@@ -345,6 +353,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	}
 
 	private void xoaTrang() {
+		txtMa.setEditable(true);
 		txtMa.setText("");
 		txtTen.setText("");
 		txtHSD.setText("");

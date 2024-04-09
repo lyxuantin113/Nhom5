@@ -1,10 +1,12 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import db.ConnectDB;
@@ -87,4 +89,58 @@ public class PhieuNhapThuoc_Dao {
             e.printStackTrace();
         }
 	}
+
+//	public boolean delete(String maPNT) {
+//		try {
+//			Connection con = ConnectDB.getInstance().getConnection();
+//			String query = "delete from PhieuNhapThuoc where maPhieuNhap = '" + maPNT + "'";
+//			Statement stm = con.createStatement();
+//			int result = stm.executeUpdate(query);
+//			if (result > 0) {
+//				for (PhieuNhapThuoc pnt : dsPNT) {
+//					if (pnt.getMaPhieuNhap().equals(maPNT)) {
+//						dsPNT.remove(pnt);
+//						return true;
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return false;
+//	}
+	public boolean delete(String maPNT) {
+	    try {
+	        Connection con = ConnectDB.getInstance().getConnection();
+	        String deleteChiTietQuery = "DELETE FROM ChiTietPhieuNhapThuoc WHERE maCTPNT IN (SELECT maPhieuNhap FROM PhieuNhapThuoc WHERE maPhieuNhap = ?)";
+	        String deletePhieuNhapQuery = "DELETE FROM PhieuNhapThuoc WHERE maPhieuNhap = ?";
+	        
+	        // Xóa các chi tiết phiếu nhập thuốc
+	        PreparedStatement deleteChiTietStatement = con.prepareStatement(deleteChiTietQuery);
+	        deleteChiTietStatement.setString(1, maPNT);
+	        deleteChiTietStatement.executeUpdate();
+	        
+	        // Sau đó xóa phiếu nhập thuốc
+	        PreparedStatement deletePhieuNhapStatement = con.prepareStatement(deletePhieuNhapQuery);
+	        deletePhieuNhapStatement.setString(1, maPNT);
+	        int result = deletePhieuNhapStatement.executeUpdate();
+	        
+	        if (result > 0) {
+	            // Xóa phiếu nhập khỏi danh sách dsPNT (nếu có)
+	            Iterator<PhieuNhapThuoc> iterator = dsPNT.iterator();
+	            while (iterator.hasNext()) {
+	                PhieuNhapThuoc pnt = iterator.next();
+	                if (pnt.getMaPhieuNhap().equals(maPNT)) {
+	                    iterator.remove();
+	                    break;
+	                }
+	            }
+	            return true;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+
 }

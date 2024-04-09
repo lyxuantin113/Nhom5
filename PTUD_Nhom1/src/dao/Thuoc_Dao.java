@@ -236,7 +236,7 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return null;
 			}
-			String query = "select * from Thuoc where tenNCC = '" + ncc + "'";
+			String query = "select * from Thuoc where maNCC = '" + ncc + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			while (rs.next()) {

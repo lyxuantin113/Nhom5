@@ -65,7 +65,6 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		JPanel pnCenterTop = new JPanel();
 		pnCenterTop.setLayout(new BoxLayout(pnCenterTop, BoxLayout.Y_AXIS));
 
-		
 		JPanel pnCenterBot = new JPanel();
 		pnCenterBot.setLayout(new BoxLayout(pnCenterBot, BoxLayout.Y_AXIS));
 		// Box
@@ -142,7 +141,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin thuốc nhập"));
 		// Button tạo phiếu
 		JPanel pnButtonTaoPhieu = new JPanel();
-		
+
 		btnTao = new JButton("Tạo phiếu");
 		btnHuy = new JButton("Hủy");
 		btnTao.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -151,11 +150,10 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		btnHuy.setBackground(new Color(0, 160, 255));
 		pnButtonTaoPhieu.add(btnTao);
 		pnButtonTaoPhieu.add(btnHuy);
-		
+
 		pnTTPNT.add(Box.createVerticalStrut(5));
 		pnCenterTop.add(pnButtonTaoPhieu);
-		
-		
+
 		// Mã thuốc
 		JLabel lblMa = new JLabel("Mã thuốc: ");
 		lblMa.setPreferredSize(new Dimension(90, 25));
@@ -205,11 +203,11 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		lblDonVi.setPreferredSize(new Dimension(90, 25));
 		cbbDonVi = new JComboBox<String>();
 		cbbDonVi.setPreferredSize(new Dimension(395, 25));
-		cbbDonVi.addItem("Viên");
+		cbbDonVi.addItem("Vien");
+		cbbDonVi.addItem("Vi");
+		cbbDonVi.addItem("Hop");
+		cbbDonVi.addItem("Goi");
 		cbbDonVi.addItem("Chai");
-		cbbDonVi.addItem("Hộp");
-		cbbDonVi.addItem("Gói");
-		cbbDonVi.addItem("Lọ");
 		b3.add(Box.createHorizontalStrut(10));
 		b3.add(lblDonVi);
 		b3.add(cbbDonVi);
@@ -276,7 +274,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		cbbDonVi.setEnabled(false);
 		txtThanhTien.setEnabled(false);
 		txtMaCTPNT.setEnabled(false);
-		
+
 		// BUTTON
 		JPanel pnButton = new JPanel();
 		btnAdd = new JButton("Thêm");
@@ -289,8 +287,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
 		// TABLE
-		String[] headers = { "Mã thuốc", "Giá nhập", "Hạn sử dụng", "Số lượng", "Đơn vị", "Thành tiền",
-				"Mã CTPNT" };
+		String[] headers = { "Mã thuốc", "Giá nhập", "Hạn sử dụng", "Số lượng", "Đơn vị", "Thành tiền", "Mã CTPNT" };
 		DefaultTableModel model = new DefaultTableModel(headers, 0);
 		table = new JTable(model);
 		JScrollPane sp = new JScrollPane(table);
@@ -299,7 +296,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		pnCenter.add(Box.createVerticalStrut(10));
 		// FOOTER
 		JPanel pnFooter = new JPanel();
-		
+
 		btnXoa = new JButton("Xóa");
 		btnSua = new JButton("Sửa");
 		btnXacNhan = new JButton("Xác nhận");
@@ -309,8 +306,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		btnSua.setBackground(new Color(0, 160, 255));
 		btnXacNhan.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXacNhan.setBackground(new Color(0, 160, 255));
-		
-		
+
 		pnFooter.add(btnXoa);
 		pnFooter.add(btnSua);
 		pnFooter.add(btnXacNhan);
@@ -372,7 +368,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 //				txtNgayNhap.setText(ngayNhap);
 //			}
 //		});
-		
+
 		ConnectDB.connect();
 		// Đổ dữ liệu cho combobox
 		addCombobox();
@@ -383,7 +379,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		for (NhaCungCap ncc : nccDao.readFromTable()) {
 			cbbNCC.addItem(ncc.getMaNCC());
 		}
-		
+
 	}
 
 	private void hienTable(String maPhieuNhap) {
@@ -392,8 +388,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		// Lấy dữ liệu từ database
 		ChiTietPhieuNhapThuoc_Dao pntDao = new ChiTietPhieuNhapThuoc_Dao();
 		for (ChiTietPhieuNhapThuoc ct : pntDao.readFromTable(maPhieuNhap)) {
-			model.addRow(new Object[] { ct.getMaThuoc(), ct.getGiaNhap(), ct.getHsd(),
-					ct.getSoLuong(), ct.getDonVi(), ct.getThanhTien(), ct.getMaCTPNT() });
+			model.addRow(new Object[] { ct.getMaThuoc(), ct.getGiaNhap(), ct.getHsd(), ct.getSoLuong(), ct.getDonVi(),
+					ct.getThanhTien(), ct.getMaCTPNT() });
 		}
 
 	}
@@ -417,13 +413,49 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnSua)) {
 			sua();
 		}
+		if (o.equals(btnHuy)) {
+			huy();
+		}
+	}
+
+	private void huy() {
+		// Xóa phiếu đặt thuốc trong database
+		String maPNT = txtMaPNT.getText();
+		PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+		if (pntDao.delete(maPNT)) {
+			JOptionPane.showMessageDialog(this, "Hủy thành công.");
+			txtMaPNT.setEnabled(true);
+			txtMaNV.setEnabled(true);
+			txtNgayNhap.setEnabled(true);
+			cbbNCC.setEnabled(true);
+			txtTongTien.setEnabled(true);
+			cbbMaThuoc.setEnabled(false);
+			txtGiaNhap.setEnabled(false);
+			txtHSD.setEnabled(false);
+			txtSoLuong.setEnabled(false);
+			cbbDonVi.setEnabled(false);
+			txtMaCTPNT.setText("");
+			txtMaPNT.setText("");
+			txtMaNV.setText("");
+			txtTongTien.setText("");
+			txtGiaNhap.setText("");
+			txtHSD.setText("");
+			txtSoLuong.setText("");
+			txtThanhTien.setText("");
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+		} else {
+			JOptionPane.showMessageDialog(this, "Hủy thất bại.");
+
+		}
+
 	}
 
 	private void sua() {
 		String giaNhap = txtGiaNhap.getText();
 		String soLuong = txtSoLuong.getText();
 		String hsd = txtHSD.getText();
-		
+
 		// Cập nhật dữ liệu vào database
 		String maCTPNT = txtMaCTPNT.getText();
 		String maThuoc = cbbMaThuoc.getSelectedItem().toString();
@@ -431,7 +463,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		Integer sl = Integer.parseInt(soLuong);
 		String donVi = cbbDonVi.getSelectedItem().toString();
 		Double thanhTien = gia * sl;
-		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, maThuoc, sl, gia, LocalDate.parse(hsd), donVi, thanhTien);
+		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, maThuoc, sl, gia, LocalDate.parse(hsd), donVi,
+				thanhTien);
 		ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
 		if (ctDao.update(ct)) {
 			JOptionPane.showMessageDialog(this, "Sửa thành công.");
@@ -440,40 +473,43 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		} else {
 			JOptionPane.showMessageDialog(this, "Sửa thất bại.");
 		}
-		
-		
+
 	}
 
 	private void xoa() {
 		// Xóa dữ liệu trong table
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
-		int row = table.getSelectedRow();
-		String maCTPNT = model.getValueAt(row, 6).toString();
-		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?");
-		if (hoi == JOptionPane.YES_OPTION) {
-			
-			// Xóa dữ liệu trong database
-			ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
-			if (ctDao.delete(maCTPNT)) {
-				JOptionPane.showMessageDialog(this, "Xóa thành công.");
-				model.removeRow(row);
-			} else {
-				JOptionPane.showMessageDialog(this, "Xóa thất bại.");
+		int rowCounts = model.getRowCount();
+		if (rowCounts <= 1) {
+			JOptionPane.showMessageDialog(this, "Phải có ít nhất 1 thông tin thuốc.");
+			return;
+		} else {
+			int row = table.getSelectedRow();
+			String maCTPNT = model.getValueAt(row, 6).toString();
+			int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?");
+			if (hoi == JOptionPane.YES_OPTION) {
+				// Xóa dữ liệu trong database
+				ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
+				if (ctDao.delete(maCTPNT)) {
+					JOptionPane.showMessageDialog(this, "Xóa thành công.");
+					model.removeRow(row);
+				} else {
+					JOptionPane.showMessageDialog(this, "Xóa thất bại.");
+				}
 			}
 		}
-		
-		
+
 	}
 
 	private void taoPhieu() {
 		String maPNT = txtMaPNT.getText();
 		String maNV = txtMaNV.getText();
 		LocalDate ngayNhap = LocalDate.now();
-		String tenNCC = cbbNCC.getSelectedItem().toString();
+		String maNCC = cbbNCC.getSelectedItem().toString();
 		Double tongTien = 0.0;
 		Boolean trangThai = false;
-		
-		PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPNT, tenNCC, maNV, ngayNhap, tongTien, trangThai);
+
+		PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPNT, maNCC, maNV, ngayNhap, tongTien, trangThai);
 		PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
 		if (pntDao.create(pnt)) {
 			JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công.");
@@ -491,18 +527,16 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			txtMaCTPNT.setText(maPNT);
 			// Add mã thuốc theo ncc vào combobox
 			Thuoc_Dao thuocDao = new Thuoc_Dao();
-			for (Thuoc thuoc : thuocDao.getDSTByNCC(tenNCC)) {
+			for (Thuoc thuoc : thuocDao.getDSTByNCC(maNCC)) {
 				cbbMaThuoc.addItem(thuoc.getMaThuoc());
 			}
-			
+
 			hienTable(maPNT);
-			
+
 		} else {
 			JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại.");
 		}
-		
-	
-		
+
 	}
 
 	private void xoaTrang() {
@@ -528,10 +562,9 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		String donVi = cbbDonVi.getSelectedItem().toString();
 		String maCTPNT = txtMaCTPNT.getText();
 		Double thanhTien = giaNhap * soLuong;
-		
+
 		// Thêm vào database
-		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, ma, soLuong,
-				giaNhap, hsd, donVi, thanhTien);
+		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, ma, soLuong, giaNhap, hsd, donVi, thanhTien);
 		ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
 		if (ctDao.create(ct)) {
 			JOptionPane.showMessageDialog(this, "Thêm thành công.");
@@ -547,9 +580,5 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Thêm thất bại.");
 		}
 	}
-
-	
-		
-	
 
 }
