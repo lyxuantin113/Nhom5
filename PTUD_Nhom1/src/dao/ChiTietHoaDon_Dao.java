@@ -35,7 +35,7 @@ public class ChiTietHoaDon_Dao {
 	}
 	
 	public void resetDanhSachDon() {
-		danhSachDon = null;
+		danhSachDon = new LinkedHashMap<>();
 	}
 	
 	public Map<Thuoc, Integer> getDanhSachDon() {
@@ -71,8 +71,8 @@ public class ChiTietHoaDon_Dao {
 		int n = 0;
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setObject(1, chiTietHoaDon.getMaHoaDon());
-			pstmt.setObject(2, chiTietHoaDon.getMaThuoc());
+			pstmt.setString(1, chiTietHoaDon.getMaHoaDon().getMaHoaDon());
+			pstmt.setString(2, chiTietHoaDon.getMaThuoc().getDonVi());
 			pstmt.setInt(3, chiTietHoaDon.getSoLuong());
 			n = pstmt.executeUpdate();
 		} catch (Exception e) {

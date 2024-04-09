@@ -14,31 +14,27 @@ public class HoaDon {
 	private NhanVien maNV;
 	private LocalDate ngayLap;
 	private LocalDate ngayNhan;
-	private List<ChiTietHoaDon> cthd;
 
 	public HoaDon() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
-			List<ChiTietHoaDon> cthd) {
+	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan) {
 		super();
 		this.maHoaDon = maHoaDon;
 		this.maKH = maKH;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
-		this.cthd = cthd;
 	}
 
-	public HoaDon(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan, List<ChiTietHoaDon> cthd) {
+	public HoaDon(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan) {
 		super();
 		this.maHoaDon = PREFIX + counter.incrementAndGet();
 		this.maKH = maKH;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
-		this.cthd = cthd;
 	}
 
 	public LocalDate getNgayLap() {
@@ -65,14 +61,6 @@ public class HoaDon {
 		this.ngayNhan = ngayNhan;
 	}
 
-	public List<ChiTietHoaDon> getCthd() {
-		return cthd;
-	}
-
-	public void setCthd(List<ChiTietHoaDon> cthd) {
-		this.cthd = cthd;
-	}
-
 	public String getMaHoaDon() {
 		return maHoaDon;
 	}
@@ -87,14 +75,8 @@ public class HoaDon {
 
 	@Override
 	public String toString() {
-		String hoaDonString = "HoaDon [maHoaDon=" + maHoaDon + ", maKH=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
-				+ ", ngayNhan=" + ngayNhan + ", cthd=" ;
-		
-		for (ChiTietHoaDon chiTietHoaDon : cthd) {
-			hoaDonString+=chiTietHoaDon.toString();
-		}
-		
-		return hoaDonString+ "] ";
+		return "HoaDon [maHoaDon=" + maHoaDon + ", maKH=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
+				+ ", ngayNhan=" + ngayNhan + "]";
 	}
 
 }

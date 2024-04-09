@@ -1,5 +1,7 @@
 package dao;
+
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,38 +13,38 @@ import entity.KhachHang;
 
 public class KhachHang_Dao {
 	private List<KhachHang> dsKH;
-	
+
 	public KhachHang_Dao() {
 		dsKH = new ArrayList<KhachHang>();
 	}
-	
+
 	public List<KhachHang> readFromTable() {
-	    try {
-	        Connection con = ConnectDB.getInstance().getConnection();
-	        if (con == null) {
-	            System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
-	            return dsKH; // Trả về danh sách trống hoặc xử lý một cách thích hợp
-	        }
-	        String query = "select * from KhachHang";
-	        Statement stm = con.createStatement();
-	        ResultSet rs = stm.executeQuery(query);
-	        while (rs.next()) {
-	            String maKH = rs.getString(1);
-	            String sdt = rs.getString(2);
-	            String tenKH = rs.getString(3);
-	            KhachHang kh = new KhachHang(maKH, sdt, tenKH);
-	            dsKH.add(kh);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return dsKH;
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return dsKH; // Trả về danh sách trống hoặc xử lý một cách thích hợp
+			}
+			String query = "select * from KhachHang";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			while (rs.next()) {
+				String maKH = rs.getString(1);
+				String sdt = rs.getString(2);
+				String tenKH = rs.getString(3);
+				KhachHang kh = new KhachHang(maKH, sdt, tenKH);
+				dsKH.add(kh);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dsKH;
 	}
 
 	public List<KhachHang> getDSKH() {
 		return dsKH;
 	}
-	
+
 	// Thêm khách hàng vào database
 	public void addKhachHang(KhachHang kh) {
 		try {
@@ -61,25 +63,48 @@ public class KhachHang_Dao {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	// Xóa khách hàng trong database
 	public boolean deleteKhachHang(KhachHang kh) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
+			String query = "DELETE FROM KhachHang WHERE maKH = '" + kh.getMaKH() + "'";
+			try (Statement stm = con.createStatement()) {
+				stm.executeUpdate(query);
+				dsKH.remove(kh);
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public KhachHang findBySDT(String sdtKH) {
+	    KhachHang kh = null;
 	    try {
 	        Connection con = ConnectDB.getInstance().getConnection();
 	        if (con == null) {
 	            System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
-	            return false;
+	            return null;
 	        }
-	        String query = "DELETE FROM KhachHang WHERE maKH = '" + kh.getMaKH() + "'";
-	        try (Statement stm = con.createStatement()) {
-	            stm.executeUpdate(query);
-	            dsKH.remove(kh);
+	        String query = "SELECT * FROM KhachHang WHERE soDienThoai = ?";
+	        PreparedStatement stm = con.prepareStatement(query);
+	        stm.setString(1, sdtKH);
+	        ResultSet rs = stm.executeQuery(); // Sử dụng executeQuery() mà không có đối số
+	        if (rs.next()) {
+	            String maKH = rs.getString(1);
+	            String tenKH = rs.getString(3);
+	            kh = new KhachHang(maKH, sdtKH, tenKH);
 	        }
-	        return true;
+	        return kh;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
-	        return false;
+	        return null;
 	    }
 	}
 

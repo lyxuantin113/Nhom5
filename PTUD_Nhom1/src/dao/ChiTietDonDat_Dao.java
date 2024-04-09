@@ -52,8 +52,8 @@ public class ChiTietDonDat_Dao {
 		int n = 0;
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setObject(1, chiTietDonDat.getMaDonDat());
-			pstmt.setObject(2, chiTietDonDat.getMaThuoc());
+			pstmt.setString(1, chiTietDonDat.getMaDonDat().getMaDonDat());
+			pstmt.setString(2, chiTietDonDat.getMaThuoc().getDonVi());
 			pstmt.setInt(3, chiTietDonDat.getSoLuong());
 			n = pstmt.executeUpdate();
 		} catch (Exception e) {

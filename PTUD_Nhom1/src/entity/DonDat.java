@@ -7,37 +7,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DonDat {
 	private static final String PREFIX = "DD";
-    private static final AtomicInteger counter = new AtomicInteger(0);
-    
+	private static final AtomicInteger counter = new AtomicInteger(0);
+
 	private String maDonDat;
 	private KhachHang maKH;
 	private NhanVien maNV;
 	private LocalDate ngayLap, ngayNhan;
-	private List<ChiTietDonDat> ctdd;
 
 	public DonDat() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DonDat(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan, List<ChiTietDonDat> ctdd) {
+	public DonDat(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan) {
 		super();
 		this.maDonDat = PREFIX + counter.incrementAndGet();
 		this.maKH = maKH;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
-		this.ctdd = ctdd;
 	}
 
-	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
-			List<ChiTietDonDat> ctdd) {
+	public DonDat(String maPD, KhachHang khachHang, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan) {
 		super();
 		this.maDonDat = maPD;
 		this.maKH = khachHang;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
-		this.ctdd = ctdd;
 	}
 
 	public String getMaDonDat() {
@@ -80,18 +76,10 @@ public class DonDat {
 		this.ngayNhan = ngayNhan;
 	}
 
-	public List<ChiTietDonDat> getCtdd() {
-		return ctdd;
-	}
-
-	public void setCtdd(List<ChiTietDonDat> ctdd) {
-		this.ctdd = ctdd;
-	}
-
 	@Override
 	public String toString() {
 		return "DonDat [maPD=" + maDonDat + ", khachHang=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
-				+ ", ngayNhan=" + ngayNhan + ", ctdd=" + ctdd + "]";
+				+ ", ngayNhan=" + ngayNhan + "]";
 	}
 
 }

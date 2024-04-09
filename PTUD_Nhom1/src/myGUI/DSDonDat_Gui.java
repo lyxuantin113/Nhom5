@@ -5,16 +5,42 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class DSDonDat_Gui extends JPanel {
-	
-private JComboBox<String> cbbTim;
+import dao.ChiTietDonDat_Dao;
+import dao.ChiTietHoaDon_Dao;
+import dao.DonDat_Dao;
+import dao.HoaDon_Dao;
+import dao.KhachHang_Dao;
+import dao.NhanVien_Dao;
+import dao.Thuoc_Dao;
+import entity.DonDat;
+import entity.Thuoc;
+
+public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListener {
+
+	private JComboBox<String> cbbTim;
+	private JButton btnReset;
+	private JButton btnHoanThanh;
+	private JButton btnTim;
+	private JTable tableDonDat;
+	private JTable tblThuoc;
+	private Thuoc_Dao thuocDao;
+	private NhanVien_Dao nhanVienDao;
+	private KhachHang_Dao khachHangDao;
+	private DonDat_Dao donDatDao;
+	private ChiTietDonDat_Dao ctddDao;
 
 //	Nút Chuyển Qua DS Hóa Đơn ????????????????
-	
+
 	public DSDonDat_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
@@ -28,7 +54,7 @@ private JComboBox<String> cbbTim;
 		headLb.setFont(fo);
 		headLb.setForeground(Color.blue);
 		pnHead.add(headLb);
-		
+
 //		CENTER
 		JPanel pnCenter = new JPanel();
 		pnCenter.setLayout(new BoxLayout(pnCenter, BoxLayout.Y_AXIS));
@@ -48,7 +74,7 @@ private JComboBox<String> cbbTim;
 		Box boxTableDSThuoc = Box.createVerticalBox();
 		String[] headerThuoc = "Mã thuốc;Tên thuốc;Loại;Đơn giá;Đơn vị;Số lượng;Thành tiền".split(";");
 		DefaultTableModel modelThuoc = new DefaultTableModel(headerThuoc, 0);
-		JTable tblThuoc = new JTable(modelThuoc);
+		tblThuoc = new JTable(modelThuoc);
 		JScrollPane scrollThuoc = new JScrollPane();
 		scrollThuoc.setViewportView(tblThuoc = new JTable(modelThuoc));
 		tblThuoc.setRowHeight(20);
@@ -64,9 +90,9 @@ private JComboBox<String> cbbTim;
 		JLabel lblTableDonDat = new JLabel("Danh Sách Đơn Đặt:");
 		lblTableDonDat.setFont(fo16);
 		Box boxTableDonDat = Box.createVerticalBox();
-		String[] headerDonDat = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
+		String[] headerDonDat = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận".split(";");
 		DefaultTableModel modelDonDat = new DefaultTableModel(headerDonDat, 0);
-		JTable tableDonDat = new JTable(modelDonDat);
+		tableDonDat = new JTable(modelDonDat);
 		JScrollPane scrollDonDat = new JScrollPane();
 		scrollDonDat.setViewportView(tableDonDat = new JTable(modelDonDat));
 //		scrollThuoc.setPreferredSize(new Dimension(0, 310));  //SET CHIỀU CAO TABLE
@@ -82,50 +108,122 @@ private JComboBox<String> cbbTim;
 		jsplit.add(Box.createHorizontalStrut(30));
 		jsplit.setRightComponent(pnTableDonDat);
 		jsplit.setLeftComponent(pnTableThuoc);
-		jsplit.setSize(1500,470);
+		jsplit.setSize(1500, 470);
 		jsplit.setPreferredSize(new Dimension(950, 470)); // SET CHIỀU CAO TABLE
 
 		pnCenterBot.add(jsplit);
 		pnCenterBot.add(Box.createVerticalStrut(10));
-		
+
 //		SOUTH
 		JPanel pnSouth = new JPanel();
-		
+
 		cbbTim = new JComboBox<String>();
 		cbbTim.addItem("Mã đơn");
 		cbbTim.addItem("Mã Nhân viên");
 		cbbTim.addItem("Ngày lập");
 		cbbTim.addItem("Ngày nhận");
 		cbbTim.setPreferredSize(new Dimension(110, 35));
-		
+
 		JTextField tfTim = new JTextField(17);
-		tfTim.setPreferredSize(new Dimension(0,35));
-		JButton btnTim = new JButton("Tìm kiếm");
-		btnTim.setBackground(new Color(0,160,255));
+		tfTim.setPreferredSize(new Dimension(0, 35));
+		btnTim = new JButton("Tìm kiếm");
+		btnTim.setBackground(new Color(0, 160, 255));
 		btnTim.setPreferredSize(new Dimension(100, 35));
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
-		JButton btnHoanThanh = new JButton("Hoàn Thành Đơn");
-		btnHoanThanh.setBackground(new Color(0,160,255));
+
+		btnHoanThanh = new JButton("Hoàn Thành Đơn");
+		btnHoanThanh.setBackground(new Color(0, 160, 255));
 		btnHoanThanh.setPreferredSize(new Dimension(150, 35));
-		btnHoanThanh.setCursor(new Cursor(Cursor.HAND_CURSOR)); 
-		
+		btnHoanThanh.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		btnReset = new JButton("Reset");
+		btnReset.setBackground(new Color(0, 160, 255));
+		btnReset.setPreferredSize(new Dimension(150, 35));
+		btnReset.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
 		pnSouth.add(cbbTim);
 		pnSouth.add(tfTim);
 		pnSouth.add(btnTim);
+		pnSouth.add(btnReset);
 		pnSouth.add(Box.createHorizontalStrut(100));
 		pnSouth.add(btnHoanThanh);
-		
+
 //		End
 		pnCenter.add(Box.createVerticalStrut(10));
 		pnCenter.add(pnCenterTop, BorderLayout.NORTH);
 		pnCenter.add(Box.createVerticalStrut(10));
 		pnCenter.add(pnCenterBot, BorderLayout.CENTER);
-		
+
 		pnMain.add(pnHead, BorderLayout.NORTH);
 		pnMain.add(pnCenter, BorderLayout.CENTER);
 		pnMain.add(pnSouth, BorderLayout.SOUTH);
 		add(pnMain);
+		
+		thuocDao = new Thuoc_Dao();
+		nhanVienDao = new NhanVien_Dao();
+		khachHangDao = new KhachHang_Dao();
+		donDatDao = new DonDat_Dao();
+		ctddDao = new ChiTietDonDat_Dao();
+		
+		tblThuoc.addMouseListener(this);
+		tableDonDat.addMouseListener(this);
+		btnTim.addActionListener(this);
+		btnReset.addActionListener(this);
+		btnHoanThanh.addActionListener(this);
+
+		hienTableDonDat();
+	}
+
+	private void hienTableDonDat() {
+		DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
+		model.setRowCount(0);
+
+		List<DonDat> listDonDat = donDatDao.getDSPDT();
+		if (listDonDat != null) {
+			for (DonDat donDat : listDonDat) {
+				Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(), donDat.getMaKH().getHoTen()
+						, donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(), donDat.getNgayNhan()}; // Tạo dữ liệu hàng mới
+
+				model.addRow(rowData); // Thêm hàng vào model
+			}
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

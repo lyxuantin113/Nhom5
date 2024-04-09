@@ -38,11 +38,8 @@ public class HoaDon_Dao {
 				KhachHang kh = new KhachHang(sdtKH);
 				String maNV = rs.getString(5);
 				NhanVien nv = new NhanVien(maNV);
-				List<ChiTietHoaDon> list = (List<ChiTietHoaDon>) rs.getArray(6);
-//				HoaDon gồm các field: String maHD, Date ngayLap, KhachHang khachHang, 
-//				NhanVien maNV, List<ChiTietHoaDon>
 
-				HoaDon hd = new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate(), list);
+				HoaDon hd = new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
 				dshd.add(hd);
 			}
 
@@ -53,20 +50,21 @@ public class HoaDon_Dao {
 	}
 
 	public void addOne(HoaDon hoaDon) {
-		try {
-			String query = "Insert into HoaDon Values (?,?,?,?,?,?)";
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, hoaDon.getMaHoaDon());
-			pstmt.setObject(2, hoaDon.getMaKH());
-			pstmt.setObject(3, hoaDon.getMaNV());
-			pstmt.setDate(4, Date.valueOf(hoaDon.getNgayLap()));
-			pstmt.setDate(5, Date.valueOf(hoaDon.getNgayNhan()));
-			pstmt.setArray(6, (Array) hoaDon.getCthd());
-			dshd.add(hoaDon);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	    try {
+	        String query = "INSERT INTO HoaDon VALUES (?,?,?,?,?)";
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setString(1, hoaDon.getMaHoaDon());
+	        pstmt.setString(2, hoaDon.getMaKH().getMaKH());
+	        pstmt.setString(3, hoaDon.getMaNV().getMaNV());
+	        pstmt.setDate(4, Date.valueOf(hoaDon.getNgayLap()));
+	        pstmt.setDate(5, Date.valueOf(hoaDon.getNgayNhan()));
+	        pstmt.executeUpdate();
+	        dshd.add(hoaDon);
+	    } catch (Exception e) {
+	        e.printStackTrace(); 
+	    }
 	}
+
 
 //	ID
 	public List<HoaDon> findByID(String maHoaDon) {
@@ -83,9 +81,8 @@ public class HoaDon_Dao {
 			NhanVien nv = (NhanVien) rs.getObject(3);
 			Date ngayLap = rs.getDate(4);
 			Date ngayNhan = rs.getDate(5);
-			List<ChiTietHoaDon> cthd = (List<ChiTietHoaDon>) rs.getArray(6);
 
-			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate(), cthd));
+			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate()));
 			return dshd;
 
 		} catch (Exception e) {
@@ -111,9 +108,8 @@ public class HoaDon_Dao {
 			KhachHang kh = (KhachHang) rs.getObject(2);
 			Date ngayLap = rs.getDate(4);
 			Date ngayNhan = rs.getDate(5);
-			List<ChiTietHoaDon> cthd = (List<ChiTietHoaDon>) rs.getArray(6);
 
-			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate(), cthd));
+			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate()));
 			return dshd;
 
 		} catch (Exception e) {
@@ -139,8 +135,7 @@ public class HoaDon_Dao {
 				NhanVien nv = (NhanVien) rs.getObject(3);
 				Date ngayLapHD = rs.getDate(4);
 				Date ngayNhanHD = rs.getDate(5);
-				List<ChiTietHoaDon> cthd = (List<ChiTietHoaDon>) rs.getArray(6);
-				dshd.add(new HoaDon(maHD, kh, nv, ngayLapHD.toLocalDate(), ngayNhanHD.toLocalDate(), cthd));
+				dshd.add(new HoaDon(maHD, kh, nv, ngayLapHD.toLocalDate(), ngayNhanHD.toLocalDate()));
 			}
 
 			return dshd;
@@ -168,8 +163,7 @@ public class HoaDon_Dao {
 				NhanVien nv = (NhanVien) rs.getObject(3);
 				Date ngayLapHD = rs.getDate(4);
 				Date ngayNhanHD = rs.getDate(5);
-				List<ChiTietHoaDon> cthd = (List<ChiTietHoaDon>) rs.getArray(6);
-				dshd.add(new HoaDon(maHD, kh, nv, ngayLapHD.toLocalDate(), ngayNhanHD.toLocalDate(), cthd));
+				dshd.add(new HoaDon(maHD, kh, nv, ngayLapHD.toLocalDate(), ngayNhanHD.toLocalDate()));
 			}
 
 			return dshd;

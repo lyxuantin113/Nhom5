@@ -27,7 +27,6 @@ public class DonDat_Dao {
 		dsdd = new ArrayList<DonDat>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<DonDat> readFromTable() {
 		try {
 			String query = "select * from DonDat";
@@ -39,10 +38,9 @@ public class DonDat_Dao {
 				NhanVien nv = (NhanVien) rs.getObject(3);
 				Date ngayLap = rs.getDate(4);
 				Date ngayNhan = rs.getDate(5);
-				List<ChiTietDonDat> list = (List<ChiTietDonDat>) rs.getArray(6);
 
 //				String maPD, KhachHang khachHang, NhanVien maNV, Date ngayLap, Date ngayNhan, List<ChiTietDonDat>
-				DonDat pdt = new DonDat(maPDT, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate(), list);
+				DonDat pdt = new DonDat(maPDT, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
 
 				dsdd.add(pdt);
 			}
@@ -52,9 +50,9 @@ public class DonDat_Dao {
 		}
 		return dsdd;
 	}
-	
+
 	public void addOne(DonDat donDat) {
-		String query = "Insert into DonDat Values (?,?,?,?,?,?)";
+		String query = "Insert into DonDat Values (?,?,?,?,?)";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, donDat.getMaDonDat());
@@ -62,8 +60,7 @@ public class DonDat_Dao {
 			pstmt.setObject(3, donDat.getMaNV());
 			pstmt.setDate(4, Date.valueOf(donDat.getNgayLap()));
 			pstmt.setDate(5, Date.valueOf(donDat.getNgayNhan()));
-			pstmt.setArray(6, (Array) donDat.getCtdd());
-			
+			pstmt.executeUpdate();
 			dsdd.add(donDat);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -84,9 +81,8 @@ public class DonDat_Dao {
 			NhanVien nv = (NhanVien) rs.getObject(3);
 			Date ngayLap = rs.getDate(4);
 			Date ngayNhan = rs.getDate(5);
-			List<ChiTietDonDat> ctdd = (List<ChiTietDonDat>) rs.getArray(6);
 
-			dsdd.add(new DonDat(maDD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate(), ctdd));
+			dsdd.add(new DonDat(maDD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate()));
 			return dsdd;
 
 		} catch (Exception e) {
@@ -111,8 +107,7 @@ public class DonDat_Dao {
 				NhanVien nv = (NhanVien) rs.getObject(3);
 				Date ngayLapDD = rs.getDate(4);
 				Date ngayNhanDD = rs.getDate(5);
-				List<ChiTietDonDat> ctdd = (List<ChiTietDonDat>) rs.getArray(6);
-				dsdd.add(new DonDat(maDD, kh, nv, ngayLapDD.toLocalDate(), ngayNhanDD.toLocalDate(), ctdd));
+				dsdd.add(new DonDat(maDD, kh, nv, ngayLapDD.toLocalDate(), ngayNhanDD.toLocalDate()));
 			}
 
 			return dsdd;
@@ -139,8 +134,7 @@ public class DonDat_Dao {
 				NhanVien nv = (NhanVien) rs.getObject(3);
 				Date ngayLapDD = rs.getDate(4);
 				Date ngayNhanDD = rs.getDate(5);
-				List<ChiTietDonDat> ctdd = (List<ChiTietDonDat>) rs.getArray(6);
-				dsdd.add(new DonDat(maDD, kh, nv, ngayLapDD.toLocalDate(), ngayNhanDD.toLocalDate(), ctdd));
+				dsdd.add(new DonDat(maDD, kh, nv, ngayLapDD.toLocalDate(), ngayNhanDD.toLocalDate()));
 			}
 
 			return dsdd;

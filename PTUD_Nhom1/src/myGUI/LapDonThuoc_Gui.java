@@ -378,14 +378,14 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o == btnThem) {
-			if (this.checkQuatity()) {
+			if (this.checkQuatity())
 				this.addOrderDetail();
-				xoaTrangThuoc();
-			} else
+			else
 				JOptionPane.showMessageDialog(this, "Lưu ý: Số thuốc vượt quá thuốc tồn kho!");
 		}
 		if (o == btnXoa) {
 			this.deleteOrderDetail();
+			
 		}
 		if (o == btnLapHD) {
 //			Check isValid();
@@ -394,10 +394,11 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			xoaTrangTatCa();
 		}
 		if (o == btnLapDD) {
-//			Check ngày lập và nhận
-			lapDonDat();
-			cthdDao.resetDanhSachDon();
-			xoaTrangTatCa();
+			if(checkDate()) {				
+				lapDonDat();
+				cthdDao.resetDanhSachDon();
+				xoaTrangTatCa();
+			}
 		}
 		if (o.equals(btnTim)) {
 			timThuoc();
@@ -434,6 +435,14 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		}
 		return true;
 	}
+	
+	public boolean checkDate() {
+		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
+		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
+		
+		if(ngayLapHD.isAfter(ngayNhanHD)) return false;
+		return true;
+	}
 
 	public void addOrderDetail() {
 		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
@@ -456,6 +465,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getGiaBan() + "",
 				thuoc.getDonVi(), soLuong + "", thuoc.getGiaBan() * soLuong + "" };
 		modelHoaDon.addRow(rowData);
+		xoaTrangThuoc();
 
 //		Total Price
 		double total = 0;
@@ -484,6 +494,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 					
 					cthdDao.deleteDanhSachDon(thuoc);
 					modelHoaDon.removeRow(selectedRow);
+					hienTableHoaDon();
+					xoaTrangThuoc();
 				}
 			}
 		} else
@@ -493,24 +505,27 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 //	LẬP HÓA ĐƠN
 	private void lapHoaDon() {
 		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
+		
 		String tenKH = tfTenKH.getText();
 		String sdtKH = tfSDT.getText();
-		KhachHang kh = new KhachHang(tenKH, sdtKH);
-		if (!khachHangDao.getDSKH().contains(kh))
+		KhachHang kh = khachHangDao.findBySDT(sdtKH);
+		if(kh==null && sdtKH.equals("")) {
+			kh = new KhachHang("", tenKH);
 			khachHangDao.addKhachHang(kh);
-		System.out.println(kh);
+		}
+		else if(kh==null) {
+			kh = new KhachHang(sdtKH, tenKH);
+			khachHangDao.addKhachHang(kh);
+		}
+		
 		String maNV = tfMaNV.getText();
 		List<NhanVien> listNhanVien = nhanVienDao.getNhanVien(maNV);
 		NhanVien nv = listNhanVien.get(0);
-		System.out.println(nv);
 
 		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
 		LocalDate ngayNhanHD = ngayLapHD;
 
-		HoaDon hoaDon = new HoaDon(kh, nv, ngayLapHD, ngayNhanHD, null);
-
-//		Tạo List<ChiTietHoaDon>
-		List<ChiTietHoaDon> listChiTietHoaDon = new ArrayList<>();
+		HoaDon hoaDon = new HoaDon(kh, nv, ngayLapHD, ngayNhanHD);
 
 		// Duyệt qua mỗi cặp key-value trong mapChiTiet
 		for (Map.Entry<Thuoc, Integer> entry : dshd.entrySet()) {
@@ -518,12 +533,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			int soLuong = entry.getValue();
 
 			ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, soLuong);
-			chiTietHoaDon.setMaThuoc(thuoc);
-			chiTietHoaDon.setSoLuong(soLuong);
-			listChiTietHoaDon.add(chiTietHoaDon);
+			cthdDao.addOne(chiTietHoaDon);
 		}
-
-		hoaDon.setCthd(listChiTietHoaDon);
 
 		hoaDonDao.addOne(hoaDon);
 		int rowCount = modelHoaDon.getRowCount();
@@ -535,11 +546,18 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 //	LẬP ĐƠN ĐẶT
 	private void lapDonDat() {
 		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
+		
 		String tenKH = tfTenKH.getText();
 		String sdtKH = tfSDT.getText();
-		KhachHang kh = new KhachHang(tenKH, sdtKH);
-		if (!khachHangDao.getDSKH().contains(kh))
+		KhachHang kh = khachHangDao.findBySDT(sdtKH);
+		if(kh==null && sdtKH.equals("")) {
+			kh = new KhachHang("", tenKH);
 			khachHangDao.addKhachHang(kh);
+		}
+		else if(kh==null) {
+			kh = new KhachHang(sdtKH, tenKH);
+			khachHangDao.addKhachHang(kh);
+		}
 
 		String maNV = tfMaNV.getText();
 		List<NhanVien> listNhanVien = nhanVienDao.getNhanVien(maNV);
@@ -549,10 +567,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
 		;
 
-		DonDat donDat = new DonDat(kh, nv, ngayLapHD, ngayNhanHD, null);
-
-//		Tạo List<ChiTietDonDat>
-		List<ChiTietDonDat> listChiTietDonDat = new ArrayList<>();
+		DonDat donDat = new DonDat(kh, nv, ngayLapHD, ngayNhanHD);
 
 		// Duyệt qua mỗi cặp key-value trong mapChiTiet
 		for (Map.Entry<Thuoc, Integer> entry : dshd.entrySet()) {
@@ -562,10 +577,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			ChiTietDonDat chiTietDonDat = new ChiTietDonDat(donDat, thuoc, soLuong);
 			chiTietDonDat.setMaThuoc(thuoc);
 			chiTietDonDat.setSoLuong(soLuong);
-			listChiTietDonDat.add(chiTietDonDat);
+			ctddDao.addOne(chiTietDonDat);
 		}
-
-		donDat.setCtdd(listChiTietDonDat);
 
 		donDatDao.addOne(donDat);
 		int rowCount = modelHoaDon.getRowCount();
