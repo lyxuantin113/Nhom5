@@ -251,8 +251,7 @@ public class Thuoc_Dao {
 				String nuocSX = rs.getString(9);
 				String tenNCC = rs.getString(10);
 
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
-						tenNCC);
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,tenNCC);
 				ds.add(thuoc);
 			}
 		} catch (Exception e) {
@@ -277,6 +276,60 @@ public class Thuoc_Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+	}
+
+	public boolean checkThuoc(String maThuoc) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
+			String query = "select * from Thuoc where maThuoc = '" + maThuoc + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+
+	public Thuoc readFromTable(String string) {
+		Thuoc thuoc = null;
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from Thuoc where maThuoc = '"+string+"'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			while (rs.next()) {
+				String maThuoc = rs.getString(1);
+				String tenThuoc = rs.getString(2);
+				String loaiThuoc = rs.getString(3);
+				String donVi = rs.getString(4);
+				LocalDate hsd = rs.getDate(5).toLocalDate();
+				double giaGoc = rs.getDouble(6);
+				double giaBan = rs.getDouble(7);
+				int slTon = rs.getInt(8);
+				String nuocSX = rs.getString(9);
+
+				String tenNCC = rs.getString(10);
+
+				thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
+						tenNCC);
+				
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return thuoc;
+		
 		
 	}
 

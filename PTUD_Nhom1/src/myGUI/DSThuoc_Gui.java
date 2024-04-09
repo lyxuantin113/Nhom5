@@ -325,7 +325,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 
 	private void updateThuoc() {
 		
-		
+		if (!xuLyDuLieu()) {
+			return;
+		}
 		
 		String maThuoc = txtMa.getText();
 		String tenThuoc = txtTen.getText();
@@ -386,12 +388,15 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	}
 
 	private void addThuoc() {
+		if (!xuLyDuLieu()) {
+			return;
+		}
 		// Lấy thông tin từ các textfield
 		String maThuoc = txtMa.getText();
 		String tenThuoc = txtTen.getText();
 		String loaiThuoc = cbbLoai.getSelectedItem().toString();
 		String donVi = cbbDonVi.getSelectedItem().toString();
-		LocalDate hsd = new java.sql.Date(System.currentTimeMillis()).toLocalDate();
+		LocalDate hsd = txtHSD.getText().isEmpty() ? null : LocalDate.parse(txtHSD.getText());
 		
 		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 		double giaBan = Double.parseDouble(txtGiaBan.getText());
@@ -401,10 +406,66 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		
 		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		if (thuocDao.checkThuoc(maThuoc)) {
+			JOptionPane.showMessageDialog(this, "Mã thuốc đã tồn tại");
+			return;
+		}
 		thuocDao.addThuoc(thuoc);
 		xoaTrang();
 		// Hiển thị lại table
 		hienTable();
+	}
+
+	private boolean xuLyDuLieu() {
+		// Kiểm tra dữ liệu
+		String maThuoc = txtMa.getText();
+		String tenThuoc = txtTen.getText();
+		String loaiThuoc = cbbLoai.getSelectedItem().toString();
+		String donVi = cbbDonVi.getSelectedItem().toString();
+		String hsd = txtHSD.getText();
+		String giaNhap = txtGiaNhap.getText();
+		String giaBan = txtGiaBan.getText();
+		String soLuong = txtSoLuong.getText();
+		String xuatXu = txtXuatXu.getText();
+		String maNCC = cbbNCC.getSelectedItem().toString();
+		if (maThuoc.isEmpty() || tenThuoc.isEmpty() || loaiThuoc.isEmpty() || donVi.isEmpty() || hsd.isEmpty()
+				|| giaNhap.isEmpty() || giaBan.isEmpty() || soLuong.isEmpty() || xuatXu.isEmpty() || maNCC.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
+			return false;
+		}
+		// Kiểm tra số lượng nhập vào
+		try {
+			double giaNhap1 = Double.parseDouble(giaNhap);
+			double giaBan1 = Double.parseDouble(giaBan);
+			int soLuong1 = Integer.parseInt(soLuong);
+			if (giaNhap1 <= 0 || giaBan1 <= 0) {
+				JOptionPane.showMessageDialog(this, "Giá nhập, giá bán, số lượng phải lớn hơn 0");
+				return false;
+			}
+			else if (giaNhap1 > giaBan1) {
+				JOptionPane.showMessageDialog(this, "Giá nhập phải nhỏ hơn giá bán");
+				return false;
+			} else if (soLuong1 < 0) {
+				JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn hoặc bằng 0");
+				return false;
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Giá nhập, giá bán, số lượng phải là số");
+			return false;
+		}
+		
+		if (hsd.length() != 10 || !hsd.matches("\\d{4}-\\d{2}-\\d{2}")) {
+			JOptionPane.showMessageDialog(this, "Hạn sử dụng phải có dạng yyyy-MM-dd");
+			return false;
+		}
+		LocalDate hsdCheck = LocalDate.parse(hsd);
+		if (hsdCheck.isBefore(LocalDate.now())) {
+			JOptionPane.showMessageDialog(this, "Hạn sử dụng phải lớn hơn ngày hiện tại");
+			return false;
+		}
+		
+		return true;
+		
 	}
 
 }

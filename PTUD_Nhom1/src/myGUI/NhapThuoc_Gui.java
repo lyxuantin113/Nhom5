@@ -347,6 +347,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 				txtMaCTPNT.setText(maCTPNT);
 			}
 		});
+//		cbbMaThuoc.addActionListener(this);
+			
 //		table.addMouseListener(new java.awt.event.MouseAdapter() {
 //			public void mouseClicked(java.awt.event.MouseEvent evt) {
 //				int row = table.getSelectedRow();
@@ -391,7 +393,17 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			model.addRow(new Object[] { ct.getMaThuoc(), ct.getGiaNhap(), ct.getHsd(), ct.getSoLuong(), ct.getDonVi(),
 					ct.getThanhTien(), ct.getMaCTPNT() });
 		}
+		
 
+	}
+
+	private void capNhatGiaNhap() {
+		// Lấy giá nhập theo mã thuốc
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		Thuoc thuoc = thuocDao.readFromTable(cbbMaThuoc.getSelectedItem().toString());
+		txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
+
+	
 	}
 
 	@Override
@@ -416,6 +428,49 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnHuy)) {
 			huy();
 		}
+		if (o.equals(btnXacNhan)) {
+			xacNhan();
+		}
+	}
+
+	private void xacNhan() {
+		// Kiểm tra số lượng chi tiết phiếu nhập
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		int rowCounts = model.getRowCount();
+		if (rowCounts <1) {
+			JOptionPane.showMessageDialog(this, "Phải có ít nhất 1 thông tin thuốc.");
+			return;
+		} else {
+			JOptionPane.showMessageDialog(this, "Xác nhận thành công.");
+			XoaTrangToanBo();
+		}
+		
+	}
+
+	private void XoaTrangToanBo() {
+		txtMaPNT.setEnabled(true);
+		txtMaNV.setEnabled(true);
+		txtNgayNhap.setEnabled(true);
+		cbbNCC.setEnabled(true);
+		txtTongTien.setEnabled(true);
+		cbbMaThuoc.setEnabled(false);
+		txtGiaNhap.setEnabled(false);
+		txtHSD.setEnabled(false);
+		txtSoLuong.setEnabled(false);
+		cbbDonVi.setEnabled(false);
+		txtMaCTPNT.setText("");
+		txtMaPNT.setText("");
+		txtMaNV.setText("");
+		txtTongTien.setText("");
+//		txtGiaNhap.setText("");
+		txtHSD.setText("");
+		txtSoLuong.setText("");
+		txtThanhTien.setText("");
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		model.setRowCount(0);
+		
+		
+		
 	}
 
 	private void huy() {
@@ -530,6 +585,9 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			for (Thuoc thuoc : thuocDao.getDSTByNCC(maNCC)) {
 				cbbMaThuoc.addItem(thuoc.getMaThuoc());
 			}
+			// Lấy giá theo mã thuốc
+//			dkLayGiaNhap();
+			
 
 			hienTable(maPNT);
 
@@ -539,11 +597,21 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 
 	}
 
+	private void dkLayGiaNhap() {
+		cbbMaThuoc.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				capNhatGiaNhap();
+			}
+		});
+		
+	}
+
 	private void xoaTrang() {
 //		txtMa.setText("");
 //		txtTen.setText("");
 		cbbMaThuoc.setSelectedIndex(0);
-		txtGiaNhap.setText("");
+//		txtGiaNhap.setText("");
 		txtSoLuong.setText("");
 //		txtThanhTien.setText("");
 		txtHSD.setText("");

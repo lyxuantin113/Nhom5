@@ -191,13 +191,33 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	}
 
 	private void xoa() {
-		// TODO Auto-generated method stub
+		String maNCC = txtMa.getText();
+		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+		if (maNCC.equals("")) {
+			JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xóa");
+			return;
+		}
+		if (nccDao.searchNCC(maNCC)) {
+			int chon = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa", "Xác nhận",
+					JOptionPane.YES_NO_OPTION);
+			if (chon == JOptionPane.YES_OPTION) {
+				nccDao.deleteNCC(maNCC);
+				JOptionPane.showMessageDialog(null, "Xóa thành công");
+				hienThiDanhSachNCC();
+				xoaTrang();
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Không tìm thấy nhà cung cấp cần xóa");
+		}
 
 	}
 
 	private void tim() {
 		String maNCC = txtTimKiem.getText();
-
+		if (maNCC.equals("")) {
+			JOptionPane.showMessageDialog(null, "Vui lòng nhập mã nhà cung cấp cần tìm");
+			return;
+		}
 		int rowCount = table.getRowCount();
 		for (int row = 0; row < rowCount; row++) {
 			String rowData = table.getValueAt(row, 0).toString();
@@ -223,6 +243,9 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	}
 
 	private void themNCC() {
+		if(!xuLyDuLieu())
+			return;
+		
 		String ma = txtMa.getText();
 		String ten = txtTen.getText();
 		String diaChi = txtDiaChi.getText();
@@ -244,6 +267,44 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		}
 		
 		
+	}
+
+	private boolean xuLyDuLieu() {
+		String ma = txtMa.getText();
+		String ten = txtTen.getText();
+		String diaChi = txtDiaChi.getText();
+		String sdt = txtSDT.getText();
+		if (ma.equals("") || ten.equals("") || diaChi.equals("") || sdt.equals("")) {
+			JOptionPane.showMessageDialog(null, "Vui lòng nhập đủ thông tin");
+			return false;
+		}
+		if (ma.length() > 10) {
+			JOptionPane.showMessageDialog(null, "Mã nhà cung cấp không được quá 10 ký tự");
+			txtMa.requestFocus();
+			return false;
+		}
+		if (ten.length() > 50) {
+			JOptionPane.showMessageDialog(null, "Tên nhà cung cấp không được quá 50 ký tự");
+			txtTen.requestFocus();
+			return false;
+		}
+		if (diaChi.length() > 100) {
+			JOptionPane.showMessageDialog(null, "Địa chỉ không được quá 100 ký tự");
+			txtDiaChi.requestFocus();
+			return false;
+		}
+		if (sdt.length() > 10) {
+			JOptionPane.showMessageDialog(null, "Số điện thoại không được quá 10 ký tự");
+			txtSDT.requestFocus();
+			return false;
+		}
+		if (!sdt.matches("0[0-9]{9}")) {
+			JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ");
+			txtSDT.requestFocus();
+			return false;
+		}
+		
+		return true;
 	}
 
 }
