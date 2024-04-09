@@ -1,4 +1,4 @@
-package myGUI;
+package gui;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -381,7 +381,6 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		for (NhaCungCap ncc : nccDao.readFromTable()) {
 			cbbNCC.addItem(ncc.getMaNCC());
 		}
-
 	}
 
 	private void hienTable(String maPhieuNhap) {

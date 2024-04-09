@@ -1,4 +1,4 @@
-package myGUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -450,7 +450,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		List<Thuoc> listThuoc = thuocDao.timTheoMa(maThuoc); // Tim Thuoc
 		int soLuong = Integer.parseInt(tfSoLuong.getText());
 		Thuoc thuoc = listThuoc.get(0);
-//		Add OrderDetail vao' Map
+//		
+//		Add List ChiTietHoaDon 
 		if (dshd != null && dshd.containsKey(thuoc)) {
 			int value = dshd.get(thuoc);
 			int newValue = value + soLuong;
