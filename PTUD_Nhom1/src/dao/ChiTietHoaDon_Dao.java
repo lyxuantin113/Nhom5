@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.ConnectDB;
 import entity.ChiTietHoaDon;
@@ -15,12 +17,29 @@ import entity.Thuoc;
 
 public class ChiTietHoaDon_Dao {
 	List<ChiTietHoaDon> dscthd = null;
+	Map<Thuoc, Integer> danhSachDon = new LinkedHashMap<>();
 	Connection con = null;
 	private PreparedStatement pstmt;
 	
 	public ChiTietHoaDon_Dao() {
 		dscthd = new ArrayList<ChiTietHoaDon>();
 		con = ConnectDB.getInstance().getConnection();
+	}
+	
+	public void addDanhSachDon(Thuoc thuoc, int soLuong) {
+		danhSachDon.put(thuoc, soLuong);
+	}
+	
+	public void deleteDanhSachDon(Thuoc thuoc) {
+		danhSachDon.remove(thuoc);
+	}
+	
+	public void resetDanhSachDon() {
+		danhSachDon = null;
+	}
+	
+	public Map<Thuoc, Integer> getDanhSachDon() {
+		return danhSachDon;
 	}
 	
 	public List<ChiTietHoaDon> findByID(HoaDon maHoaDon) {

@@ -29,9 +29,8 @@ public class Thuoc {
 		this.maNCC = maNCC;
 	}
 
-	public Thuoc(String maThuoc) {
+	public Thuoc() {
 		super();
-		this.maThuoc = maThuoc;
 	}
 
 	public String getMaThuoc() {

@@ -87,8 +87,14 @@ public class HoaDon {
 
 	@Override
 	public String toString() {
-		return "HoaDon [maHoaDon=" + maHoaDon + ", maKH=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
-				+ ", ngayNhan=" + ngayNhan + ", cthd=" + cthd + "]";
+		String hoaDonString = "HoaDon [maHoaDon=" + maHoaDon + ", maKH=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
+				+ ", ngayNhan=" + ngayNhan + ", cthd=" ;
+		
+		for (ChiTietHoaDon chiTietHoaDon : cthd) {
+			hoaDonString+=chiTietHoaDon.toString();
+		}
+		
+		return hoaDonString+ "] ";
 	}
 
 }

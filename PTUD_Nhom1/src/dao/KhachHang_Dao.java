@@ -42,6 +42,7 @@ public class KhachHang_Dao {
 	public List<KhachHang> getDSKH() {
 		return dsKH;
 	}
+	
 	// Thêm khách hàng vào database
 	public void addKhachHang(KhachHang kh) {
 		try {

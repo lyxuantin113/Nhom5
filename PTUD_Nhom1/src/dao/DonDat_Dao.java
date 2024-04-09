@@ -53,11 +53,10 @@ public class DonDat_Dao {
 		return dsdd;
 	}
 	
-	public boolean addOne(DonDat donDat) {
+	public void addOne(DonDat donDat) {
 		String query = "Insert into DonDat Values (?,?,?,?,?,?)";
-		int n = 0;
 		try {
-			pstmt.executeQuery(query);
+			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, donDat.getMaDonDat());
 			pstmt.setObject(2, donDat.getMaKH());
 			pstmt.setObject(3, donDat.getMaNV());
@@ -65,12 +64,10 @@ public class DonDat_Dao {
 			pstmt.setDate(5, Date.valueOf(donDat.getNgayNhan()));
 			pstmt.setArray(6, (Array) donDat.getCtdd());
 			
-			n = pstmt.executeUpdate();
+			dsdd.add(donDat);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
-		return n > 0;
 	}
 
 	public List<DonDat> findByID(String maDonDat) {

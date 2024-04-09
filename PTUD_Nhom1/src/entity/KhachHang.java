@@ -1,6 +1,11 @@
 package entity;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class KhachHang {
+	private static final String PREFIX = "KH";
+	private static final AtomicInteger counter = new AtomicInteger(0);
+
 	private String maKH;
 	private String soDienThoai;
 	private String hoTen;
@@ -9,16 +14,17 @@ public class KhachHang {
 		// TODO Auto-generated constructor stub
 	}
 
-	public KhachHang(String maKH, String soDienThoai, String hoTen) {
+	public KhachHang(String soDienThoai, String hoTen) {
 		super();
-		this.maKH = maKH;
+		this.maKH = PREFIX + counter.incrementAndGet();
 		this.soDienThoai = soDienThoai;
 		this.hoTen = hoTen;
 	}
 
-	public KhachHang(String maKH, String hoTen) {
+	public KhachHang(String maKH, String soDienThoai, String hoTen) {
 		super();
 		this.maKH = maKH;
+		this.soDienThoai = soDienThoai;
 		this.hoTen = hoTen;
 	}
 

@@ -152,16 +152,15 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 			return;
 		} else {
 			if (cachTim.equals("Mã thuốc")) {
-				if (thuocDao.timTheoMa(thongTin)) {
-					DefaultTableModel model = (DefaultTableModel) table.getModel();
-					model.setRowCount(0);
-					for (Thuoc thuoc : dsThuoc) {
-						if (thuoc.getMaThuoc().equals(thongTin)) {
-							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
-									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
-							model.addRow(rowData);
-						}
+				List<Thuoc> listThuoc = thuocDao.timTheoMa(thongTin);
+				if (listThuoc!=null) {
+					for (Thuoc thuoc : listThuoc) {						
+						DefaultTableModel model = (DefaultTableModel) table.getModel();
+						model.setRowCount(0);
+						Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+								thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+								thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
+						model.addRow(rowData);
 					}
 				} else {
 					JOptionPane.showMessageDialog(this, "Không tìm thấy mã thuốc.");

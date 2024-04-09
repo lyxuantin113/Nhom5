@@ -52,24 +52,20 @@ public class HoaDon_Dao {
 		return dshd;
 	}
 
-	public boolean addOne(HoaDon hoaDon) {
-		String query = "Insert into HoaDon Values (?,?,?,?,?,?)";
-		int n = 0;
+	public void addOne(HoaDon hoaDon) {
 		try {
-			pstmt.executeQuery(query);
+			String query = "Insert into HoaDon Values (?,?,?,?,?,?)";
+			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, hoaDon.getMaHoaDon());
 			pstmt.setObject(2, hoaDon.getMaKH());
 			pstmt.setObject(3, hoaDon.getMaNV());
 			pstmt.setDate(4, Date.valueOf(hoaDon.getNgayLap()));
 			pstmt.setDate(5, Date.valueOf(hoaDon.getNgayNhan()));
 			pstmt.setArray(6, (Array) hoaDon.getCthd());
-			
-			n = pstmt.executeUpdate();
+			dshd.add(hoaDon);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return n > 0;
 	}
 
 //	ID

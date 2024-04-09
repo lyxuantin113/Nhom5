@@ -132,24 +132,37 @@ public class Thuoc_Dao {
 	}
 
 	// Tìm thuốc theo mã
-	public Boolean timTheoMa(String ma) {
+	public List<Thuoc> timTheoMa(String ma) {
+		List<Thuoc> listThuoc = new ArrayList<>();
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
-				return false;
+//				return false;
 			}
 			String query = "select * from Thuoc where maThuoc = '" + ma + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			if (rs.next()) {
-				return true;
+//				return true;
+				String ten = rs.getString(2);
+				String loai = rs.getString(3);
+				String donVi = rs.getString(4);
+				LocalDate hsd = rs.getDate(5).toLocalDate();
+				double giaNhap = rs.getDouble(6);
+				double giaBan = rs.getDouble(7);
+				int tonKho = rs.getInt(8);
+				String nuocSx = rs.getString(9);
+				String tenNCC = rs.getString(10);
+				Thuoc thuoc = new Thuoc(ma, ten, loai, donVi, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
+				listThuoc.add(thuoc);
 			}
-
+			return listThuoc;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+//		return false;
+		return listThuoc;
 	}
 
 	// Tìm thuốc theo tên
