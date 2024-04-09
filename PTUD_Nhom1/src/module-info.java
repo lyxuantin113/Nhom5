@@ -11,4 +11,5 @@ module nhom11111 {
 	requires junit;
 	requires itextpdf;
 	requires jdatepicker;
+	requires org.apache.poi.poi;
 }

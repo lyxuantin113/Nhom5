@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,10 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
 import dao.ChiTietPhieuNhapThuoc_Dao;
 import dao.PhieuNhapThuoc_Dao;
 import dao.Thuoc_Dao;
@@ -21,11 +26,14 @@ import entity.ChiTietPhieuNhapThuoc;
 import entity.PhieuNhapThuoc;
 import entity.Thuoc;
 
+import java.io.FileOutputStream;
+
 public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener, MouseListener {
     
 	private JTable table;
 	private JTable table2;
 	private JButton btnDaNhan;
+	private JButton btnIn;
 
 	public DanhSachPhieuNhapThuoc_Gui() {
 		setSize(1070, 600);
@@ -59,12 +67,18 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		JScrollPane sp = new JScrollPane(table);
 		pnCenterTop.add(sp);
 		// Button
+		JPanel pnButton = new JPanel();
 		btnDaNhan = new JButton("Đã nhận");
 		btnDaNhan.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnDaNhan.setBackground(new Color(0, 160, 255));
+		btnIn = new JButton("In");
+		btnIn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnIn.setBackground(new Color(0, 160, 255));
 		
+		pnButton.add(btnDaNhan);
+		pnButton.add(btnIn);
 		
-		pnCenterTop.add(btnDaNhan);
+		pnCenterTop.add(pnButton);
 		// Table danh sách thuốc trong phiếu nhập
 		String[] headers2 = { "Mã thuốc","Số lượng", "Giá nhập", "Hạn sử dụng", "Đơn vị", "Thành tiền", "Mã CTPNT" };
 		DefaultTableModel model2 = new DefaultTableModel(headers2, 0);
@@ -82,8 +96,6 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		
 		//Footer
 		JPanel pnFoot = new JPanel();
-		
-		
 		
 		
 		add(pnMain);
@@ -146,6 +158,45 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			// Hiển thị lại danh sách phiếu nhập
 			
 			hienTable();
+		}
+		if (o.equals(btnIn)) {
+			
+		
+//			// In phiếu nhập
+//			try {
+//	            Workbook workbook = new XSSFWorkbook();
+//	            Sheet sheet = workbook.createSheet("Danh sách phiếu nhập");
+//
+//	            // Tiêu đề cột
+//	            Row headerRow = sheet.createRow(0);
+//	            for (int i = 0; i < table.getColumnCount(); i++) {
+//	                Cell cell = headerRow.createCell(i);
+//	                cell.setCellValue(table.getColumnName(i));
+//	            }
+//
+//	            // Dữ liệu từ JTable
+//	            for (int row = 0; row < table.getRowCount(); row++) {
+//	                Row excelRow = sheet.createRow(row + 1);
+//	                for (int col = 0; col < table.getColumnCount(); col++) {
+//	                    Object value = table.getValueAt(row, col);
+//	                    Cell cell = excelRow.createCell(col);
+//	                    if (value != null) {
+//	                        cell.setCellValue(value.toString());
+//	                    }
+//	                }
+//	            }
+//
+//	            // Lưu file Excel
+//	            FileOutputStream fileOut = new FileOutputStream("DanhSachPhieuNhap.xlsx");
+//	            workbook.write(fileOut);
+//	            fileOut.close();
+//	            workbook.close();
+//
+//	            JOptionPane.showMessageDialog(this, "Danh sách đã được in vào file Excel!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+//	        } catch (Exception ex) {
+//	            ex.printStackTrace();
+//	            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi in danh sách!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+//	        }
 		}
 		
 	}
