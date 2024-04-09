@@ -199,7 +199,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		btnXemThongKe.addActionListener(this);
 		table.addMouseListener(this);
 		ConnectDB.connect();
-//		hienTable();
+		hienTable();
 		cbbThang.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -221,7 +221,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		});
 	}
 
-	// Phương thức thực hiện thống kê và cập nhật dữ liệu lên bảng
+//
+//	 Phương thức thực hiện thống kê và cập nhật dữ liệu lên bảng
 //	public void thucHienThongKe(int nam, int thang, int ngay) {
 //		// Gọi các phương thức từ DAO để thực hiện thống kê
 //
@@ -243,65 +244,63 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 //		DefaultTableModel model = (DefaultTableModel) table.getModel();
 //		model.addRow(rowData);
 //	}
-	// Trong phương thức hienTable()
-//	public void hienTable() {
-//		List<HoaDon> danhSachHoaDon = dsHD.readFromTable();
-//
-//		// Xóa các dòng hiện tại trên bảng trước khi cập nhật dữ liệu mới
-//		model.setRowCount(0);
-//		// Khởi tạo danh sách để lưu trữ các mã khách hàng và mã nhân viên
-//		Set<String> maKhachHangSet = new HashSet<>();
-//		Set<String> maNhanVienSet = new HashSet<>();
-//		// Khởi tạo một Set để lưu trữ các năm đã xuất hiện
-//		Set<Integer> namSet = new HashSet<>();
-//
-//		// Duyệt qua từng hóa đơn trong danh sách
-//		for (HoaDon hoaDon : danhSachHoaDon) {
-//			
-//			// Lấy năm từ ngày lập hóa đơn
-//			int nam = hoaDon.getNgayLap().getYear();
-//			// Lấy mã khách hàng và mã nhân viên từ hóa đơn
-//			String maKhachHang = hoaDon.getMaKH().getMaKH();
-//			String maNhanVien = hoaDon.getMaNV().getMaNV();
-//			
-//			// Thêm năm vào Set
-//			namSet.add(nam);
-//			// Thêm mã khách hàng và mã nhân viên vào danh sách (nếu chưa có)
-//	        maKhachHangSet.add(maKhachHang);
-//	        maNhanVienSet.add(maNhanVien);
-//	        
-//			// Tính doanh thu và lợi nhuận cho hóa đơn hiện tại
-//			double doanhThu = dsHD.tinhDoanhThuChoHoaDon(hoaDon);
-//			double loiNhuan = dsHD.tinhLoiNhuanChoHoaDon(hoaDon);
-//
-//			// Tạo một mảng chứa các giá trị của hàng
-//			Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH(), hoaDon.getMaNV(), hoaDon.getCthd().size(),
-//					hoaDon.getNgayLap().toString(), doanhThu, loiNhuan };
-//
-//			// Thêm hàng vào bảng
-//			model.addRow(rowData);
-//		}
-//
-//		// Xóa các mục cũ trong Combobox của năm
-//		cbbNam.removeAllItems();
-//		 // Xóa các lựa chọn cũ trong Combobox của Khách hàng và Nhân viên
-//	    cbbKhachHang.removeAllItems();
-//	    cbbNhanVien.removeAllItems();
-//
-//		// Thêm các năm từ Set vào Combobox của năm
-//		for (int nam : namSet) {
-//			cbbNam.addItem(String.valueOf(nam));
-//		}
-//		// Thêm các mã khách hàng vào Combobox của Khách hàng
-//	    for (String maKH : maKhachHangSet) {
-//	        cbbKhachHang.addItem(maKH);
-//	    }
-//	    
-//	    // Thêm các mã nhân viên vào Combobox của Nhân viên
-//	    for (String maNV : maNhanVienSet) {
-//	        cbbNhanVien.addItem(maNV);
-//	    }
-//	}
+//	 Trong phương thức hienTable()
+	public void hienTable() {
+		List<HoaDon> danhSachHoaDon = dsHD.readFromTable();
+
+		// Xóa các dòng hiện tại trên bảng trước khi cập nhật dữ liệu mới
+		model.setRowCount(0);
+		// Khởi tạo danh sách để lưu trữ các mã khách hàng và mã nhân viên
+		Set<String> maKhachHangSet = new HashSet<>();
+		Set<String> maNhanVienSet = new HashSet<>();
+		// Khởi tạo một Set để lưu trữ các năm đã xuất hiện
+		Set<Integer> namSet = new HashSet<>();
+
+		// Duyệt qua từng hóa đơn trong danh sách
+		for (HoaDon hoaDon : danhSachHoaDon) {
+			// Lấy năm từ ngày lập hóa đơn
+			int nam = hoaDon.getNgayLap().getYear();
+			// Lấy mã khách hàng và mã nhân viên từ hóa đơn
+			String maKhachHang = hoaDon.getMaKH().getMaKH();
+			String maNhanVien = hoaDon.getMaNV().getMaNV();
+
+			// Thêm năm vào Set
+			namSet.add(nam);
+			// Thêm mã khách hàng và mã nhân viên vào danh sách (nếu chưa có)
+			maKhachHangSet.add(maKhachHang);
+			maNhanVienSet.add(maNhanVien);
+
+			// Tính doanh thu và lợi nhuận cho hóa đơn hiện tại
+			double doanhThu = dsHD.tinhDoanhThuChoHoaDon(hoaDon);
+			double loiNhuan = dsHD.tinhLoiNhuanChoHoaDon(hoaDon);
+
+			// Tạo một mảng chứa các giá trị của hàng
+			Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+					hoaDon.getNgayLap().toString(), hoaDon.getNgayNhan().toString(), doanhThu, loiNhuan };
+
+			// Thêm hàng vào bảng
+			model.addRow(rowData);
+		}
+		// Xóa các mục cũ trong Combobox của năm
+		cbbNam.removeAllItems();
+		// Xóa các lựa chọn cũ trong Combobox của Khách hàng và Nhân viên
+		cbbKhachHang.removeAllItems();
+		cbbNhanVien.removeAllItems();
+
+		// Thêm các năm từ Set vào Combobox của năm
+		for (int nam : namSet) {
+			cbbNam.addItem(String.valueOf(nam));
+		}
+		// Thêm các mã khách hàng vào Combobox của Khách hàng
+		for (String maKH : maKhachHangSet) {
+			cbbKhachHang.addItem(maKH);
+		}
+
+		// Thêm các mã nhân viên vào Combobox của Nhân viên
+		for (String maNV : maNhanVienSet) {
+			cbbNhanVien.addItem(maNV);
+		}
+	}
 
 	private int getDaysInMonth(int monthIndex) {
 		// Tháng 2 (index = 2) có 28 hoặc 29 ngày tùy theo năm nhuận

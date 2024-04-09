@@ -27,6 +27,9 @@ import entity.PhieuNhapThuoc;
 import entity.Thuoc;
 
 import java.io.FileOutputStream;
+import org.apache.poi.ss.usermodel.Workbook;
+
+
 
 public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener, MouseListener {
     
@@ -162,7 +165,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		if (o.equals(btnIn)) {
 			
 		
-//			// In phiếu nhập
+			// In phiếu nhập
 //			try {
 //	            Workbook workbook = new XSSFWorkbook();
 //	            Sheet sheet = workbook.createSheet("Danh sách phiếu nhập");

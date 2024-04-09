@@ -31,5 +31,17 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< HEAD
+=======
+	<classpathentry exported="true" kind="lib" path="C:/Users/PC/.m2/repository/org/apache/poi/poi/5.2.5/poi-5.2.5.jar" sourcepath="C:/Users/PC/.m2/repository/org/apache/poi/poi/5.2.5/poi-5.2.5-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="org.apache.poi"/>
+			<attribute name="maven.artifactId" value="poi"/>
+			<attribute name="maven.version" value="5.2.5"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+>>>>>>> c61c016829580a4ec8daabff6e3c67c48c24770e
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

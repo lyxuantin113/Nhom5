@@ -179,4 +179,28 @@ public class HoaDon_Dao {
 	public List<HoaDon> getDSHD() {
 		return dshd;
 	}
+	
+	
+	public double tinhDoanhThuChoHoaDon(HoaDon hoaDon) {
+        double doanhThu = 0.0;
+        List<ChiTietHoaDon> chiTietList = new ChiTietHoaDon_Dao().findByID(hoaDon);
+        for (ChiTietHoaDon chiTiet : chiTietList) {
+            double giaBan = chiTiet.getMaThuoc().getGiaBan();
+            int soLuong = chiTiet.getSoLuong();
+            doanhThu += giaBan * soLuong;
+        }
+        return doanhThu;
+    }
+
+    public double tinhLoiNhuanChoHoaDon(HoaDon hoaDon) {
+        double loiNhuan = 0.0;
+        List<ChiTietHoaDon> chiTietList = new ChiTietHoaDon_Dao().findByID(hoaDon);
+        for (ChiTietHoaDon chiTiet : chiTietList) {
+            double giaNhap = chiTiet.getMaThuoc().getGiaNhap();
+            double giaBan = chiTiet.getMaThuoc().getGiaBan();
+            int soLuong = chiTiet.getSoLuong();
+            loiNhuan += (giaBan - giaNhap) * soLuong;
+        }
+        return loiNhuan;
+    }
 }
