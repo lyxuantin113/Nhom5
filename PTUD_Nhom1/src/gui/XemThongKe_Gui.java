@@ -199,7 +199,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		btnXemThongKe.addActionListener(this);
 		table.addMouseListener(this);
 		ConnectDB.connect();
-//		hienTable();
+		hienTable();
 		cbbThang.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

@@ -104,11 +104,11 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
 			}
+			
 			String query = "update Thuoc set tenThuoc = '" + thuoc.getTenThuoc() + "', loaiThuoc = '"
 					+ thuoc.getLoaiThuoc() + "', donVi = '" + thuoc.getDonVi() + "', HSD = '" + thuoc.getHSD()
 					+ "', giaNhap = " + thuoc.getGiaNhap() + ", giaBan = " + thuoc.getGiaBan() + ", soLuongTon = "
-					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat() + "', tenNCC = '"
-					+ thuoc.getMaNCC() + "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
+					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat()+ "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			for (Thuoc t : dsThuoc) {
