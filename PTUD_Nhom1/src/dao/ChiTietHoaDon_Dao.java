@@ -66,19 +66,18 @@ public class ChiTietHoaDon_Dao {
 		return dscthd;
 	}
 	
-	public boolean addOne(ChiTietHoaDon chiTietHoaDon) {
-		String query = "Insert into ChiTietHoaDon Values (?,?,?)";
-		int n = 0;
+	public void addOne(ChiTietHoaDon chiTietHoaDon) {
 		try {
+			String query = "Insert into ChiTietHoaDon Values (?,?,?)";
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, chiTietHoaDon.getMaHoaDon().getMaHoaDon());
 			pstmt.setString(2, chiTietHoaDon.getMaThuoc().getDonVi());
 			pstmt.setInt(3, chiTietHoaDon.getSoLuong());
-			n = pstmt.executeUpdate();
+			pstmt.executeUpdate();
+			dscthd.add(chiTietHoaDon);
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-		return n > 0;
 	}
 	
 	public boolean deleteById(Thuoc maThuoc) {
