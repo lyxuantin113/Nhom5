@@ -271,7 +271,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 			maNhanVienSet.add(maNhanVien);
 
 			// Tính doanh thu và lợi nhuận cho hóa đơn hiện tại
-			double doanhThu = dsHD.tinhDoanhThuChoHoaDon(hoaDon);
+			double doanhThu = dsHD.tinhTongTien(hoaDon);
 			double loiNhuan = dsHD.tinhLoiNhuanChoHoaDon(hoaDon);
 
 			// Tạo một mảng chứa các giá trị của hàng

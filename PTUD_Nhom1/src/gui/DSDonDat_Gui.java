@@ -22,6 +22,8 @@ import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
+import entity.ChiTietDonDat;
+import entity.ChiTietHoaDon;
 import entity.DonDat;
 import entity.Thuoc;
 
@@ -38,6 +40,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 	private KhachHang_Dao khachHangDao;
 	private DonDat_Dao donDatDao;
 	private ChiTietDonDat_Dao ctddDao;
+	private DefaultTableModel modelDonDat;
 
 //	Nút Chuyển Qua DS Hóa Đơn ????????????????
 
@@ -90,8 +93,8 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		JLabel lblTableDonDat = new JLabel("Danh Sách Đơn Đặt:");
 		lblTableDonDat.setFont(fo16);
 		Box boxTableDonDat = Box.createVerticalBox();
-		String[] headerDonDat = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận".split(";");
-		DefaultTableModel modelDonDat = new DefaultTableModel(headerDonDat, 0);
+		String[] headerDonDat = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
+		modelDonDat = new DefaultTableModel(headerDonDat, 0);
 		tableDonDat = new JTable(modelDonDat);
 		JScrollPane scrollDonDat = new JScrollPane();
 		scrollDonDat.setViewportView(tableDonDat = new JTable(modelDonDat));
@@ -178,16 +181,34 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
 		model.setRowCount(0);
 
-		List<DonDat> listDonDat = donDatDao.getDSPDT();
+		List<DonDat> listDonDat = donDatDao.readFromTable();
 		if (listDonDat != null) {
 			for (DonDat donDat : listDonDat) {
 				Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(), donDat.getMaKH().getHoTen()
-						, donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(), donDat.getNgayNhan()}; // Tạo dữ liệu hàng mới
+						, donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(), donDat.getNgayNhan(), donDatDao.tinhTongTien(donDat)}; 
 
 				model.addRow(rowData); // Thêm hàng vào model
 			}
 		}
 
+	}
+	
+	private void hienTableChiTietDonDat(int rowSelected) {
+		String maHoaDon = modelDonDat.getValueAt(rowSelected, 0).toString();
+
+		DefaultTableModel model = (DefaultTableModel) tblThuoc.getModel();
+		model.setRowCount(0);
+
+		List<ChiTietDonDat> listChiTietDonDat = ctddDao.findByID(maHoaDon);
+		if (listChiTietDonDat != null) {
+			for (ChiTietDonDat chiTietDonDat : listChiTietDonDat) {
+				Object[] rowData = { chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getMaThuoc().getTenThuoc(),
+						chiTietDonDat.getMaThuoc().getLoaiThuoc(), chiTietDonDat.getMaThuoc().getGiaBan(),
+						chiTietDonDat.getMaThuoc().getDonVi(), chiTietDonDat.getSoLuong(),
+						chiTietDonDat.getSoLuong() * chiTietDonDat.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng mới
+				model.addRow(rowData); // Thêm hàng vào model
+			}
+		}
 	}
 
 	@Override
@@ -198,8 +219,10 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		int rowSelectedDon = tableDonDat.getSelectedRow();
+		if(rowSelectedDon != -1) {
+			hienTableChiTietDonDat(rowSelectedDon);
+		}
 	}
 
 	@Override

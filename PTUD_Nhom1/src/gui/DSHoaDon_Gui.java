@@ -30,10 +30,11 @@ import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
+import entity.ChiTietHoaDon;
 import entity.DonDat;
 import entity.HoaDon;
 
-public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
+public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListener {
 	private JComboBox<String> cbbTim;
 	private JTable tableThuoc;
 	private JTable tableHoaDon;
@@ -45,8 +46,9 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 	private KhachHang_Dao khachHangDao;
 	private HoaDon_Dao hoaDonDao;
 	private ChiTietHoaDon_Dao cthdDao;
+	private DefaultTableModel modelHoaDon;
 
-	public DSHoaDon() {
+	public DSHoaDon_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
@@ -95,8 +97,8 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 		JLabel lbTableHoaDon = new JLabel("Danh Sách Hóa Đơn:");
 		lbTableHoaDon.setFont(fo16);
 		Box boxTableHoaDon = Box.createVerticalBox();
-		String[] headerHoaDon = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận".split(";");
-		DefaultTableModel modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
+		String[] headerHoaDon = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
+		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
 		tableHoaDon = new JTable(modelHoaDon);
 		JScrollPane scrollHoaDon = new JScrollPane();
 		scrollHoaDon.setViewportView(tableHoaDon = new JTable(modelHoaDon));
@@ -135,7 +137,7 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 		btnTim.setBackground(new Color(0, 160, 255));
 		btnTim.setPreferredSize(new Dimension(100, 35));
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		btnReset = new JButton("Reset");
 		btnReset.setBackground(new Color(0, 160, 255));
 		btnReset.setPreferredSize(new Dimension(100, 35));
@@ -168,19 +170,19 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 
 //		END
 		add(pnMain);
-		
+
 		thuocDao = new Thuoc_Dao();
 		nhanVienDao = new NhanVien_Dao();
 		khachHangDao = new KhachHang_Dao();
 		hoaDonDao = new HoaDon_Dao();
 		cthdDao = new ChiTietHoaDon_Dao();
-		
+
 		tableHoaDon.addMouseListener(this);
 		tableThuoc.addMouseListener(this);
 		btnTim.addActionListener(this);
 		btnReset.addActionListener(this);
 		btnIn.addActionListener(this);
-		
+
 		hienTableHoaDon();
 
 	}
@@ -188,13 +190,31 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 	private void hienTableHoaDon() {
 		DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
 		model.setRowCount(0);
-
-		List<HoaDon> listHoaDon = hoaDonDao.getDSHD();
+		
+		List<HoaDon> listHoaDon = hoaDonDao.readFromTable();
 		if (listHoaDon != null) {
 			for (HoaDon hoaDon : listHoaDon) {
-				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen()
-						, hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan()}; // Tạo dữ liệu hàng mới
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen(),
+						hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
 
+				model.addRow(rowData); // Thêm hàng vào model
+			}
+		}
+	}
+
+	private void hienTableChiTietHoaDon(int rowSelected) {
+		String maHoaDon = modelHoaDon.getValueAt(rowSelected, 0).toString();
+
+		DefaultTableModel model = (DefaultTableModel) tableThuoc.getModel();
+		model.setRowCount(0);
+
+		List<ChiTietHoaDon> listChiTietHoaDon = cthdDao.findByID(maHoaDon);
+		if (listChiTietHoaDon != null) {
+			for (ChiTietHoaDon chiTietHoaDon : listChiTietHoaDon) {
+				Object[] rowData = { chiTietHoaDon.getMaThuoc().getMaThuoc(), chiTietHoaDon.getMaThuoc().getTenThuoc(),
+						chiTietHoaDon.getMaThuoc().getLoaiThuoc(), chiTietHoaDon.getMaThuoc().getGiaBan(),
+						chiTietHoaDon.getMaThuoc().getDonVi(), chiTietHoaDon.getSoLuong(),
+						chiTietHoaDon.getSoLuong() * chiTietHoaDon.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng mới
 				model.addRow(rowData); // Thêm hàng vào model
 			}
 		}
@@ -202,37 +222,39 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
+
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		int rowSelectedDon = tableHoaDon.getSelectedRow();
+		if(rowSelectedDon != -1) {
+			hienTableChiTietHoaDon(rowSelectedDon);
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

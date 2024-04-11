@@ -16,7 +16,7 @@ import entity.KhachHang;
 import entity.NhanVien;
 
 public class HoaDon_Dao {
-	List<HoaDon> dshd;
+	List<HoaDon> dshd = new ArrayList<HoaDon>();
 	Connection con = null;
 	PreparedStatement pstmt = null;
 
@@ -26,49 +26,65 @@ public class HoaDon_Dao {
 	}
 
 	public List<HoaDon> readFromTable() {
+		List<HoaDon> listHD = new ArrayList<HoaDon>();
 		try {
 			String query = "select * from HoaDon";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			while (rs.next()) {
 				String maHD = rs.getString(1);
-				Date ngayLap = rs.getDate(2);
-				Date ngayNhan = rs.getDate(3);
-				String sdtKH = rs.getString(4);
-				KhachHang kh = new KhachHang(sdtKH);
-				String maNV = rs.getString(5);
-				NhanVien nv = new NhanVien(maNV);
+
+				KhachHang_Dao khDao = new KhachHang_Dao();
+				String maKH = rs.getString(2);
+				KhachHang kh = khDao.findById(maKH);
+
+				NhanVien_Dao nvDao = new NhanVien_Dao();
+				String maNV = rs.getString(3);
+				NhanVien nv = nvDao.getNhanVien(maNV).get(0);
+				Date ngayLap = rs.getDate(4);
+				Date ngayNhan = rs.getDate(5);
 
 				HoaDon hd = new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
-				dshd.add(hd);
+				
+				ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
+				List<ChiTietHoaDon> listCTHD = cthdDao.findByID(maHD);
+				
+				hd.setListChiTietHoaDon(listCTHD);
+				
+				listHD.add(hd);
 			}
+			return listHD;
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-		return dshd;
 	}
 
 	public void addOne(HoaDon hoaDon) {
-	    try {
-	        String query = "INSERT INTO HoaDon VALUES (?,?,?,?,?)";
-	        pstmt = con.prepareStatement(query);
-	        pstmt.setString(1, hoaDon.getMaHoaDon());
-	        pstmt.setString(2, hoaDon.getMaKH().getMaKH());
-	        pstmt.setString(3, hoaDon.getMaNV().getMaNV());
-	        pstmt.setDate(4, Date.valueOf(hoaDon.getNgayLap()));
-	        pstmt.setDate(5, Date.valueOf(hoaDon.getNgayNhan()));
-	        pstmt.executeUpdate();
-	        dshd.add(hoaDon);
-	    } catch (Exception e) {
-	        e.printStackTrace(); 
-	    }
+		try {
+			String query = "INSERT INTO HoaDon VALUES (?,?,?,?,?)";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, hoaDon.getMaHoaDon());
+			pstmt.setString(2, hoaDon.getMaKH().getMaKH());
+			pstmt.setString(3, hoaDon.getMaNV().getMaNV());
+			pstmt.setDate(4, Date.valueOf(hoaDon.getNgayLap()));
+			pstmt.setDate(5, Date.valueOf(hoaDon.getNgayNhan()));
+			pstmt.executeUpdate();
+			pstmt.close();
+
+			ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
+			cthdDao.add(hoaDon);
+
+			dshd.add(hoaDon);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-
 //	ID
-	public List<HoaDon> findByID(String maHoaDon) {
-		List<HoaDon> dshd = null;
+	public HoaDon findByID(String maHoaDon) {
+		HoaDon hoaDon = null;
 		String query = "select * from HoaDon where maHoaDon = ?";
 		try {
 			pstmt = con.prepareStatement(query);
@@ -77,51 +93,62 @@ public class HoaDon_Dao {
 			ResultSet rs = pstmt.executeQuery();
 
 			String maHD = rs.getString(1);
-			KhachHang kh = (KhachHang) rs.getObject(2);
-			NhanVien nv = (NhanVien) rs.getObject(3);
+
+//			Khách Hàng
+			String maKH = rs.getString(2);
+			KhachHang_Dao khachDao = new KhachHang_Dao();
+			KhachHang kh = khachDao.findById(maKH);
+
+//			Nhân Viên
+			String maNV = rs.getString(3);
+			NhanVien_Dao nhanVienDao = new NhanVien_Dao();
+			NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
+
 			Date ngayLap = rs.getDate(4);
 			Date ngayNhan = rs.getDate(5);
+			hoaDon = new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
 
-			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate()));
-			return dshd;
+			rs.close();
+			pstmt.close();
 
+			ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
+			List<ChiTietHoaDon> listCTHD = cthdDao.findByID(maHoaDon);
+
+			hoaDon.setListChiTietHoaDon(listCTHD);
+
+			return hoaDon;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		return dshd;
 	}
-	
+
 //	NHÂN VIÊN
 	public List<HoaDon> findByNhanVien(String maNV) {
-		List<HoaDon> dshd = null;
+		List<HoaDon> listHD = new ArrayList<HoaDon>();
 		String query = "select * from HoaDon where maNV = ?";
-		NhanVien_Dao nvDao = new NhanVien_Dao();
-		NhanVien nv = (NhanVien) nvDao.getNhanVien(maNV);
+
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setObject(1, nv);
+			pstmt.setString(1, maNV);
 
 			ResultSet rs = pstmt.executeQuery();
 
-			String maHD = rs.getString(1);
-			KhachHang kh = (KhachHang) rs.getObject(2);
-			Date ngayLap = rs.getDate(4);
-			Date ngayNhan = rs.getDate(5);
-
-			dshd.add(new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate()));
-			return dshd;
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				listHD.add(findByID(maHD));
+			}
+			return listHD;
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		return dshd;
 	}
-	
+
 //	NGÀY LẬP
 	public List<HoaDon> findByNgayLap(Date ngayLap) {
-		List<HoaDon> dshd = null;
+		List<HoaDon> listHD = new ArrayList<HoaDon>();
 		String query = "select * from HoaDon where ngayLap = ?";
 		try {
 			pstmt = con.prepareStatement(query);
@@ -129,27 +156,20 @@ public class HoaDon_Dao {
 
 			ResultSet rs = pstmt.executeQuery();
 
-			while(rs.next()) {
+			while (rs.next()) {
 				String maHD = rs.getString(1);
-				KhachHang kh = (KhachHang) rs.getObject(2);
-				NhanVien nv = (NhanVien) rs.getObject(3);
-				Date ngayLapHD = rs.getDate(4);
-				Date ngayNhanHD = rs.getDate(5);
-				dshd.add(new HoaDon(maHD, kh, nv, ngayLapHD.toLocalDate(), ngayNhanHD.toLocalDate()));
+				listHD.add(findByID(maHD));
 			}
-
-			return dshd;
-
+			return listHD;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		return dshd;
 	}
-	
+
 //	NGÀY NHẬN
 	public List<HoaDon> findByNgayNhan(Date ngayNhan) {
-		List<HoaDon> dshd = null;
+		List<HoaDon> listHD = new ArrayList<HoaDon>();
 		String query = "select * from HoaDon where ngayNhan = ?";
 		try {
 			pstmt = con.prepareStatement(query);
@@ -157,50 +177,47 @@ public class HoaDon_Dao {
 
 			ResultSet rs = pstmt.executeQuery();
 
-			while(rs.next()) {
+			while (rs.next()) {
 				String maHD = rs.getString(1);
-				KhachHang kh = (KhachHang) rs.getObject(2);
-				NhanVien nv = (NhanVien) rs.getObject(3);
-				Date ngayLapHD = rs.getDate(4);
-				Date ngayNhanHD = rs.getDate(5);
-				dshd.add(new HoaDon(maHD, kh, nv, ngayLapHD.toLocalDate(), ngayNhanHD.toLocalDate()));
+				listHD.add(findByID(maHD));
 			}
-
-			return dshd;
+			return listHD;
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		return dshd;
 	}
 
 //	DANH SÁCH
 	public List<HoaDon> getDSHD() {
 		return dshd;
 	}
-	
-	
-	public double tinhDoanhThuChoHoaDon(HoaDon hoaDon) {
-        double doanhThu = 0.0;
-        List<ChiTietHoaDon> chiTietList = new ChiTietHoaDon_Dao().findByID(hoaDon);
-        for (ChiTietHoaDon chiTiet : chiTietList) {
-            double giaBan = chiTiet.getMaThuoc().getGiaBan();
-            int soLuong = chiTiet.getSoLuong();
-            doanhThu += giaBan * soLuong;
-        }
-        return doanhThu;
-    }
 
-    public double tinhLoiNhuanChoHoaDon(HoaDon hoaDon) {
-        double loiNhuan = 0.0;
-        List<ChiTietHoaDon> chiTietList = new ChiTietHoaDon_Dao().findByID(hoaDon);
-        for (ChiTietHoaDon chiTiet : chiTietList) {
-            double giaNhap = chiTiet.getMaThuoc().getGiaNhap();
-            double giaBan = chiTiet.getMaThuoc().getGiaBan();
-            int soLuong = chiTiet.getSoLuong();
-            loiNhuan += (giaBan - giaNhap) * soLuong;
-        }
-        return loiNhuan;
-    }
+	public double tinhTongTien(HoaDon hoaDon) {
+		double doanhThu = 0.0;
+		if (hoaDon.getListChiTietHoaDon() != null) {
+			for (ChiTietHoaDon chiTietHoaDon : hoaDon.getListChiTietHoaDon()) {
+				double giaBan = chiTietHoaDon.getMaThuoc().getGiaBan();
+				int soLuong = chiTietHoaDon.getSoLuong();
+				doanhThu += giaBan * soLuong;
+			}
+		} else
+			return 0;
+		return doanhThu;
+	}
+
+	public double tinhLoiNhuanChoHoaDon(HoaDon hoaDon) {
+		double loiNhuan = 0.0;
+		if (hoaDon.getListChiTietHoaDon() != null) {
+			for (ChiTietHoaDon chiTiet : hoaDon.getListChiTietHoaDon()) {
+				double giaNhap = chiTiet.getMaThuoc().getGiaNhap();
+				double giaBan = chiTiet.getMaThuoc().getGiaBan();
+				int soLuong = chiTiet.getSoLuong();
+				loiNhuan += (giaBan - giaNhap) * soLuong;
+			}
+		} else
+			return 0;
+		return loiNhuan;
+	}
 }

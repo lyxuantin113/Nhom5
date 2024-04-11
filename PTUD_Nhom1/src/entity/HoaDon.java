@@ -14,6 +14,7 @@ public class HoaDon {
 	private NhanVien maNV;
 	private LocalDate ngayLap;
 	private LocalDate ngayNhan;
+	List<ChiTietHoaDon> listChiTietHoaDon;
 
 	public HoaDon() {
 		// TODO Auto-generated constructor stub
@@ -28,14 +29,29 @@ public class HoaDon {
 		this.ngayNhan = ngayNhan;
 	}
 
-	public HoaDon(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan) {
+	public HoaDon(String maHoaDon, KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
+			List<ChiTietHoaDon> listChiTietHoaDon) {
+		super();
+		this.maHoaDon = maHoaDon;
+		this.maKH = maKH;
+		this.maNV = maNV;
+		this.ngayLap = ngayLap;
+		this.ngayNhan = ngayNhan;
+		this.listChiTietHoaDon = listChiTietHoaDon;
+	}
+
+	public HoaDon(KhachHang maKH, NhanVien maNV, LocalDate ngayLap, LocalDate ngayNhan,
+			List<ChiTietHoaDon> listChiTietHoaDon) {
 		super();
 		this.maHoaDon = PREFIX + generateRandomCode(5);
 		this.maKH = maKH;
 		this.maNV = maNV;
 		this.ngayLap = ngayLap;
 		this.ngayNhan = ngayNhan;
+		this.listChiTietHoaDon = listChiTietHoaDon;
 	}
+	
+	
 
 	public LocalDate getNgayLap() {
 		return ngayLap;
@@ -73,6 +89,18 @@ public class HoaDon {
 		this.maKH = maKH;
 	}
 
+	public List<ChiTietHoaDon> getListChiTietHoaDon() {
+		return listChiTietHoaDon;
+	}
+
+	public void setListChiTietHoaDon(List<ChiTietHoaDon> listChiTietHoaDon) {
+		this.listChiTietHoaDon = listChiTietHoaDon;
+	}
+
+	public void setMaHoaDon() {
+		this.maHoaDon = PREFIX + generateRandomCode(5);
+	}
+
 	public static String generateRandomCode(int length) {
 		String characters = "0123456789"; // Các ký tự được chấp nhận
 		StringBuilder sb = new StringBuilder();
@@ -87,7 +115,7 @@ public class HoaDon {
 	@Override
 	public String toString() {
 		return "HoaDon [maHoaDon=" + maHoaDon + ", maKH=" + maKH + ", maNV=" + maNV + ", ngayLap=" + ngayLap
-				+ ", ngayNhan=" + ngayNhan + "]";
+				+ ", ngayNhan=" + ngayNhan + ", listChiTietHoaDon=" + listChiTietHoaDon + "]";
 	}
 
 }

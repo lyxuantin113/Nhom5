@@ -3,7 +3,6 @@ package entity;
 import java.util.List;
 
 public class ChiTietHoaDon {
-	private HoaDon maHoaDon;
 	private Thuoc maThuoc;
 	private int soLuong;
 
@@ -11,19 +10,10 @@ public class ChiTietHoaDon {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChiTietHoaDon(HoaDon maHoaDon, Thuoc maThuoc, int soLuong) {
+	public ChiTietHoaDon(Thuoc maThuoc, int soLuong) {
 		super();
-		this.maHoaDon = maHoaDon;
 		this.maThuoc = maThuoc;
 		this.soLuong = soLuong;
-	}
-
-	public HoaDon getMaHoaDon() {
-		return maHoaDon;
-	}
-
-	public void setMaHoaDon(HoaDon maHoaDon) {
-		this.maHoaDon = maHoaDon;
 	}
 
 	public Thuoc getMaThuoc() {
@@ -44,7 +34,7 @@ public class ChiTietHoaDon {
 
 	@Override
 	public String toString() {
-		return "ChiTietHoaDon [maHoaDon=" + maHoaDon + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
+		return "ChiTietHoaDon [maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
 	}
 
 }

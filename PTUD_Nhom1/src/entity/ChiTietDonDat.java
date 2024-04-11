@@ -1,7 +1,6 @@
 package entity;
 
 public class ChiTietDonDat {
-	private DonDat maDonDat;
 	private Thuoc maThuoc;
 	private int soLuong;
 
@@ -9,19 +8,10 @@ public class ChiTietDonDat {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChiTietDonDat(DonDat maDonDat, Thuoc maThuoc, int soLuong) {
+	public ChiTietDonDat(Thuoc maThuoc, int soLuong) {
 		super();
-		this.maDonDat = maDonDat;
 		this.maThuoc = maThuoc;
 		this.soLuong = soLuong;
-	}
-
-	public DonDat getMaDonDat() {
-		return maDonDat;
-	}
-
-	public void setMaDonDat(DonDat maDonDat) {
-		this.maDonDat = maDonDat;
 	}
 
 	public Thuoc getMaThuoc() {
@@ -42,7 +32,7 @@ public class ChiTietDonDat {
 
 	@Override
 	public String toString() {
-		return "ChiTietDonDat [maDonDat=" + maDonDat + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
+		return "ChiTietDonDat [maThuoc=" + maThuoc + ", soLuong=" + soLuong + "]";
 	}
 
 }

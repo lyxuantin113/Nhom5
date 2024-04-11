@@ -32,8 +32,8 @@ public class KhachHang {
 		return maKH;
 	}
 
-	public void setMaKH(String maKH) {
-		this.maKH = maKH;
+	public void setMaKH() {
+		this.maKH = PREFIX + generateRandomCode(5);
 	}
 
 	public KhachHang(String sdtKH) {

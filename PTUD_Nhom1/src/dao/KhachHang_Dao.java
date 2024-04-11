@@ -85,28 +85,54 @@ public class KhachHang_Dao {
 	}
 
 	public KhachHang findBySDT(String sdtKH) {
-	    KhachHang kh = null;
-	    try {
-	        Connection con = ConnectDB.getInstance().getConnection();
-	        if (con == null) {
-	            System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
-	            return null;
-	        }
-	        String query = "SELECT * FROM KhachHang WHERE soDienThoai = ?";
-	        PreparedStatement stm = con.prepareStatement(query);
-	        stm.setString(1, sdtKH);
-	        ResultSet rs = stm.executeQuery(); // Sử dụng executeQuery() mà không có đối số
-	        if (rs.next()) {
-	            String maKH = rs.getString(1);
-	            String tenKH = rs.getString(3);
-	            kh = new KhachHang(maKH, sdtKH, tenKH);
-	        }
-	        return kh;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		KhachHang kh = null;
+		if (!sdtKH.equals("")) {
+			try {
+				Connection con = ConnectDB.getInstance().getConnection();
+				if (con == null) {
+					System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+					return null;
+				}
+				String query = "SELECT * FROM KhachHang WHERE soDienThoai = ?";
+				PreparedStatement stm = con.prepareStatement(query);
+				stm.setString(1, sdtKH);
+				ResultSet rs = stm.executeQuery(); // Sử dụng executeQuery() mà không có đối số
+				if (rs.next()) {
+					String maKH = rs.getString(1);
+					String tenKH = rs.getString(3);
+					kh = new KhachHang(maKH, sdtKH, tenKH);
+				}
+				return kh;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		else return null;
 	}
 
+	public KhachHang findById(String maKH) {
+		KhachHang kh = null;
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return null;
+			}
+			String query = "SELECT * FROM KhachHang WHERE maKH = ?";
+			PreparedStatement stm = con.prepareStatement(query);
+			stm.setString(1, maKH);
+			ResultSet rs = stm.executeQuery(); // Sử dụng executeQuery() mà không có đối số
+			if (rs.next()) {
+				String sdtKH = rs.getString(2);
+				String tenKH = rs.getString(3);
+				kh = new KhachHang(maKH, sdtKH, tenKH);
+			}
+			return kh;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }
