@@ -192,7 +192,103 @@ public class HoaDon_Dao {
 			return null;
 		}
 	}
+	
+//	THỐNG KÊ FULL FIELD
+	public List<HoaDon> findTKFullField(LocalDate ngayLap, String maNV, String maKH) {
+		List<HoaDon> listHD = new ArrayList<HoaDon>();
+		String query = "select * from HoaDon where ngayLap = ? AND maNV = ? AND maKH = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setDate(1, Date.valueOf(ngayLap));
+			pstmt.setString(2, maNV);
+			pstmt.setString(3, maKH);
 
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				listHD.add(findByID(maHD));
+			}
+			return listHD;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+//	Thống kê đơn của KH X được lập bởi NV Y theo tháng
+	public List<HoaDon> findXYinMonth(LocalDate ngayLap, String maNV, String maKH) {
+	    List<HoaDon> listHD = new ArrayList<HoaDon>();
+	    String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? AND maNV = ? AND maKH = ?";
+	    try {
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setInt(1, ngayLap.getMonthValue());
+	        pstmt.setInt(2, ngayLap.getYear());
+	        pstmt.setString(3, maNV);
+	        pstmt.setString(4, maKH);
+
+	        ResultSet rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            String maHD = rs.getString(1);
+	            listHD.add(findByID(maHD));
+	        }
+	        return listHD;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+//	Thống kê đơn của KH X được lập bởi NV Y theo năm
+	public List<HoaDon> findXYinYear(LocalDate ngayLap, String maNV, String maKH) {
+	    List<HoaDon> listHD = new ArrayList<HoaDon>();
+	    String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND maNV = ? AND maKH = ?";
+	    try {
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setInt(1, ngayLap.getYear());
+	        pstmt.setString(2, maNV);
+	        pstmt.setString(3, maKH);
+
+	        ResultSet rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            String maHD = rs.getString(1);
+	            listHD.add(findByID(maHD));
+	        }
+	        return listHD;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+//	Thống kê đơn của KH X được lập bởi NV Y 
+	public List<HoaDon> findXByY(String maNV, String maKH) {
+	    List<HoaDon> listHD = new ArrayList<HoaDon>();
+	    String query = "SELECT * FROM HoaDon WHERE maNV = ? AND maKH = ?";
+	    try {
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setString(1, maNV);
+	        pstmt.setString(2, maKH);
+
+	        ResultSet rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            String maHD = rs.getString(1);
+	            listHD.add(findByID(maHD));
+	        }
+	        return listHD;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
 //	DANH SÁCH
 	public List<HoaDon> getDSHD() {
 		return dshd;

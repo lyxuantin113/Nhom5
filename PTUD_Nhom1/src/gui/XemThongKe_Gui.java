@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,9 +17,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import dao.HoaDon_Dao;
+import dao.KhachHang_Dao;
+import dao.NhanVien_Dao;
 //import dao.ThongKe_Dao;
 import db.ConnectDB;
 import entity.HoaDon;
+import entity.KhachHang;
+import entity.NhanVien;
 
 public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private JPanel pnlMain;
@@ -63,6 +68,13 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private JLabel lblKhachHang;
 	private JLabel lblNhanVien;
 	private JLabel lblThongKe;
+	private JPanel pnlBottom;
+	private JLabel lblTongTien;
+	private Box boxTong;
+	private JTextField txtTongTien;
+	private JLabel lblTongLoi;
+	private JTextField txtTongLoi;
+	private JButton btnIn;
 
 	public XemThongKe_Gui() {
 
@@ -103,8 +115,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxThang = Box.createHorizontalBox();
 		lbThang = new JLabel("Xem theo tháng: ");
 		// Tạo mảng chứa tên các tháng
-		String[] months = { "", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8",
-				"Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+		String[] months = { "", "1", "2", "3", "4", "5", "6", "7", "8",
+				"9", "10", "11", "12" };
 		cbbThang = new JComboBox<>(months);
 		lbThang.setPreferredSize(new Dimension(100, 30));
 		cbbThang.setPreferredSize(new Dimension(100, 30));
@@ -199,7 +211,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		table = new JTable(model);
 		scroll = new JScrollPane();
 		scroll.setViewportView(table = new JTable(model));
-		scroll.setPreferredSize(new Dimension(350, 500)); // SET CHIỀU CAO TABLE
+		scroll.setPreferredSize(new Dimension(500, 350)); // SET CHIỀU CAO TABLE
 		table.setRowHeight(20);
 		boxTable.add(scroll);
 
@@ -208,13 +220,43 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxBoLoc.setBorder(BorderFactory.createTitledBorder("Bộ lọc"));
 		pnlCenter.add(boxContainer);
 
+//		BOTTOM
+		pnlBottom = new JPanel();
+		boxTong = Box.createHorizontalBox();
+		lblTongTien = new JLabel("Tổng tiền:");
+		lblTongTien.setPreferredSize(new Dimension(70, 30));
+		txtTongTien = new JTextField(15);
+		txtTongTien.setEditable(false);
+
+		lblTongLoi = new JLabel("Tổng lợi nhuận:");
+		lblTongLoi.setPreferredSize(new Dimension(100, 30));
+		txtTongLoi = new JTextField(15);
+		txtTongLoi.setEditable(false);
+
+		btnIn = new JButton("In thống kê");
+		btnIn.setPreferredSize(new Dimension(100, 35));
+
+		boxTong.add(lblTongTien);
+		boxTong.add(txtTongTien);
+		boxTong.add(Box.createHorizontalStrut(20));
+		boxTong.add(lblTongLoi);
+		boxTong.add(txtTongLoi);
+		boxTong.add(Box.createHorizontalStrut(20));
+		boxTong.add(btnIn);
+		pnlBottom.add(boxTong);
+
+//		MAIN
 		pnlMain.add(pnlHead, BorderLayout.NORTH);
 		pnlMain.add(pnlCenter, BorderLayout.CENTER);
+		pnlMain.add(pnlBottom, BorderLayout.SOUTH);
 
 		add(pnlMain);
-		// Action
+
+// 		ACTION
 		btnXoaRong.addActionListener(this);
 		btnXemThongKe.addActionListener(this);
+		btnIn.addActionListener(this);
+
 		ConnectDB.connect();
 		hienTable();
 		cbbThang.addActionListener(new ActionListener() {
@@ -273,6 +315,9 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		// Khởi tạo một Set để lưu trữ các năm đã xuất hiện
 		Set<Integer> namSet = new HashSet<>();
 
+		double tongTien = 0;
+		double tongLoi = 0;
+		
 		// Duyệt qua từng hóa đơn trong danh sách
 		for (HoaDon hoaDon : danhSachHoaDon) {
 			// Lấy năm từ ngày lập hóa đơn
@@ -297,12 +342,23 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 			// Thêm hàng vào bảng
 			model.addRow(rowData);
+			
+			tongTien += dsHD.tinhTongTien(hoaDon);
+			tongLoi += dsHD.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
+		
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
+		
+		
 		// Xóa các mục cũ trong Combobox của năm
 		cbbNam.removeAllItems();
+		cbbNam.addItem("");
 		// Xóa các lựa chọn cũ trong Combobox của Khách hàng và Nhân viên
 		cbbKhachHang.removeAllItems();
 		cbbNhanVien.removeAllItems();
+		cbbKhachHang.addItem("");
+		cbbNhanVien.addItem("");
 
 		// Thêm các năm từ Set vào Combobox của năm
 		for (int nam : namSet) {
@@ -345,7 +401,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnXemThongKe) {
-
+			checkThongKe();
 		}
 		if (e.getSource() == btnXoaRong) {
 			// Xóa rỗng Combobox của năm
@@ -370,12 +426,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	}
 
 	public void checkThongKe() {
-		String checkNam = cbbNam.getSelectedItem().toString();
-		String checkThang = cbbThang.getSelectedItem().toString();
-		String checkNgay = cbbNgay.getSelectedItem().toString();
-		String checkMaKH = cbbKhachHang.getSelectedItem().toString();
-		String checkMaNV = cbbNhanVien.getSelectedItem().toString();
-		String checkTypeThongKe = cbbSapXep.getSelectedItem().toString();
+		String checkNam = cbbNam.getSelectedItem() != null ? cbbNam.getSelectedItem().toString() : "";
+		String checkThang = cbbThang.getSelectedItem() != null ? cbbThang.getSelectedItem().toString() : "";
+		String checkNgay = cbbNgay.getSelectedItem() != null ? cbbNgay.getSelectedItem().toString() : "";
+		String checkMaKH = cbbKhachHang.getSelectedItem() != null ? cbbKhachHang.getSelectedItem().toString() : "";
+		String checkMaNV = cbbNhanVien.getSelectedItem() != null ? cbbNhanVien.getSelectedItem().toString() : "";
+		String checkTypeThongKe = cbbSapXep.getSelectedItem() != null ? cbbSapXep.getSelectedItem().toString() : "";
 
 		if (checkNam.equals("") && checkMaKH.equals("") && checkMaNV.equals("")) {
 			thongKeDon();
@@ -492,26 +548,134 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Thống kê đơn của KH X được lập bởi NV Y theo ngày
 	private void thongKeFullField() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String maKH = cbbKhachHang.getSelectedItem().toString();
 
+		LocalDate date = LocalDate.of(nam, thang, ngay);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findTKFullField(date, maNV, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+		
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+		
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Thống kê đơn của KH X được lập bởi NV Y theo tháng
 	private void thongKeXYinMonth() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String maKH = cbbKhachHang.getSelectedItem().toString();
 
+		LocalDate date = LocalDate.of(nam, thang, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findXYinMonth(date, maNV, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+		
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+		
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Thống kê đơn của KH X được lập bởi NV Y theo năm
 	private void thongKeXYinYear() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String maKH = cbbKhachHang.getSelectedItem().toString();
 
+		LocalDate date = LocalDate.of(nam, 1, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findXYinYear(date, maNV, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+		
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+		
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Thống kê đơn của KH X được lập bởi NV Y 
 	private void thongKeXY() {
-		// TODO Auto-generated method stub
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String maKH = cbbKhachHang.getSelectedItem().toString();
 
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findXByY(maNV, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+		
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+		
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Khách Hàng
@@ -590,15 +754,6 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeDon() {
 		// TODO Auto-generated method stub
 
-	}
-
-//	Thống Kê Các đơn của nhân viên X đã lập trong yyyy-MM-dd
-	private void thongKeDonNVAllField() {
-		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
-		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
-		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
-		String maKH = cbbKhachHang.getSelectedItem().toString();
 	}
 
 }
