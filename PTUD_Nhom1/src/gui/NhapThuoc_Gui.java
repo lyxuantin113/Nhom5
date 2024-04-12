@@ -396,14 +396,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 
 	}
 
-	private void capNhatGiaNhap() {
-		// Lấy giá nhập theo mã thuốc
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		Thuoc thuoc = thuocDao.readFromTable(cbbMaThuoc.getSelectedItem().toString());
-		txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
-
 	
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -498,6 +491,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			txtThanhTien.setText("");
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
+			// Xóa dữ liệu trong combobox
+			cbbMaThuoc.removeAllItems();
 		} else {
 			JOptionPane.showMessageDialog(this, "Hủy thất bại.");
 
@@ -554,7 +549,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		}
 
 	}
-
+	
 	private void taoPhieu() {
 		String maPNT = txtMaPNT.getText();
 		String maNV = txtMaNV.getText();
@@ -580,20 +575,23 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			cbbDonVi.setEnabled(true);
 			txtMaCTPNT.setText(maPNT);
 			// Add mã thuốc theo ncc vào combobox
-			Thuoc_Dao thuocDao = new Thuoc_Dao();
-			for (Thuoc thuoc : thuocDao.getDSTByNCC(maNCC)) {
-				cbbMaThuoc.addItem(thuoc.getMaThuoc());
-			}
-			// Lấy giá theo mã thuốc
-//			dkLayGiaNhap();
+			addMaThuoc(maNCC);
 			
-
 			hienTable(maPNT);
 
 		} else {
 			JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại.");
 		}
 
+	}
+
+	private void addMaThuoc(String maNCC) {
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		for (Thuoc thuoc : thuocDao.getDSTByNCC(maNCC)) {
+			cbbMaThuoc.addItem(thuoc.getMaThuoc());
+		}
+		// Đăng ký sự kiện cho combobox
+		dkLayGiaNhap();
 	}
 
 	private void dkLayGiaNhap() {
@@ -604,6 +602,14 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			}
 		});
 		
+	}
+	private void capNhatGiaNhap() {
+		// Lấy giá nhập theo mã thuốc
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		Thuoc thuoc = thuocDao.readFromTable(cbbMaThuoc.getSelectedItem().toString());
+		txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
+		txtGiaNhap.setEnabled(false);
+	
 	}
 
 	private void xoaTrang() {

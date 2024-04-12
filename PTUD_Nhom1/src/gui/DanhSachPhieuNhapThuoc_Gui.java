@@ -27,7 +27,11 @@ import entity.PhieuNhapThuoc;
 import entity.Thuoc;
 
 import java.io.FileOutputStream;
-import org.apache.poi.ss.usermodel.Workbook;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+
 
 
 
@@ -37,6 +41,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	private JTable table2;
 	private JButton btnDaNhan;
 	private JButton btnIn;
+	private JButton btnInChiTiet;
 
 	public DanhSachPhieuNhapThuoc_Gui() {
 		setSize(1070, 600);
@@ -99,11 +104,18 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		
 		//Footer
 		JPanel pnFoot = new JPanel();
+		btnInChiTiet = new JButton("In chi tiết");
+		btnInChiTiet.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnInChiTiet.setBackground(new Color(0, 160, 255));
+		pnFoot.add(btnInChiTiet);
+		pnMain.add(pnFoot, BorderLayout.SOUTH);
 		
 		
 		add(pnMain);
 		//Action
 		btnDaNhan.addActionListener(this);
+		btnIn.addActionListener(this);
+		btnInChiTiet.addActionListener(this);
 		
 		//Hiển thị danh sách phiếu nhập
 		hienTable();
@@ -158,51 +170,71 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			}
 			DSThuoc_Gui thuocGui = new DSThuoc_Gui();
 			thuocGui.hienTable();
-			// Hiển thị lại danh sách phiếu nhập
 			
 			hienTable();
 		}
 		if (o.equals(btnIn)) {
+			// In danh sách phiếu nhập
+			inPhieuNhap( table, "DanhSachPhieuNhap.xlsx");
+		}
+		if (o.equals(btnInChiTiet)) {
+			// Lấy mã phiếu nhập
+			int row = table.getSelectedRow();
+			if (row == -1) {
+				JOptionPane.showMessageDialog(this, "Chọn phiếu nhập cần in chi tiết!");
+				return;
+			}
+			String maPhieuNhap = table.getValueAt(row, 0).toString();
+			// In danh sách chi tiết phiếu nhập
+			maPhieuNhap += ".xlsx";
+			inPhieuNhap(table2, maPhieuNhap);
 			
-		
-			// In phiếu nhập
-//			try {
-//	            Workbook workbook = new XSSFWorkbook();
-//	            Sheet sheet = workbook.createSheet("Danh sách phiếu nhập");
-//
-//	            // Tiêu đề cột
-//	            Row headerRow = sheet.createRow(0);
-//	            for (int i = 0; i < table.getColumnCount(); i++) {
-//	                Cell cell = headerRow.createCell(i);
-//	                cell.setCellValue(table.getColumnName(i));
-//	            }
-//
-//	            // Dữ liệu từ JTable
-//	            for (int row = 0; row < table.getRowCount(); row++) {
-//	                Row excelRow = sheet.createRow(row + 1);
-//	                for (int col = 0; col < table.getColumnCount(); col++) {
-//	                    Object value = table.getValueAt(row, col);
-//	                    Cell cell = excelRow.createCell(col);
-//	                    if (value != null) {
-//	                        cell.setCellValue(value.toString());
-//	                    }
-//	                }
-//	            }
-//
-//	            // Lưu file Excel
-//	            FileOutputStream fileOut = new FileOutputStream("DanhSachPhieuNhap.xlsx");
-//	            workbook.write(fileOut);
-//	            fileOut.close();
-//	            workbook.close();
-//
-//	            JOptionPane.showMessageDialog(this, "Danh sách đã được in vào file Excel!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-//	        } catch (Exception ex) {
-//	            ex.printStackTrace();
-//	            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi in danh sách!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-//	        }
 		}
 		
 	}
+
+	private void inPhieuNhap(JTable table, String filePath) {
+		
+		try {
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Sheet1");
+
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+            // Lấy header
+            Row headerRow = ((XSSFSheet) sheet).createRow(0);
+            for (int col = 0; col < model.getColumnCount(); col++) {
+                Cell cell = headerRow.createCell(col);
+                cell.setCellValue(model.getColumnName(col));
+            }
+
+            // Lấy data
+            for (int row = 0; row < model.getRowCount(); row++) {
+                Row excelRow = ((XSSFSheet) sheet).createRow(row + 1);
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    Object value = model.getValueAt(row, col);
+                    Cell cell = excelRow.createCell(col);
+                    if (value != null) {
+                        cell.setCellValue(value.toString());
+                    }
+                }
+            }
+
+            // Viết vào file
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            workbook.write(fileOut);
+            fileOut.close();
+            workbook.close();
+
+            JOptionPane.showMessageDialog(this, "In thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("In thất bại!");
+        }
+		
+	}
+
+	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {

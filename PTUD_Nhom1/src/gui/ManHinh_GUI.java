@@ -171,14 +171,14 @@ public class ManHinh_GUI extends JFrame {
 		
 //		Menu Iten Nhập thuốc
 		JMenuItem nhapThuoc = new JMenuItem("Nhập Thuốc");
-		ImageIcon iconNhapThuoc = new ImageIcon("src//Icon//dsThuoc.png");
+		ImageIcon iconNhapThuoc = new ImageIcon("src//Icon//nhapThuoc.png");
 		Image imageNhapThuoc = iconNhapThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconNhapThuoc = new ImageIcon(imageNhapThuoc);
 		nhapThuoc.setIcon(iconNhapThuoc);
 		
 //		Menu Item Danh sách phiếu nhập thuốc
 		JMenuItem dsPhieuNhapThuoc = new JMenuItem("Danh sách phiếu nhập thuốc");
-		ImageIcon iconPhieuNhapThuoc = new ImageIcon("src//Icon//dsThuoc.png");
+		ImageIcon iconPhieuNhapThuoc = new ImageIcon("src//Icon//phieuNhap.png");
 		Image imagePhieuNhapThuoc = iconPhieuNhapThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconPhieuNhapThuoc = new ImageIcon(imagePhieuNhapThuoc);
 		dsPhieuNhapThuoc.setIcon(iconPhieuNhapThuoc);
@@ -186,7 +186,7 @@ public class ManHinh_GUI extends JFrame {
 		
 //		Menu Item Thêm Nhà Cung Cấp
 		JMenuItem themNCC = new JMenuItem("Thêm Nhà Cung Cấp");
-		ImageIcon iconThemNCC = new ImageIcon("src//Icon//themNCC.png");
+		ImageIcon iconThemNCC = new ImageIcon("src//Icon//themNCC.jpg");
 		Image imageThemNCC = iconThemNCC.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconThemNCC = new ImageIcon(imageThemNCC);
 		themNCC.setIcon(iconThemNCC);
