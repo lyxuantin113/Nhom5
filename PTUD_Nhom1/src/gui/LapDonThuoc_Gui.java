@@ -11,10 +11,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Console;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -48,7 +50,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JTextField tfTong;
 	private JTextField tfNgayLap;
 	private JTextField tfNgayNhan;
-	private JTextField tfMaHD;
 	private JTextField tfMaNV;
 	private JTextField tfTenKH;
 	private JTextField tfSDT;
@@ -57,15 +58,13 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JButton btnXoa;
 	private JTextField tfTimThuoc;
 	private JComboBox<String> cbbTimThuoc;
-	private Thuoc_Dao thuocDao;
-	private NhanVien_Dao nhanVienDao;
-	private KhachHang_Dao khachHangDao;
-	private HoaDon_Dao hoaDonDao;
-	private DonDat_Dao donDatDao;
-	private ChiTietHoaDon_Dao cthdDao;
-	private ChiTietDonDat_Dao ctddDao;
+
 	private JButton btnReset;
 	private JButton btnTim;
+
+//	TEMPORARY tạm lưu danh sách ChiTietHoaDon
+	List<ChiTietHoaDon> tempListHD = new ArrayList<ChiTietHoaDon>();
+	List<ChiTietDonDat> tempListDD = new ArrayList<ChiTietDonDat>();
 
 	public LapDonThuoc_Gui() {
 //		JPANEL
@@ -238,35 +237,27 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		boxTong.add(lbNgayLap);
 		boxTong.add(tfNgayLap);
 
-//		Ngày Nhận
-		JLabel lbNgayNhan = new JLabel("Ngày Nhận: ");
-		lbNgayNhan.setPreferredSize(new Dimension(100, 30));
-		tfNgayNhan = new JTextField(20);
-		boxTong.add(Box.createHorizontalStrut(30));
-		boxTong.add(lbNgayNhan);
-		boxTong.add(tfNgayNhan);
-
 		pnEndHD.add(boxTong);
 		pnEndHD.add(Box.createVerticalStrut(10));
 
 //		BOX2
-//		Mã Đơn Đặt
-		JLabel lbMaHD = new JLabel("Mã Đơn:");
-		lbMaHD.setPreferredSize(new Dimension(100, 30));
-		tfMaHD = new JTextField(20);
-		boxMa.add(Box.createHorizontalStrut(10));
-		boxMa.add(lbMaHD);
-		boxMa.add(tfMaHD);
-
 //		Mã NV
 		JLabel lbMaNV = new JLabel("Mã Nhân Viên: ");
 		lbMaNV.setPreferredSize(new Dimension(100, 30));
 		tfMaNV = new JTextField(20);
-		boxMa.add(Box.createHorizontalStrut(30));
+		boxMa.add(Box.createHorizontalStrut(10));
 		boxMa.add(lbMaNV);
 		boxMa.add(tfMaNV);
 		pnEndHD.add(boxMa);
 		pnEndHD.add(Box.createVerticalStrut(10));
+
+//		Ngày Nhận
+		JLabel lbNgayNhan = new JLabel("Ngày Nhận: ");
+		lbNgayNhan.setPreferredSize(new Dimension(100, 30));
+		tfNgayNhan = new JTextField(20);
+		boxMa.add(Box.createHorizontalStrut(30));
+		boxMa.add(lbNgayNhan);
+		boxMa.add(tfNgayNhan);
 
 //		Box 3
 //		Tên Khách Hàng
@@ -325,18 +316,11 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		btnTim.addActionListener(this);
 		btnReset.addActionListener(this);
 		btnThem.addActionListener(this);
+		btnXoa.addActionListener(this);
 		btnLapHD.addActionListener(this);
 		btnLapDD.addActionListener(this);
 		tableThuoc.addMouseListener(this);
 		tableHoaDon.addMouseListener(this);
-
-		thuocDao = new Thuoc_Dao();
-		nhanVienDao = new NhanVien_Dao();
-		khachHangDao = new KhachHang_Dao();
-		hoaDonDao = new HoaDon_Dao();
-		donDatDao = new DonDat_Dao();
-		cthdDao = new ChiTietHoaDon_Dao();
-		ctddDao = new ChiTietDonDat_Dao();
 
 		ConnectDB.connect();
 		hienTableThuoc();
@@ -351,8 +335,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
-			Object[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
-					thuoc.getDonVi(), thuoc.getGiaBan(), thuoc.getSoLuongTon()};
+			Object[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getDonVi(),
+					thuoc.getGiaBan(), thuoc.getSoLuongTon() };
 			model.addRow(rowData);
 		}
 	}
@@ -361,13 +345,16 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
 		model.setRowCount(0);
 
-		Map<Thuoc, Integer> mapThuoc = cthdDao.getDanhSachDon();
-		if(mapThuoc!=null) {
-			for (Map.Entry<Thuoc, Integer> entry : mapThuoc.entrySet()) {
-				Thuoc thuoc = entry.getKey();
-				Integer soLuong = entry.getValue();
+		ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
 
-				Object[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), soLuong }; // Tạo dữ liệu hàng mới
+		List<ChiTietHoaDon> listChiTietHD = cthdDao.getList();
+		if (listChiTietHD != null) {
+			for (ChiTietHoaDon chiTietHoaDon : listChiTietHD) {
+				Thuoc thuoc = chiTietHoaDon.getMaThuoc();
+				Integer soLuong = chiTietHoaDon.getSoLuong();
+
+				Object[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getGiaBan(),
+						thuoc.getDonVi(), soLuong, thuoc.getGiaBan() * soLuong }; // Tạo dữ liệu hàng mới
 
 				model.addRow(rowData); // Thêm hàng vào model
 			}
@@ -378,25 +365,22 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o == btnThem) {
-			if (this.checkQuatity())
+			if (this.checkQuatity() && hasThuoc())
 				this.addOrderDetail();
-			else
-				JOptionPane.showMessageDialog(this, "Lưu ý: Số thuốc vượt quá thuốc tồn kho!");
 		}
 		if (o == btnXoa) {
 			this.deleteOrderDetail();
-			
+
 		}
 		if (o == btnLapHD) {
-//			Check isValid();
-			lapHoaDon();
-			cthdDao.resetDanhSachDon();
-			xoaTrangTatCa();
+			if (checkValidLap()) {
+				lapHoaDon();
+				xoaTrangTatCa();
+			}
 		}
 		if (o == btnLapDD) {
-			if(checkDate()) {				
+			if (checkDate() && checkValidLap() && hasKhach()) {
 				lapDonDat();
-				cthdDao.resetDanhSachDon();
 				xoaTrangTatCa();
 			}
 		}
@@ -419,7 +403,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void xoaTrangTatCa() {
 		tfMaThuoc.setText("");
 		tfSoLuong.setText("");
-		tfMaHD.setText("");
 		tfMaNV.setText("");
 		tfTenKH.setText("");
 		tfSDT.setText("");
@@ -428,45 +411,148 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 	// KIỂM TRA VIỆC THÊM XÓA THUỐC VÀO ĐƠN
 	public boolean checkQuatity() {
-		List<Thuoc> listThuoc = thuocDao.timTheoMa(tfMaThuoc.getText()); //Tim Thuoc
-		for (Thuoc thuoc : listThuoc) {			
-			if(thuoc.getSoLuongTon() < Integer.parseInt(tfSoLuong.getText())) 
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		List<Thuoc> listThuoc = thuocDao.timTheoMa(tfMaThuoc.getText()); // Tim Thuoc
+		for (Thuoc thuoc : listThuoc) {
+			if (thuoc.getSoLuongTon() < Integer.parseInt(tfSoLuong.getText())) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng thuốc yêu cầu vượt quá thuốc tồn kho!");
+				return false;				
+			}
+		}
+
+		try {
+			int soLuongThuoc = Integer.parseInt(tfSoLuong.getText());
+			if (soLuongThuoc <= 0) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng phải > 0");
 				return false;
+			}
+			return true;
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Nhập số lượng là số");
+			return false;
+		}
+	}
+
+	public boolean checkDate() {
+		if(tfNgayNhan.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập Ngày lập");
+			return false;
+		}
+		
+		try {		
+			LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
+			LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
+			String ngayNhanText = tfNgayNhan.getText();
+			
+			if (ngayLapHD.isAfter(ngayNhanHD)) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận phải sau Ngày lập");
+				return false;
+			}
+			
+			if (ngayNhanText.equals("")) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập ngày nhận (yyyy-MM-dd)");
+				return false;
+			}
+			
+			if (!Pattern.matches("\\d{4}-\\d{2}-\\d{2}", ngayNhanText)) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận có định dạng là (yyyy-MM-dd)");
+				return false;
+			}
+		} catch (DateTimeParseException e) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean checkValidLap() {
+		String tenKhach = tfTenKH.getText();
+		String sdt = tfSDT.getText();
+
+		if (!Pattern.matches("([A-Z]{1}[a-z]+)( [A-Z]{1}[a-z]*)*", tenKhach) && !tenKhach.equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Tên Khách chưa đúng định dạng");
+			return false;
+		}
+		if (!Pattern.matches("^((84|0)(3[2-9]|5[2689]|7[06789]|8[1-9]|9[0-9])\\d{7})$", sdt) && !sdt.equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Số điện thoại chưa đúng định dạng");
+			return false;
+		}
+		return true;
+	}
+
+//	XỬ LÝ SỰ KIỆN
+	public boolean hasKhach() {
+		if(tfTenKH.getText().equals("") || tfSDT.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Đơn đặt phải có đầy đủ thông tin Khách hàng");
+			return false;
 		}
 		return true;
 	}
 	
-	public boolean checkDate() {
-		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
-		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
-		
-		if(ngayLapHD.isAfter(ngayNhanHD)) return false;
-		return true;
+	public boolean hasThuoc() {
+		if(tfMaThuoc.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập thông tin thuốc!");
+			return false;
+		}
+		return true;	
 	}
-
+	
 	public void addOrderDetail() {
-		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
+
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		String maThuoc = tfMaThuoc.getText();
-		List<Thuoc> listThuoc = thuocDao.timTheoMa(maThuoc); // Tim Thuoc
+		Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
 		int soLuong = Integer.parseInt(tfSoLuong.getText());
-		Thuoc thuoc = listThuoc.get(0);
-//		
-//		Add List ChiTietHoaDon 
-		if (dshd != null && dshd.containsKey(thuoc)) {
-			int value = dshd.get(thuoc);
-			int newValue = value + soLuong;
-			cthdDao.addDanhSachDon(thuoc, newValue);
-		} else
-			cthdDao.addDanhSachDon(thuoc, soLuong);
+		ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
+		ChiTietDonDat ctdd = new ChiTietDonDat(thuoc, soLuong);
 
-//		Trừ đi số lương tồn
-		int updateTonKho = thuoc.getSoLuongTon() - soLuong;
-		thuoc.setSoLuongTon(updateTonKho);
+		int check = 0;
+		for (int i = 0; i < tempListHD.size(); i++) {
+			if (tempListHD.get(i).getMaThuoc().getMaThuoc().equalsIgnoreCase(maThuoc)
+					&& tempListDD.get(i).getMaThuoc().getMaThuoc().equalsIgnoreCase(maThuoc)) {
+				int slHD = tempListHD.get(i).getSoLuong();
 
-		String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getGiaBan() + "",
-				thuoc.getDonVi(), soLuong + "", thuoc.getGiaBan() * soLuong + "" };
-		modelHoaDon.addRow(rowData);
-		xoaTrangThuoc();
+				if(thuoc.getSoLuongTon() < slHD+soLuong) {
+					JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng thuốc yêu cầu vượt quá thuốc tồn kho!");
+					check++;
+					break;
+				}
+				else {
+					tempListHD.get(i).setSoLuong(slHD + soLuong);
+					tempListDD.get(i).setSoLuong(slHD + soLuong);
+					check++;
+					break;					
+				}
+			}
+		}
+
+		if (check == 0) {
+			tempListHD.add(cthd);
+			tempListDD.add(ctdd);
+
+			String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getGiaBan() + "",
+					thuoc.getDonVi(), soLuong + "", thuoc.getGiaBan() * soLuong + "" };
+			modelHoaDon.addRow(rowData);
+			xoaTrangThuoc();
+		} else {
+			int rowCount = modelHoaDon.getRowCount();
+			for (int i = rowCount - 1; i >= 0; i--) {
+				modelHoaDon.removeRow(i);
+			}
+			for (ChiTietDonDat chiTietDonDat : tempListDD) {
+				String[] rowData = { chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getMaThuoc().getTenThuoc(),
+						chiTietDonDat.getMaThuoc().getLoaiThuoc(), chiTietDonDat.getMaThuoc().getGiaBan() + "",
+						chiTietDonDat.getMaThuoc().getDonVi(), chiTietDonDat.getSoLuong() + "",
+						chiTietDonDat.getMaThuoc().getGiaBan() * chiTietDonDat.getSoLuong() + "" };
+				modelHoaDon.addRow(rowData);
+				xoaTrangThuoc();
+			}
+		}
+
+//		Trừ số lương tồn
+//		int updateTonKho = thuoc.getSoLuongTon() - soLuong;
+//		thuoc.setSoLuongTon(updateTonKho);
 
 //		Total Price
 		double total = 0;
@@ -478,116 +564,156 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	}
 
 	public void deleteOrderDetail() {
-		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
 		int selectedRow = tableHoaDon.getSelectedRow();
 		if (selectedRow != -1) {
+			Thuoc_Dao thuocDao = new Thuoc_Dao();
 			String maThuoc = (String) tableHoaDon.getValueAt(selectedRow, 0);
-			int soLuong = (int) tableHoaDon.getValueAt(selectedRow, 5);
-			// Tìm thuốc trong danhSachDon có mã là maThuoc và xóa nó nếu tồn tại
-			Iterator<Map.Entry<Thuoc, Integer>> iterator = dshd.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry<Thuoc, Integer> entry = iterator.next();
-				Thuoc thuoc = entry.getKey();
-				if (thuoc.getMaThuoc().equals(maThuoc)) {
-					iterator.remove();
-					int updateTonKho = thuoc.getSoLuongTon() + soLuong;
-					thuoc.setSoLuongTon(updateTonKho);
-					
-					cthdDao.deleteDanhSachDon(thuoc);
-					modelHoaDon.removeRow(selectedRow);
-					hienTableHoaDon();
-					xoaTrangThuoc();
-				}
-			}
+			Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
+			int soLuong = Integer.parseInt(tableHoaDon.getValueAt(selectedRow, 5).toString());
+
+			ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
+			ChiTietDonDat ctdd = new ChiTietDonDat(thuoc, soLuong);
+			tempListHD.remove(cthd);
+			tempListDD.remove(ctdd);
+
+//			Cập Nhật Số Lượng
+//			int updateTonKho = thuoc.getSoLuongTon() + soLuong;
+//			thuoc.setSoLuongTon(updateTonKho);	
+
+			modelHoaDon.removeRow(selectedRow);
+			xoaTrangThuoc();
 		} else
 			JOptionPane.showMessageDialog(null, "Lưu ý: Chưa có cột được chọn!");
 	}
 
 //	LẬP HÓA ĐƠN
 	private void lapHoaDon() {
-		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
-		
+		KhachHang_Dao khachHangDao = new KhachHang_Dao();
+		List<KhachHang> listKH = khachHangDao.getDSKH();
 		String tenKH = tfTenKH.getText();
 		String sdtKH = tfSDT.getText();
 		KhachHang kh = khachHangDao.findBySDT(sdtKH);
-		if(kh==null && sdtKH.equals("")) {
+		if (kh == null && sdtKH.equals("")) {
 			kh = new KhachHang("", tenKH);
+			int i = 0;
+			while (i < listKH.size()) {
+				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
+					kh.setMaKH();
+					i = 0;
+				} else
+					i++;
+			}
 			khachHangDao.addKhachHang(kh);
-		}
-		else if(kh==null) {
+		} else if (kh == null && sdtKH.equals("") && tenKH.equals("")) {
+			kh = null;
+		} else if (kh == null) {
 			kh = new KhachHang(sdtKH, tenKH);
+			int i = 0;
+			while (i < listKH.size()) {
+				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
+					kh.setMaKH();
+					i = 0;
+				} else
+					i++;
+			}
 			khachHangDao.addKhachHang(kh);
 		}
-		
+
+		NhanVien_Dao nhanVienDao = new NhanVien_Dao();
 		String maNV = tfMaNV.getText();
-		List<NhanVien> listNhanVien = nhanVienDao.getNhanVien(maNV);
-		NhanVien nv = listNhanVien.get(0);
+		NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
 
 		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
 		LocalDate ngayNhanHD = ngayLapHD;
 
-		HoaDon hoaDon = new HoaDon(kh, nv, ngayLapHD, ngayNhanHD);
-
-		// Duyệt qua mỗi cặp key-value trong mapChiTiet
-		for (Map.Entry<Thuoc, Integer> entry : dshd.entrySet()) {
-			Thuoc thuoc = entry.getKey();
-			int soLuong = entry.getValue();
-
-			ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(hoaDon, thuoc, soLuong);
-			cthdDao.addOne(chiTietHoaDon);
-		}
+		HoaDon_Dao hoaDonDao = new HoaDon_Dao();
+		HoaDon hoaDon = new HoaDon(kh, nv, ngayLapHD, ngayNhanHD, tempListHD);
 
 		hoaDonDao.addOne(hoaDon);
 		int rowCount = modelHoaDon.getRowCount();
 		for (int i = rowCount - 1; i >= 0; i--) {
 			modelHoaDon.removeRow(i);
 		}
+		
+//		Cập nhật số lượng trong kho
+		for (ChiTietHoaDon chiTietHoaDon : hoaDon.getListChiTietHoaDon()) {
+			Thuoc_Dao thuocDao = new Thuoc_Dao();
+			thuocDao.updateThuocQuatity(chiTietHoaDon.getMaThuoc().getMaThuoc(), chiTietHoaDon.getSoLuong());
+		}
+		
+		
+		int rowCount2 = modelThuoc.getRowCount();
+		for (int i = rowCount2 - 1; i >= 0; i--) {
+			modelThuoc.removeRow(i);
+		}
+		hienTableThuoc();
+		
+		resetTempListHD();
+		resetTempListDD();
 	}
 
 //	LẬP ĐƠN ĐẶT
 	private void lapDonDat() {
-		Map<Thuoc, Integer> dshd = cthdDao.getDanhSachDon();
-		
+		KhachHang_Dao khachHangDao = new KhachHang_Dao();
+		List<KhachHang> listKH = khachHangDao.getDSKH();
 		String tenKH = tfTenKH.getText();
 		String sdtKH = tfSDT.getText();
 		KhachHang kh = khachHangDao.findBySDT(sdtKH);
-		if(kh==null && sdtKH.equals("")) {
-			kh = new KhachHang("", tenKH);
-			khachHangDao.addKhachHang(kh);
-		}
-		else if(kh==null) {
+		if (kh == null) {
 			kh = new KhachHang(sdtKH, tenKH);
+			int i = 0;
+			while (i < listKH.size()) {
+				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
+					kh.setMaKH();
+					i = 0;
+				} else
+					i++;
+			}
 			khachHangDao.addKhachHang(kh);
 		}
 
+		NhanVien_Dao nhanVienDao = new NhanVien_Dao();
 		String maNV = tfMaNV.getText();
-		List<NhanVien> listNhanVien = nhanVienDao.getNhanVien(maNV);
-		NhanVien nv = listNhanVien.get(0);
+		NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
 
 		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
 		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
-		;
 
-		DonDat donDat = new DonDat(kh, nv, ngayLapHD, ngayNhanHD);
-
-		// Duyệt qua mỗi cặp key-value trong mapChiTiet
-		for (Map.Entry<Thuoc, Integer> entry : dshd.entrySet()) {
-			Thuoc thuoc = entry.getKey();
-			int soLuong = entry.getValue();
-
-			ChiTietDonDat chiTietDonDat = new ChiTietDonDat(donDat, thuoc, soLuong);
-			chiTietDonDat.setMaThuoc(thuoc);
-			chiTietDonDat.setSoLuong(soLuong);
-			ctddDao.addOne(chiTietDonDat);
-		}
-
+		DonDat_Dao donDatDao = new DonDat_Dao();
+		DonDat donDat = new DonDat(kh, nv, ngayLapHD, ngayNhanHD, tempListDD);
 		donDatDao.addOne(donDat);
+
 		int rowCount = modelHoaDon.getRowCount();
 		for (int i = rowCount - 1; i >= 0; i--) {
 			modelHoaDon.removeRow(i);
 		}
+
+//		Cập nhật số lượng trong kho
+		for (ChiTietDonDat chiTietDonDat : donDat.getListChiTietDonDat()) {
+			Thuoc_Dao thuocDao = new Thuoc_Dao();
+			thuocDao.updateThuocQuatity(chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getSoLuong());
+		}
+		
+		
+		int rowCount2 = modelThuoc.getRowCount();
+		for (int i = rowCount2 - 1; i >= 0; i--) {
+			modelThuoc.removeRow(i);
+		}
+		hienTableThuoc();
+		
+		resetTempListDD();
+		resetTempListHD();
 	}
-	
+
+//	RESET TEMP LIST
+	public void resetTempListHD() {
+		tempListHD.clear();
+	}
+
+	public void resetTempListDD() {
+		tempListDD.clear();
+	}
+
 //	TÌM THUỐC
 	private void timThuoc() {
 		// Lấy thông tin tìm kiếm
@@ -602,8 +728,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		} else {
 			if (cachTim.equals("Mã thuốc")) {
 				List<Thuoc> listThuoc = thuocDao.timTheoMa(thongTin);
-				if (listThuoc!=null) {
-					for (Thuoc thuoc : listThuoc) {						
+				if (listThuoc != null) {
+					for (Thuoc thuoc : listThuoc) {
 						DefaultTableModel model = (DefaultTableModel) tableThuoc.getModel();
 						model.setRowCount(0);
 						Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),

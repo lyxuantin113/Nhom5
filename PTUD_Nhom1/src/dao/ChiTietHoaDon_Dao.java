@@ -17,7 +17,6 @@ import entity.Thuoc;
 
 public class ChiTietHoaDon_Dao {
 	List<ChiTietHoaDon> dscthd = null;
-	Map<Thuoc, Integer> danhSachDon = new LinkedHashMap<>();
 	Connection con = null;
 	private PreparedStatement pstmt;
 	
@@ -25,97 +24,68 @@ public class ChiTietHoaDon_Dao {
 		dscthd = new ArrayList<ChiTietHoaDon>();
 		con = ConnectDB.getInstance().getConnection();
 	}
-	
-	public void addDanhSachDon(Thuoc thuoc, int soLuong) {
-		danhSachDon.put(thuoc, soLuong);
-	}
-	
-	public void deleteDanhSachDon(Thuoc thuoc) {
-		danhSachDon.remove(thuoc);
-	}
-	
-	public void resetDanhSachDon() {
-		danhSachDon = new LinkedHashMap<>();
-	}
-	
-	public Map<Thuoc, Integer> getDanhSachDon() {
-		return danhSachDon;
-	}
-	
-	public List<ChiTietHoaDon> findByID(HoaDon maHoaDon) {
-		String query = "Select * from ChiTietHoaDon Where maHoaDon = ?";
-		Statement stmt;
-		try {
-			pstmt.setObject(1, maHoaDon);
 
-			stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			
-			while(rs.next()) {
-				HoaDon hoaDon = (HoaDon) rs.getObject(1); 
-				Thuoc thuoc = (Thuoc) rs.getObject(2);
-				int soLuong = rs.getInt(3);
-				ChiTietHoaDon cthd = new ChiTietHoaDon(hoaDon, thuoc, soLuong);
-				dscthd.add(cthd);
+	public List<ChiTietHoaDon> findByID(String maHoaDon) {
+		String query = "SELECT * FROM ChiTietHoaDon WHERE maHoaDon = ?";
+		List<ChiTietHoaDon> listChiTietHoaDon = new ArrayList<ChiTietHoaDon>();
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maHoaDon);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				// Lấy ID của thuốc từ ResultSet
+				String maThuoc = rs.getString("maThuoc");
+				int soLuong = rs.getInt("soLuong");
+
+				// Tạo mới một đối tượng Thuoc với ID tương ứng
+				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
+
+				ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
+				listChiTietHoaDon.add(cthd);
 			}
+			return listChiTietHoaDon;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
-		
-		return dscthd;
 	}
-	
-	public void addOne(ChiTietHoaDon chiTietHoaDon) {
+
+	public void add(HoaDon hoaDon) {
 		try {
 			String query = "Insert into ChiTietHoaDon Values (?,?,?)";
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, chiTietHoaDon.getMaHoaDon().getMaHoaDon());
-			pstmt.setString(2, chiTietHoaDon.getMaThuoc().getDonVi());
-			pstmt.setInt(3, chiTietHoaDon.getSoLuong());
-			pstmt.executeUpdate();
-			dscthd.add(chiTietHoaDon);
+			for (ChiTietHoaDon chiTietHoaDon : hoaDon.getListChiTietHoaDon()) {
+				pstmt.setString(1, hoaDon.getMaHoaDon());
+				pstmt.setString(2, chiTietHoaDon.getMaThuoc().getMaThuoc());
+				pstmt.setInt(3, chiTietHoaDon.getSoLuong());
+				pstmt.executeUpdate();
+				dscthd.add(chiTietHoaDon);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean deleteById(Thuoc maThuoc) {
+
+	public boolean deleteOne(ChiTietHoaDon chiTietHoaDon) {
 		String query = "Delete from ChiTietHoaDon Where maThuoc = ?";
 		int n = 0;
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setObject(1, maThuoc);
+			pstmt.setString(1, chiTietHoaDon.getMaThuoc().getMaThuoc());
+			dscthd.remove(chiTietHoaDon);
 			n = pstmt.executeUpdate();
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return n > 0;
 	}
-	
-	public boolean updateSoLuong(ChiTietHoaDon chiTietHoaDon) {
-		String query = "Update ChiTietHoaDon "
-				+ "Set soLuong = soLuong + ? "
-				+ "Where maHoaDon = ?, maThuoc = ?";
-		int n = 0;
-		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, chiTietHoaDon.getSoLuong());
-			pstmt.setObject(2, chiTietHoaDon.getMaHoaDon());
-			pstmt.setObject(3, chiTietHoaDon.getMaThuoc());
-			n = pstmt.executeUpdate();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return n > 0;
-	}
-	
+
 	public List<ChiTietHoaDon> getList() {
 		return dscthd;
 	}
-	
-//	public void resetList() {
-//		dscthd = null;
-//	}
 
 }

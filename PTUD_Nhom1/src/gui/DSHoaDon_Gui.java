@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import javax.swing.Box;
@@ -16,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -30,10 +33,11 @@ import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
+import entity.ChiTietHoaDon;
 import entity.DonDat;
 import entity.HoaDon;
 
-public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
+public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListener {
 	private JComboBox<String> cbbTim;
 	private JTable tableThuoc;
 	private JTable tableHoaDon;
@@ -45,8 +49,10 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 	private KhachHang_Dao khachHangDao;
 	private HoaDon_Dao hoaDonDao;
 	private ChiTietHoaDon_Dao cthdDao;
+	private DefaultTableModel modelHoaDon;
+	private JTextField tfTim;
 
-	public DSHoaDon() {
+	public DSHoaDon_Gui() {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
@@ -95,8 +101,8 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 		JLabel lbTableHoaDon = new JLabel("Danh Sách Hóa Đơn:");
 		lbTableHoaDon.setFont(fo16);
 		Box boxTableHoaDon = Box.createVerticalBox();
-		String[] headerHoaDon = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận".split(";");
-		DefaultTableModel modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
+		String[] headerHoaDon = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
+		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
 		tableHoaDon = new JTable(modelHoaDon);
 		JScrollPane scrollHoaDon = new JScrollPane();
 		scrollHoaDon.setViewportView(tableHoaDon = new JTable(modelHoaDon));
@@ -129,13 +135,13 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 		cbbTim.addItem("Ngày nhận");
 		cbbTim.setPreferredSize(new Dimension(110, 35));
 
-		JTextField tfTim = new JTextField(17);
+		tfTim = new JTextField(17);
 		tfTim.setPreferredSize(new Dimension(0, 35));
 		btnTim = new JButton("Tìm kiếm");
 		btnTim.setBackground(new Color(0, 160, 255));
 		btnTim.setPreferredSize(new Dimension(100, 35));
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		btnReset = new JButton("Reset");
 		btnReset.setBackground(new Color(0, 160, 255));
 		btnReset.setPreferredSize(new Dimension(100, 35));
@@ -168,33 +174,51 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 
 //		END
 		add(pnMain);
-		
+
 		thuocDao = new Thuoc_Dao();
 		nhanVienDao = new NhanVien_Dao();
 		khachHangDao = new KhachHang_Dao();
 		hoaDonDao = new HoaDon_Dao();
 		cthdDao = new ChiTietHoaDon_Dao();
-		
+
 		tableHoaDon.addMouseListener(this);
 		tableThuoc.addMouseListener(this);
 		btnTim.addActionListener(this);
 		btnReset.addActionListener(this);
 		btnIn.addActionListener(this);
-		
-		hienTableHoaDon();
 
+		hienTableHoaDon();
 	}
 
-	private void hienTableHoaDon() {
+	public void hienTableHoaDon() {
 		DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
 		model.setRowCount(0);
 
-		List<HoaDon> listHoaDon = hoaDonDao.getDSHD();
+		List<HoaDon> listHoaDon = hoaDonDao.readFromTable();
 		if (listHoaDon != null) {
 			for (HoaDon hoaDon : listHoaDon) {
-				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen()
-						, hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan()}; // Tạo dữ liệu hàng mới
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen(),
+						hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(),
+						hoaDonDao.tinhTongTien(hoaDon) };
 
+				model.addRow(rowData); // Thêm hàng vào model
+			}
+		}
+	}
+
+	private void hienTableChiTietHoaDon(int rowSelected) {
+		String maHoaDon = modelHoaDon.getValueAt(rowSelected, 0).toString();
+
+		DefaultTableModel model = (DefaultTableModel) tableThuoc.getModel();
+		model.setRowCount(0);
+
+		List<ChiTietHoaDon> listChiTietHoaDon = cthdDao.findByID(maHoaDon);
+		if (listChiTietHoaDon != null) {
+			for (ChiTietHoaDon chiTietHoaDon : listChiTietHoaDon) {
+				Object[] rowData = { chiTietHoaDon.getMaThuoc().getMaThuoc(), chiTietHoaDon.getMaThuoc().getTenThuoc(),
+						chiTietHoaDon.getMaThuoc().getLoaiThuoc(), chiTietHoaDon.getMaThuoc().getGiaBan(),
+						chiTietHoaDon.getMaThuoc().getDonVi(), chiTietHoaDon.getSoLuong(),
+						chiTietHoaDon.getSoLuong() * chiTietHoaDon.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng mới
 				model.addRow(rowData); // Thêm hàng vào model
 			}
 		}
@@ -202,37 +226,120 @@ public class DSHoaDon extends JPanel implements ActionListener, MouseListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		Object o = e.getSource();
+		if (o.equals(btnTim)) {
+			timKiem();
+			tfTim.setText("");
+			tfTim.requestFocus();
+		}
+		if (o.equals(btnReset)) {
+			hienTableHoaDon();
+			tfTim.setText("");
+			DefaultTableModel model = (DefaultTableModel) tableThuoc.getModel();
+			model.setRowCount(0);
+		}
+	}
+
+	public void timKiem() {
+		String typeSearch = cbbTim.getSelectedItem().toString();
+		String textFind = tfTim.getText();
+
+		if (textFind.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin tìm kiếm.");
+		} else {
+			if (typeSearch.equalsIgnoreCase("Mã đơn")) {
+				HoaDon hoaDon = hoaDonDao.findByID(textFind);
+				if (hoaDon != null) {
+					DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+					model.setRowCount(0);
+
+					Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen(),
+							hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(),
+							hoaDonDao.tinhTongTien(hoaDon) };
+
+					model.addRow(rowData);
+				}
+			} else if (typeSearch.equalsIgnoreCase("Mã Nhân viên")) {
+				List<HoaDon> listHD = hoaDonDao.findByNhanVien(textFind);
+				if (listHD != null) {
+					DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+					model.setRowCount(0);
+					for (HoaDon hoaDon : listHD) {
+						Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+								hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
+								hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+						model.addRow(rowData);
+					}
+				}
+			} else if (typeSearch.equalsIgnoreCase("Ngày lập")) {
+				try {
+					LocalDate textFindDate = LocalDate.parse(tfTim.getText());
+					List<HoaDon> listHD = hoaDonDao.findByNgayLap(textFindDate);
+					if (listHD != null) {
+						DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+						model.setRowCount(0);
+						for (HoaDon hoaDon : listHD) {
+							Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+									hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
+									hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+							model.addRow(rowData);
+						}
+					}
+				} catch (DateTimeParseException e) {
+					JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
+					return;
+				}
+			} else if (typeSearch.equalsIgnoreCase("Ngày nhận")) {
+				try {
+					LocalDate textFindDate = LocalDate.parse(tfTim.getText());
+					List<HoaDon> listHD = hoaDonDao.findByNgayNhan(textFindDate);
+					if (listHD != null) {
+						DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+						model.setRowCount(0);
+						for (HoaDon hoaDon : listHD) {
+							Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+									hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
+									hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+							model.addRow(rowData);
+						}
+					}
+				} catch (DateTimeParseException e) {
+					JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
+					return;
+				}
+			}
+		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		int rowSelectedDon = tableHoaDon.getSelectedRow();
+		if (rowSelectedDon != -1) {
+			hienTableChiTietHoaDon(rowSelectedDon);
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

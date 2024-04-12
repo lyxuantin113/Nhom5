@@ -17,81 +17,68 @@ public class ChiTietDonDat_Dao {
 	List<ChiTietDonDat> dsctdd = null;
 	Connection con = null;
 	private PreparedStatement pstmt;
-	
+
 	public ChiTietDonDat_Dao() {
 		dsctdd = new ArrayList<ChiTietDonDat>();
 		con = ConnectDB.getInstance().getConnection();
 	}
-	
-	public List<ChiTietDonDat> findByID(DonDat maDonDat) {
-		String query = "Select * from ChiTietDonDat Where maDonDat = ?";
-		Statement stmt;
-		try {
-			pstmt.setObject(1, maDonDat);
 
-			stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			
-			while(rs.next()) {
-				DonDat donDat = (DonDat) rs.getObject(1); 
-				Thuoc thuoc = (Thuoc) rs.getObject(2);
-				int soLuong = rs.getInt(3);
-				ChiTietDonDat cthd = new ChiTietDonDat(donDat, thuoc, soLuong);
-				dsctdd.add(cthd);
+	public List<ChiTietDonDat> findByID(String maDonDat) {
+		String query = "Select * from ChiTietDonDat Where maDonDat = ?";
+		List<ChiTietDonDat> listChiTietDonDat = new ArrayList<ChiTietDonDat>();
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maDonDat);
+
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				// Lấy ID của thuốc từ ResultSet
+				String maThuoc = rs.getString("maThuoc");
+				int soLuong = rs.getInt("soLuong");
+
+				// Tạo mới một đối tượng Thuoc với ID tương ứng
+				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
+
+				ChiTietDonDat ctdd = new ChiTietDonDat(thuoc, soLuong);
+				listChiTietDonDat.add(ctdd);
 			}
+
+			return listChiTietDonDat;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void add(DonDat donDat) {
+		String query = "Insert into ChiTietDonDat Values (?,?,?)";
+		try {
+			pstmt = con.prepareStatement(query);
+			for (ChiTietDonDat chiTietDonDat : donDat.getListChiTietDonDat()) {
+				pstmt.setString(1, donDat.getMaDonDat());
+				pstmt.setString(2, chiTietDonDat.getMaThuoc().getMaThuoc());
+				pstmt.setInt(3, chiTietDonDat.getSoLuong());
+				pstmt.executeUpdate();
+				dsctdd.add(chiTietDonDat);
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return dsctdd;
 	}
-	
-	public boolean addOne(ChiTietDonDat chiTietDonDat) {
-		String query = "Insert into ChiTietDonDat Values (?,?,?)";
-		int n = 0;
+
+	public void deleteByID(String maDonDat) {
+		String query = "Delete from ChiTietDonDat Where maDonDat = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, chiTietDonDat.getMaDonDat().getMaDonDat());
-			pstmt.setString(2, chiTietDonDat.getMaThuoc().getDonVi());
-			pstmt.setInt(3, chiTietDonDat.getSoLuong());
-			n = pstmt.executeUpdate();
+			pstmt.setString(1, maDonDat);
+			pstmt.executeUpdate();
+			pstmt.close();
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-		return n > 0;
 	}
-	
-	public boolean deleteById(Thuoc maThuoc) {
-		String query = "Delete from ChiTietDonDat Where maThuoc = ?";
-		int n = 0;
-		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setObject(1, maThuoc);
-			n = pstmt.executeUpdate();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return n > 0;
-	}
-	
-	public boolean updateSoLuong(ChiTietDonDat chiTietDonDat) {
-		String query = "Update ChiTietDonDat "
-				+ "Set soLuong = soLuong + ? "
-				+ "Where maDonDat = ?, maThuoc = ?";
-		int n = 0;
-		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, chiTietDonDat.getSoLuong());
-			pstmt.setObject(2, chiTietDonDat.getMaDonDat());
-			pstmt.setObject(3, chiTietDonDat.getMaThuoc());
-			n = pstmt.executeUpdate();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return n > 0;
-	}
-	
+
 	public List<ChiTietDonDat> getList() {
 		return dsctdd;
 	}
