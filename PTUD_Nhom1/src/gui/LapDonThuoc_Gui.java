@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Console;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +50,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JTextField tfTong;
 	private JTextField tfNgayLap;
 	private JTextField tfNgayNhan;
-	private JTextField tfMaHD;
 	private JTextField tfMaNV;
 	private JTextField tfTenKH;
 	private JTextField tfSDT;
@@ -58,14 +58,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JButton btnXoa;
 	private JTextField tfTimThuoc;
 	private JComboBox<String> cbbTimThuoc;
-
-//	private Thuoc_Dao thuocDao;
-//	private NhanVien_Dao nhanVienDao;
-//	private KhachHang_Dao khachHangDao;
-//	private HoaDon_Dao hoaDonDao;
-//	private DonDat_Dao donDatDao;
-//	private ChiTietHoaDon_Dao cthdDao;
-//	private ChiTietDonDat_Dao ctddDao;
 
 	private JButton btnReset;
 	private JButton btnTim;
@@ -330,14 +322,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		tableThuoc.addMouseListener(this);
 		tableHoaDon.addMouseListener(this);
 
-//		thuocDao = new Thuoc_Dao();
-//		nhanVienDao = new NhanVien_Dao();
-//		khachHangDao = new KhachHang_Dao();
-//		hoaDonDao = new HoaDon_Dao();
-//		donDatDao = new DonDat_Dao();
-//		cthdDao = new ChiTietHoaDon_Dao();
-//		ctddDao = new ChiTietDonDat_Dao();
-
 		ConnectDB.connect();
 		hienTableThuoc();
 		hienTableHoaDon();
@@ -381,7 +365,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o == btnThem) {
-			if (this.checkQuatity())
+			if (this.checkQuatity() && hasThuoc())
 				this.addOrderDetail();
 		}
 		if (o == btnXoa) {
@@ -395,7 +379,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			}
 		}
 		if (o == btnLapDD) {
-			if (checkDate() && checkValidLap()) {
+			if (checkDate() && checkValidLap() && hasKhach()) {
 				lapDonDat();
 				xoaTrangTatCa();
 			}
@@ -419,7 +403,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void xoaTrangTatCa() {
 		tfMaThuoc.setText("");
 		tfSoLuong.setText("");
-		tfMaHD.setText("");
 		tfMaNV.setText("");
 		tfTenKH.setText("");
 		tfSDT.setText("");
@@ -451,22 +434,32 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	}
 
 	public boolean checkDate() {
-		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
-		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
-		String ngayNhanText = tfNgayNhan.getText();
-
-		if (ngayLapHD.isAfter(ngayNhanHD)) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận phải sau Ngày lập");
+		if(tfNgayNhan.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập Ngày lập");
 			return false;
 		}
-
-		if (ngayNhanText.equals("")) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập ngày nhận (yyyy-MM-dd)");
-			return false;
-		}
-
-		if (!Pattern.matches("\\d{4}-\\d{2}-\\d{2}", ngayNhanText)) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận có định dạng là (yyyy-MM-dd)");
+		
+		try {		
+			LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
+			LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
+			String ngayNhanText = tfNgayNhan.getText();
+			
+			if (ngayLapHD.isAfter(ngayNhanHD)) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận phải sau Ngày lập");
+				return false;
+			}
+			
+			if (ngayNhanText.equals("")) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập ngày nhận (yyyy-MM-dd)");
+				return false;
+			}
+			
+			if (!Pattern.matches("\\d{4}-\\d{2}-\\d{2}", ngayNhanText)) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận có định dạng là (yyyy-MM-dd)");
+				return false;
+			}
+		} catch (DateTimeParseException e) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
 			return false;
 		}
 
@@ -489,6 +482,22 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	}
 
 //	XỬ LÝ SỰ KIỆN
+	public boolean hasKhach() {
+		if(tfTenKH.getText().equals("") || tfSDT.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Đơn đặt phải có đầy đủ thông tin Khách hàng");
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean hasThuoc() {
+		if(tfMaThuoc.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập thông tin thuốc!");
+			return false;
+		}
+		return true;	
+	}
+	
 	public void addOrderDetail() {
 
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
@@ -503,10 +512,18 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			if (tempListHD.get(i).getMaThuoc().getMaThuoc().equalsIgnoreCase(maThuoc)
 					&& tempListDD.get(i).getMaThuoc().getMaThuoc().equalsIgnoreCase(maThuoc)) {
 				int slHD = tempListHD.get(i).getSoLuong();
-				tempListHD.get(i).setSoLuong(slHD + soLuong);
-				tempListDD.get(i).setSoLuong(slHD + soLuong);
-				check++;
-				break;
+
+				if(thuoc.getSoLuongTon() < slHD+soLuong) {
+					JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng thuốc yêu cầu vượt quá thuốc tồn kho!");
+					check++;
+					break;
+				}
+				else {
+					tempListHD.get(i).setSoLuong(slHD + soLuong);
+					tempListDD.get(i).setSoLuong(slHD + soLuong);
+					check++;
+					break;					
+				}
 			}
 		}
 
@@ -617,7 +634,20 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		for (int i = rowCount - 1; i >= 0; i--) {
 			modelHoaDon.removeRow(i);
 		}
-
+		
+//		Cập nhật số lượng trong kho
+		for (ChiTietHoaDon chiTietHoaDon : hoaDon.getListChiTietHoaDon()) {
+			Thuoc_Dao thuocDao = new Thuoc_Dao();
+			thuocDao.updateThuocQuatity(chiTietHoaDon.getMaThuoc().getMaThuoc(), chiTietHoaDon.getSoLuong());
+		}
+		
+		
+		int rowCount2 = modelThuoc.getRowCount();
+		for (int i = rowCount2 - 1; i >= 0; i--) {
+			modelThuoc.removeRow(i);
+		}
+		hienTableThuoc();
+		
 		resetTempListHD();
 		resetTempListDD();
 	}
@@ -629,18 +659,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		String tenKH = tfTenKH.getText();
 		String sdtKH = tfSDT.getText();
 		KhachHang kh = khachHangDao.findBySDT(sdtKH);
-		if (kh == null && sdtKH.equals("")) {
-			kh = new KhachHang("", tenKH);
-			int i = 0;
-			while (i < listKH.size()) {
-				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
-					kh.setMaKH();
-					i = 0;
-				} else
-					i++;
-			}
-			khachHangDao.addKhachHang(kh);
-		} else if (kh == null) {
+		if (kh == null) {
 			kh = new KhachHang(sdtKH, tenKH);
 			int i = 0;
 			while (i < listKH.size()) {
@@ -669,6 +688,19 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			modelHoaDon.removeRow(i);
 		}
 
+//		Cập nhật số lượng trong kho
+		for (ChiTietDonDat chiTietDonDat : donDat.getListChiTietDonDat()) {
+			Thuoc_Dao thuocDao = new Thuoc_Dao();
+			thuocDao.updateThuocQuatity(chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getSoLuong());
+		}
+		
+		
+		int rowCount2 = modelThuoc.getRowCount();
+		for (int i = rowCount2 - 1; i >= 0; i--) {
+			modelThuoc.removeRow(i);
+		}
+		hienTableThuoc();
+		
 		resetTempListDD();
 		resetTempListHD();
 	}

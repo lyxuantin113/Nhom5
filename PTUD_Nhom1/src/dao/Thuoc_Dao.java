@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
@@ -104,11 +105,12 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
 			}
-			
+
 			String query = "update Thuoc set tenThuoc = '" + thuoc.getTenThuoc() + "', loaiThuoc = '"
 					+ thuoc.getLoaiThuoc() + "', donVi = '" + thuoc.getDonVi() + "', HSD = '" + thuoc.getHSD()
 					+ "', giaNhap = " + thuoc.getGiaNhap() + ", giaBan = " + thuoc.getGiaBan() + ", soLuongTon = "
-					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat()+ "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
+					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat() + "' where maThuoc = '"
+					+ thuoc.getMaThuoc() + "'";
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			for (Thuoc t : dsThuoc) {
@@ -129,6 +131,25 @@ public class Thuoc_Dao {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void updateThuocQuatity(String maThuoc, int soLuongGiam) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return;
+			}
+
+			String query = "Update Thuoc SET soLuongTon = soLuongTon - ? WHERE maThuoc = ?";
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, soLuongGiam);
+			pstmt.setString(2, maThuoc);
+			pstmt.executeUpdate();
+			pstmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Tìm thuốc theo mã
@@ -227,6 +248,7 @@ public class Thuoc_Dao {
 		}
 		return false;
 	}
+
 	// Lấy danh sách theo nhà cung cấp
 	public List<Thuoc> getDSTByNCC(String ncc) {
 		List<Thuoc> ds = new ArrayList<Thuoc>();
@@ -251,7 +273,8 @@ public class Thuoc_Dao {
 				String nuocSX = rs.getString(9);
 				String tenNCC = rs.getString(10);
 
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,tenNCC);
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
+						tenNCC);
 				ds.add(thuoc);
 			}
 		} catch (Exception e) {
@@ -276,7 +299,7 @@ public class Thuoc_Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public boolean checkThuoc(String maThuoc) {
@@ -296,7 +319,7 @@ public class Thuoc_Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 
@@ -304,7 +327,7 @@ public class Thuoc_Dao {
 		Thuoc thuoc = null;
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
-			String query = "select * from Thuoc where maThuoc = '"+string+"'";
+			String query = "select * from Thuoc where maThuoc = '" + string + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			while (rs.next()) {
@@ -320,19 +343,14 @@ public class Thuoc_Dao {
 
 				String tenNCC = rs.getString(10);
 
-				thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
-						tenNCC);
-				
-				
+				thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX, tenNCC);
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return thuoc;
-		
-		
+
 	}
 
-	
-	
 }

@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +50,9 @@ public class DonDat_Dao {
 
 				ChiTietDonDat_Dao ctddDao = new ChiTietDonDat_Dao();
 				List<ChiTietDonDat> listCTDD = ctddDao.findByID(maDD);
-				
+
 				dd.setListChiTietDonDat(listCTDD);
-				
+
 				listDD.add(dd);
 			}
 			return listDD;
@@ -92,34 +93,52 @@ public class DonDat_Dao {
 
 			ResultSet rs = pstmt.executeQuery();
 
-			String maDD = rs.getString(1);
+			if (rs.next()) {
+				String maDD = rs.getString(1);
 
-//			Khách Hàng
-			String maKH = rs.getString(2);
-			KhachHang_Dao khachDao = new KhachHang_Dao();
-			KhachHang kh = khachDao.findById(maKH);
+//				Khách Hàng
+				String maKH = rs.getString(2);
+				KhachHang_Dao khachDao = new KhachHang_Dao();
+				KhachHang kh = khachDao.findById(maKH);
 
-//			Nhân Viên
-			String maNV = rs.getString(3);
-			NhanVien_Dao nhanVienDao = new NhanVien_Dao();
-			NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
+//				Nhân Viên
+				String maNV = rs.getString(3);
+				NhanVien_Dao nhanVienDao = new NhanVien_Dao();
+				NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
 
-			Date ngayLap = rs.getDate(4);
-			Date ngayNhan = rs.getDate(5);
+				Date ngayLap = rs.getDate(4);
+				Date ngayNhan = rs.getDate(5);
 
-			donDat = new DonDat(maDD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
+				donDat = new DonDat(maDD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
+
+				rs.close();
+
+				ChiTietDonDat_Dao ctddDao = new ChiTietDonDat_Dao();
+				List<ChiTietDonDat> listCTDD = ctddDao.findByID(maDonDat);
+
+				donDat.setListChiTietDonDat(listCTDD);
+			}
 
 			rs.close();
-
-			ChiTietDonDat_Dao ctddDao = new ChiTietDonDat_Dao();
-			List<ChiTietDonDat> listCTDD = ctddDao.findByID(maDonDat);
-
-			donDat.setListChiTietDonDat(listCTDD);
+			pstmt.close();
 
 			return donDat;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public void deleteByID(String maDonDat) {
+		String query = "Delete from DonDat where maDonDat = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maDonDat);
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -146,12 +165,12 @@ public class DonDat_Dao {
 		}
 	}
 
-	public List<DonDat> findByNgayLap(Date ngayLap) {
+	public List<DonDat> findByNgayLap(LocalDate ngayLap) {
 		List<DonDat> listDD = new ArrayList<DonDat>();
 		String query = "select * from DonDat where ngayLap = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setDate(1, ngayLap);
+			pstmt.setDate(1, Date.valueOf(ngayLap));
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -167,12 +186,12 @@ public class DonDat_Dao {
 		}
 	}
 
-	public List<DonDat> findByNgayNhan(Date ngayNhan) {
+	public List<DonDat> findByNgayNhan(LocalDate ngayNhan) {
 		List<DonDat> listDD = new ArrayList<DonDat>();
 		String query = "select * from DonDat where ngayNhan = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setDate(1, ngayNhan);
+			pstmt.setDate(1, Date.valueOf(ngayNhan));
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -191,7 +210,7 @@ public class DonDat_Dao {
 	public List<DonDat> getDSDD() {
 		return dsdd;
 	}
-	
+
 	public double tinhTongTien(DonDat donDat) {
 		double doanhThu = 0.0;
 		for (ChiTietDonDat chiTietDonDat : donDat.getListChiTietDonDat()) {

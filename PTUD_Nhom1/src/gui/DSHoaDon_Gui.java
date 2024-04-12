@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import javax.swing.Box;
@@ -16,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -47,6 +50,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 	private HoaDon_Dao hoaDonDao;
 	private ChiTietHoaDon_Dao cthdDao;
 	private DefaultTableModel modelHoaDon;
+	private JTextField tfTim;
 
 	public DSHoaDon_Gui() {
 //		JPANEL
@@ -131,7 +135,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		cbbTim.addItem("Ngày nhận");
 		cbbTim.setPreferredSize(new Dimension(110, 35));
 
-		JTextField tfTim = new JTextField(17);
+		tfTim = new JTextField(17);
 		tfTim.setPreferredSize(new Dimension(0, 35));
 		btnTim = new JButton("Tìm kiếm");
 		btnTim.setBackground(new Color(0, 160, 255));
@@ -184,18 +188,18 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		btnIn.addActionListener(this);
 
 		hienTableHoaDon();
-
 	}
 
-	private void hienTableHoaDon() {
+	public void hienTableHoaDon() {
 		DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
 		model.setRowCount(0);
-		
+
 		List<HoaDon> listHoaDon = hoaDonDao.readFromTable();
 		if (listHoaDon != null) {
 			for (HoaDon hoaDon : listHoaDon) {
 				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen(),
-						hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+						hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(),
+						hoaDonDao.tinhTongTien(hoaDon) };
 
 				model.addRow(rowData); // Thêm hàng vào model
 			}
@@ -222,14 +226,95 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		Object o = e.getSource();
+		if (o.equals(btnTim)) {
+			timKiem();
+			tfTim.setText("");
+			tfTim.requestFocus();
+		}
+		if (o.equals(btnReset)) {
+			hienTableHoaDon();
+			tfTim.setText("");
+			DefaultTableModel model = (DefaultTableModel) tableThuoc.getModel();
+			model.setRowCount(0);
+		}
+	}
 
+	public void timKiem() {
+		String typeSearch = cbbTim.getSelectedItem().toString();
+		String textFind = tfTim.getText();
+
+		if (textFind.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin tìm kiếm.");
+		} else {
+			if (typeSearch.equalsIgnoreCase("Mã đơn")) {
+				HoaDon hoaDon = hoaDonDao.findByID(textFind);
+				if (hoaDon != null) {
+					DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+					model.setRowCount(0);
+
+					Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen(),
+							hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(),
+							hoaDonDao.tinhTongTien(hoaDon) };
+
+					model.addRow(rowData);
+				}
+			} else if (typeSearch.equalsIgnoreCase("Mã Nhân viên")) {
+				List<HoaDon> listHD = hoaDonDao.findByNhanVien(textFind);
+				if (listHD != null) {
+					DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+					model.setRowCount(0);
+					for (HoaDon hoaDon : listHD) {
+						Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+								hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
+								hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+						model.addRow(rowData);
+					}
+				}
+			} else if (typeSearch.equalsIgnoreCase("Ngày lập")) {
+				try {
+					LocalDate textFindDate = LocalDate.parse(tfTim.getText());
+					List<HoaDon> listHD = hoaDonDao.findByNgayLap(textFindDate);
+					if (listHD != null) {
+						DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+						model.setRowCount(0);
+						for (HoaDon hoaDon : listHD) {
+							Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+									hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
+									hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+							model.addRow(rowData);
+						}
+					}
+				} catch (DateTimeParseException e) {
+					JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
+					return;
+				}
+			} else if (typeSearch.equalsIgnoreCase("Ngày nhận")) {
+				try {
+					LocalDate textFindDate = LocalDate.parse(tfTim.getText());
+					List<HoaDon> listHD = hoaDonDao.findByNgayNhan(textFindDate);
+					if (listHD != null) {
+						DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+						model.setRowCount(0);
+						for (HoaDon hoaDon : listHD) {
+							Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+									hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
+									hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
+							model.addRow(rowData);
+						}
+					}
+				} catch (DateTimeParseException e) {
+					JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
+					return;
+				}
+			}
+		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int rowSelectedDon = tableHoaDon.getSelectedRow();
-		if(rowSelectedDon != -1) {
+		if (rowSelectedDon != -1) {
 			hienTableChiTietHoaDon(rowSelectedDon);
 		}
 	}

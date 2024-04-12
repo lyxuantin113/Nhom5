@@ -20,7 +20,7 @@ import dao.HoaDon_Dao;
 import db.ConnectDB;
 import entity.HoaDon;
 
-public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListener {
+public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private JPanel pnlMain;
 	private JPanel pnlHead;
 	private JLabel lbHead;
@@ -59,6 +59,10 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 
 //	private ThongKe_Dao dsTK = new ThongKe_Dao();
 	private HoaDon_Dao dsHD = new HoaDon_Dao();
+	private Box boxBoLocBtn;
+	private JLabel lblKhachHang;
+	private JLabel lblNhanVien;
+	private JLabel lblThongKe;
 
 	public XemThongKe_Gui() {
 
@@ -68,7 +72,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 
 //		HEADER
 		pnlHead = new JPanel();
-		lbHead = new JLabel("Xem Thống Kê");
+		lbHead = new JLabel("Thống Kê Doanh Thu");
 		Font fo24 = new Font("Times New Roman", Font.BOLD, 24);
 		Font fo16 = new Font("Times New Roman", Font.BOLD, 16);
 		lbHead.setFont(fo24);
@@ -79,17 +83,18 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		pnlCenter = new JPanel();
 
 		boxContainer = Box.createVerticalBox();
-		boxBoLoc = Box.createHorizontalBox();
+		boxBoLoc = Box.createVerticalBox();
 
 //		Bộ lọc 1 (theo thời gian)		
-		boxBoLoc1 = Box.createVerticalBox();
+		boxBoLoc1 = Box.createHorizontalBox();
 
 //      Xem theo năm
 		boxNam = Box.createHorizontalBox();
 		lbNam = new JLabel("Xem theo năm: ");
+		lbNam.setPreferredSize(new Dimension(100, 30));
 		// Tạo mảng chứa
 		cbbNam = new JComboBox<>();
-		lbNam.setMaximumSize(new Dimension(100, 30));
+		cbbNam.setPreferredSize(new Dimension(100, 30));
 		boxNam.add(lbNam);
 		boxNam.add(Box.createHorizontalStrut(5));
 		boxNam.add(cbbNam);
@@ -101,7 +106,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		String[] months = { "", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8",
 				"Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
 		cbbThang = new JComboBox<>(months);
-		lbThang.setMaximumSize(new Dimension(100, 30));
+		lbThang.setPreferredSize(new Dimension(100, 30));
+		cbbThang.setPreferredSize(new Dimension(100, 30));
 		boxThang.add(lbThang);
 		boxThang.add(Box.createHorizontalStrut(5));
 		boxThang.add(cbbThang);
@@ -110,78 +116,90 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		boxNgay = Box.createHorizontalBox();
 		lbNgay = new JLabel("Xem theo ngày: ");
 		cbbNgay = new JComboBox<>();
-		lbNgay.setMaximumSize(new Dimension(500, 30));
+		lbNgay.setPreferredSize(new Dimension(100, 30));
+		cbbNgay.setPreferredSize(new Dimension(100, 30));
 		boxNgay.add(lbNgay);
 		boxNgay.add(Box.createHorizontalStrut(5));
 		boxNgay.add(cbbNgay);
 
-		boxBtn = Box.createHorizontalBox();
-		btnXemThongKe = new JButton("Xem Thống Kê");
-		btnXoaRong = new JButton("Xóa Rỗng");
-		boxBtn.add(btnXemThongKe);
-		boxBtn.add(Box.createHorizontalStrut(5));
-		boxBtn.add(btnXoaRong);
-
+		boxBoLoc1.add(Box.createHorizontalStrut(20));
 		boxBoLoc1.add(boxNam);
-		boxBoLoc1.add(Box.createVerticalStrut(10));
+		boxBoLoc1.add(Box.createHorizontalStrut(20));
 		boxBoLoc1.add(boxThang);
-		boxBoLoc1.add(Box.createVerticalStrut(10));
+		boxBoLoc1.add(Box.createHorizontalStrut(20));
 		boxBoLoc1.add(boxNgay);
-		boxBoLoc1.add(Box.createVerticalStrut(10));
-		boxBoLoc1.add(boxBtn);
-		boxBoLoc1.setBorder(BorderFactory.createTitledBorder("Thời gian"));
+		boxBoLoc1.add(Box.createHorizontalStrut(20));
 
 //		Bộ lọc 2 (theo đối tượng)		
-		boxBoLoc2 = Box.createVerticalBox();
+		boxBoLoc2 = Box.createHorizontalBox();
 
 //		Xem theo Khách hàng
 		boxKhachHang = Box.createHorizontalBox();
-		btnKhachHang = new JButton("Xem Khách hàng");
+		lblKhachHang = new JLabel("Mã khách hàng:");
+		lblKhachHang.setPreferredSize(new Dimension(100, 30));
 		cbbKhachHang = new JComboBox<>();
-//		cbbKhachHang.setMaximumSize(new Dimension(200, 30));
-		boxKhachHang.add(btnKhachHang);
-		boxKhachHang.add(boxBoLoc1.add(Box.createVerticalStrut(5)));
+		cbbKhachHang.setPreferredSize(new Dimension(100, 30));
+		boxKhachHang.add(lblKhachHang);
+		boxKhachHang.add(boxBoLoc1.add(Box.createHorizontalStrut(5)));
 		boxKhachHang.add(cbbKhachHang);
 
 //      Xem theo Nhân viên
 		boxNhanVien = Box.createHorizontalBox();
-		btnNhanVien = new JButton("Xem Nhân viên");
+		lblNhanVien = new JLabel("Mã nhân viên:");
+		lblNhanVien.setPreferredSize(new Dimension(100, 30));
 		cbbNhanVien = new JComboBox<>();
+		cbbNhanVien.setPreferredSize(new Dimension(100, 30));
 //		btnNhanVien.setMaximumSize(new Dimension(50, 30));
-		boxNhanVien.add(btnNhanVien);
-		boxNhanVien.add(boxBoLoc1.add(Box.createVerticalStrut(5)));
+		boxNhanVien.add(lblNhanVien);
+		boxNhanVien.add(boxBoLoc1.add(Box.createHorizontalStrut(5)));
 		boxNhanVien.add(cbbNhanVien);
 
 // 		Sắp xếp theo đối tượng đã chọn
 		boxSapXep = Box.createHorizontalBox();
-		btnSapXep = new JButton("Sắp xếp theo: ");
+		lblThongKe = new JLabel("Thống kê theo:");
+		lblThongKe.setPreferredSize(new Dimension(100, 30));
 		// Tạo mảng chứa tên các đối tượng
-		String[] doiTuongSapXep = { "Đơn hàng", "Nhân viên", "Khách hàng", "Số lượng", "Thời gian", "Doanh thu",
-				"Lợi nhuận", };
+		String[] doiTuongSapXep = { "Đơn hàng", "Lợi nhuận cao nhất", "NV chăm chỉ", "KH tiềm năng" };
 		cbbSapXep = new JComboBox<>(doiTuongSapXep);
+		cbbSapXep.setPreferredSize(new Dimension(100, 30));
 //		btnSapXep.setMaximumSize(new Dimension(50, 30));
-		boxSapXep.add(btnSapXep);
-		boxSapXep.add(boxBoLoc1.add(Box.createVerticalStrut(5)));
+		boxSapXep.add(lblThongKe);
+		boxSapXep.add(boxBoLoc1.add(Box.createHorizontalStrut(5)));
 		boxSapXep.add(cbbSapXep);
 
+		boxBoLoc2.add(Box.createHorizontalStrut(20));
 		boxBoLoc2.add(boxKhachHang);
-		boxBoLoc2.add(Box.createVerticalStrut(10));
+		boxBoLoc2.add(Box.createHorizontalStrut(20));
 		boxBoLoc2.add(boxNhanVien);
-		boxBoLoc2.add(Box.createVerticalStrut(10));
+		boxBoLoc2.add(Box.createHorizontalStrut(20));
 		boxBoLoc2.add(boxSapXep);
-		boxBoLoc2.add(Box.createVerticalStrut(10));
+		boxBoLoc2.add(Box.createHorizontalStrut(20));
 
+//		BUTTON BO LOC
+		boxBoLocBtn = Box.createHorizontalBox();
+		boxBtn = Box.createHorizontalBox();
+		btnXemThongKe = new JButton("Xem Thống Kê");
+		btnXoaRong = new JButton("Xóa Rỗng");
+		boxBtn.add(btnXemThongKe);
+		boxBtn.add(Box.createHorizontalStrut(20));
+		boxBtn.add(btnXoaRong);
+		boxBoLocBtn.add(boxBtn);
+
+		boxBoLoc.add(Box.createVerticalStrut(10));
 		boxBoLoc.add(boxBoLoc1);
-		boxBoLoc.add(Box.createHorizontalStrut(250));
+		boxBoLoc.add(Box.createVerticalStrut(20));
 		boxBoLoc.add(boxBoLoc2);
+		boxBoLoc.add(Box.createVerticalStrut(20));
+		boxBoLoc.add(boxBoLocBtn);
+		boxBoLoc.add(Box.createVerticalStrut(20));
 
 		boxTable = Box.createVerticalBox();
-		String[] header = "Hóa đơn ;Khách Hàng ;Nhân viên ;Số lượng; Thời gian; Doanh thu; Lợi thuận".split(";");
+		String[] header = "Hóa đơn ;Khách Hàng ;Nhân viên ;Ngày lập; Ngày nhận; Doanh thu; Lợi thuận".split(";");
 		model = new DefaultTableModel(header, 0);
 		table = new JTable(model);
 		scroll = new JScrollPane();
 		scroll.setViewportView(table = new JTable(model));
-		scroll.setPreferredSize(new Dimension(700, 450)); // SET CHIỀU CAO TABLE
+		scroll.setPreferredSize(new Dimension(350, 500)); // SET CHIỀU CAO TABLE
 		table.setRowHeight(20);
 		boxTable.add(scroll);
 
@@ -197,7 +215,6 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 		// Action
 		btnXoaRong.addActionListener(this);
 		btnXemThongKe.addActionListener(this);
-		table.addMouseListener(this);
 		ConnectDB.connect();
 		hienTable();
 		cbbThang.addActionListener(new ActionListener() {
@@ -352,33 +369,236 @@ public class XemThongKe_Gui extends JPanel implements ActionListener, MouseListe
 
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void checkThongKe() {
+		String checkNam = cbbNam.getSelectedItem().toString();
+		String checkThang = cbbThang.getSelectedItem().toString();
+		String checkNgay = cbbNgay.getSelectedItem().toString();
+		String checkMaKH = cbbKhachHang.getSelectedItem().toString();
+		String checkMaNV = cbbNhanVien.getSelectedItem().toString();
+		String checkTypeThongKe = cbbSapXep.getSelectedItem().toString();
+
+		if (checkNam.equals("") && checkMaKH.equals("") && checkMaNV.equals("")) {
+			thongKeDon();
+		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && !checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeFullField();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeXYinMonth();
+
+		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeXYinYear();
+
+		} else if (checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeXY();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && !checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeKHinDay();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeKHinMonth();
+
+		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeKHinYear();
+
+		} else if (checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeKH();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeNVinDay();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeNVinMonth();
+
+		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeNVinYear();
+
+		} else if (checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
+				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeNV();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeDonInNgay();
+
+		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeDonInMonth();
+
+		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
+				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+
+			thongKeDonInYear();
+
+		} else if (checkTypeThongKe.equals("Lợi nhuận cao nhất")) {
+
+			thongKeLoiNhuanCaoNhat();
+
+		} else if (checkTypeThongKe.equals("NV chăm chỉ")) {
+
+			thongKeNVChamChi();
+
+		} else if (checkTypeThongKe.equals("KH tiềm năng")) {
+
+			thongKeKHTiemNang();
+
+		}
+
+	}
+
+//	Top 3 Khách có số đơn nhiều nhất
+	private void thongKeKHTiemNang() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void mousePressed(MouseEvent e) {
+//	Top 3 Nhân viên lập số đơn nhiều nhất
+	private void thongKeNVChamChi() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
+//	Top 3 Đơn hàng có lợi nhuận cao nhất
+	private void thongKeLoiNhuanCaoNhat() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
+//  Khách Hàng X và Nhân Viên Y
+
+//	Thống kê đơn của KH X được lập bởi NV Y theo ngày
+	private void thongKeFullField() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void mouseExited(MouseEvent e) {
+//	Thống kê đơn của KH X được lập bởi NV Y theo tháng
+	private void thongKeXYinMonth() {
 		// TODO Auto-generated method stub
 
 	}
+
+//	Thống kê đơn của KH X được lập bởi NV Y theo năm
+	private void thongKeXYinYear() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn của KH X được lập bởi NV Y 
+	private void thongKeXY() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Khách Hàng
+
+//	Thống kê đơn của KH theo ngày
+	private void thongKeKHinDay() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn của KH theo tháng
+	private void thongKeKHinMonth() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn của KH theo năm
+	private void thongKeKHinYear() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê tất cả đơn của KH
+	private void thongKeKH() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Nhân Viên
+
+//	Thống kê đơn Nhân Viên lập theo ngày
+	private void thongKeNVinDay() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn Nhân Viên lập theo tháng
+	private void thongKeNVinMonth() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn Nhân Viên lập theo năm
+	private void thongKeNVinYear() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê tất cả đơn Nhân Viên đã lập
+	private void thongKeNV() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Đơn hàng
+
+//	Thống kê đơn theo ngày
+	private void thongKeDonInNgay() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn theo tháng
+	private void thongKeDonInMonth() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê đơn theo năm
+	private void thongKeDonInYear() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống kê tất cả các đơn
+	private void thongKeDon() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	Thống Kê Các đơn của nhân viên X đã lập trong yyyy-MM-dd
+	private void thongKeDonNVAllField() {
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String maKH = cbbKhachHang.getSelectedItem().toString();
+	}
+
 }

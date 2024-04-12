@@ -46,7 +46,6 @@ public class ChiTietDonDat_Dao {
 
 			return listChiTietDonDat;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -68,17 +67,16 @@ public class ChiTietDonDat_Dao {
 		}
 	}
 
-	public boolean deleteOne(ChiTietDonDat chiTietDonDat) {
-		String query = "Delete from ChiTietDonDat Where maThuoc = ?";
-		int n = 0;
+	public void deleteByID(String maDonDat) {
+		String query = "Delete from ChiTietDonDat Where maDonDat = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, chiTietDonDat.getMaThuoc().getMaThuoc());
-			n = pstmt.executeUpdate();
+			pstmt.setString(1, maDonDat);
+			pstmt.executeUpdate();
+			pstmt.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return n > 0;
 	}
 
 	public List<ChiTietDonDat> getList() {

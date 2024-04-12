@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,44 +85,47 @@ public class HoaDon_Dao {
 
 //	ID
 	public HoaDon findByID(String maHoaDon) {
-		HoaDon hoaDon = null;
-		String query = "select * from HoaDon where maHoaDon = ?";
-		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maHoaDon);
+	    HoaDon hoaDon = null;
+	    String query = "select * from HoaDon where maHoaDon = ?";
+	    try {
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setString(1, maHoaDon);
 
-			ResultSet rs = pstmt.executeQuery();
+	        ResultSet rs = pstmt.executeQuery();
 
-			String maHD = rs.getString(1);
+	        if (rs.next()) { // Di chuyển con trỏ đến dòng đầu tiên của kết quả
+	            String maHD = rs.getString(1);
 
-//			Khách Hàng
-			String maKH = rs.getString(2);
-			KhachHang_Dao khachDao = new KhachHang_Dao();
-			KhachHang kh = khachDao.findById(maKH);
+	            // Khách Hàng
+	            String maKH = rs.getString(2);
+	            KhachHang_Dao khachDao = new KhachHang_Dao();
+	            KhachHang kh = khachDao.findById(maKH);
 
-//			Nhân Viên
-			String maNV = rs.getString(3);
-			NhanVien_Dao nhanVienDao = new NhanVien_Dao();
-			NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
+	            // Nhân Viên
+	            String maNV = rs.getString(3);
+	            NhanVien_Dao nhanVienDao = new NhanVien_Dao();
+	            NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
 
-			Date ngayLap = rs.getDate(4);
-			Date ngayNhan = rs.getDate(5);
-			hoaDon = new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
+	            Date ngayLap = rs.getDate(4);
+	            Date ngayNhan = rs.getDate(5);
+	            hoaDon = new HoaDon(maHD, kh, nv, ngayLap.toLocalDate(), ngayNhan.toLocalDate());
 
-			rs.close();
-			pstmt.close();
+	            ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
+	            List<ChiTietHoaDon> listCTHD = cthdDao.findByID(maHoaDon);
 
-			ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
-			List<ChiTietHoaDon> listCTHD = cthdDao.findByID(maHoaDon);
+	            hoaDon.setListChiTietHoaDon(listCTHD);
+	        }
 
-			hoaDon.setListChiTietHoaDon(listCTHD);
+	        rs.close();
+	        pstmt.close();
 
-			return hoaDon;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        return hoaDon;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
+
 
 //	NHÂN VIÊN
 	public List<HoaDon> findByNhanVien(String maNV) {
@@ -147,12 +151,12 @@ public class HoaDon_Dao {
 	}
 
 //	NGÀY LẬP
-	public List<HoaDon> findByNgayLap(Date ngayLap) {
+	public List<HoaDon> findByNgayLap(LocalDate ngayLap) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
 		String query = "select * from HoaDon where ngayLap = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setDate(1, ngayLap);
+			pstmt.setDate(1, Date.valueOf(ngayLap));
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -168,12 +172,12 @@ public class HoaDon_Dao {
 	}
 
 //	NGÀY NHẬN
-	public List<HoaDon> findByNgayNhan(Date ngayNhan) {
+	public List<HoaDon> findByNgayNhan(LocalDate ngayNhan) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
 		String query = "select * from HoaDon where ngayNhan = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setDate(1, ngayNhan);
+			pstmt.setDate(1, Date.valueOf(ngayNhan));
 
 			ResultSet rs = pstmt.executeQuery();
 
