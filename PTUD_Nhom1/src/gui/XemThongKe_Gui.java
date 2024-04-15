@@ -2,12 +2,15 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +18,9 @@ import java.util.Set;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
@@ -115,8 +121,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxThang = Box.createHorizontalBox();
 		lbThang = new JLabel("Xem theo tháng: ");
 		// Tạo mảng chứa tên các tháng
-		String[] months = { "", "1", "2", "3", "4", "5", "6", "7", "8",
-				"9", "10", "11", "12" };
+		String[] months = { "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
 		cbbThang = new JComboBox<>(months);
 		lbThang.setPreferredSize(new Dimension(100, 30));
 		cbbThang.setPreferredSize(new Dimension(100, 30));
@@ -191,9 +196,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxBoLocBtn = Box.createHorizontalBox();
 		boxBtn = Box.createHorizontalBox();
 		btnXemThongKe = new JButton("Xem Thống Kê");
-		btnXemThongKe.setBackground(new Color(0, 160, 255));
+		btnXemThongKe.setBackground(new Color(0,160,255));
+		btnXemThongKe.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXoaRong = new JButton("Xóa Rỗng");
-		btnXoaRong.setBackground(new Color(0, 160, 255));
+		btnXoaRong.setBackground(new Color(0,160,255));
+		btnXoaRong.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
 		boxBtn.add(btnXemThongKe);
 		boxBtn.add(Box.createHorizontalStrut(20));
 		boxBtn.add(btnXoaRong);
@@ -236,9 +244,10 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		txtTongLoi.setEditable(false);
 
 		btnIn = new JButton("In thống kê");
-		btnIn.setBackground(new Color(0, 160, 255));
+		btnIn.setBackground(new Color(0,160,255));
+		btnIn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnIn.setPreferredSize(new Dimension(100, 35));
-
+		
 		boxTong.add(lblTongTien);
 		boxTong.add(txtTongTien);
 		boxTong.add(Box.createHorizontalStrut(20));
@@ -259,7 +268,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		btnXoaRong.addActionListener(this);
 		btnXemThongKe.addActionListener(this);
 		btnIn.addActionListener(this);
-
+		
 		ConnectDB.connect();
 		hienTable();
 		cbbThang.addActionListener(new ActionListener() {
@@ -283,29 +292,6 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		});
 	}
 
-//
-//	 Phương thức thực hiện thống kê và cập nhật dữ liệu lên bảng
-//	public void thucHienThongKe(int nam, int thang, int ngay) {
-//		// Gọi các phương thức từ DAO để thực hiện thống kê
-//
-//		// Thống kê doanh thu và lợi nhuận tương ứng
-//		double doanhThu, loiNhuan;
-//		if (ngay == -1 && thang == -1) { // Thống kê theo năm
-//			doanhThu = dsTK.thongKeDoanhThuTheoNam(nam);
-//			loiNhuan = dsTK.thongKeLoiNhuanTheoNam(nam);
-//		} else if (ngay == -1) { // Thống kê theo tháng
-//			doanhThu = dsTK.thongKeDoanhThuTheoThang(thang, nam);
-//			loiNhuan = dsTK.thongKeLoiNhuanTheoThang(thang, nam);
-//		} else { // Thống kê theo ngày
-//			doanhThu = dsTK.thongKeDoanhThuTheoNgay(ngay, thang, nam);
-//			loiNhuan = dsTK.thongKeLoiNhuanTheoNgay(ngay, thang, nam);
-//		}
-//
-//		// Hiển thị kết quả lên bảng
-//		Object[] rowData = { "", "", "", "", doanhThu, loiNhuan, "" };
-//		DefaultTableModel model = (DefaultTableModel) table.getModel();
-//		model.addRow(rowData);
-//	}
 //	 Trong phương thức hienTable()
 	public void hienTable() {
 		List<HoaDon> danhSachHoaDon = dsHD.readFromTable();
@@ -320,7 +306,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 		double tongTien = 0;
 		double tongLoi = 0;
-		
+
 		// Duyệt qua từng hóa đơn trong danh sách
 		for (HoaDon hoaDon : danhSachHoaDon) {
 			// Lấy năm từ ngày lập hóa đơn
@@ -345,15 +331,14 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 			// Thêm hàng vào bảng
 			model.addRow(rowData);
-			
+
 			tongTien += dsHD.tinhTongTien(hoaDon);
 			tongLoi += dsHD.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
-		
+
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
-		
-		
+
 		// Xóa các mục cũ trong Combobox của năm
 		cbbNam.removeAllItems();
 		cbbNam.addItem("");
@@ -425,9 +410,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 			// Xóa rỗng Combobox của Sắp xếp
 			cbbSapXep.setSelectedIndex(0);
 		}
+		if (e.getSource() == btnIn) {
+			checkThongKe();
+		}
 
 	}
+	private void inThongKeRaExcel() {
+	    Workbook workbook = new XSSFWorkbook();
+	    Sheet sheet = workbook.createSheet("ThongKe");
 
+	    // Tạo hàng header
+	    Row headerRow = sheet.createRow(0);
+	    for (int i = 0; i < model.getColumnCount(); i++) {
+	        Cell cell = headerRow.createCell(i);
+	        cell.setCellValue(model.getColumnName(i));
+	    }
+
+	    // Thêm dữ liệu từ bảng vào file Excel
+	    for (int i = 0; i < model.getRowCount(); i++) {
+	        Row row = sheet.createRow(i + 1);
+	        for (int j = 0; j < model.getColumnCount(); j++) {
+	            row.createCell(j).setCellValue(model.getValueAt(i, j).toString());
+	        }
+	    }
+
+	    // Lưu workbook vào một file Excel
+	    try (FileOutputStream outputStream = new FileOutputStream("thongke.xlsx")) {
+	        workbook.write(outputStream);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
 	public void checkThongKe() {
 		String checkNam = cbbNam.getSelectedItem() != null ? cbbNam.getSelectedItem().toString() : "";
 		String checkThang = cbbThang.getSelectedItem() != null ? cbbThang.getSelectedItem().toString() : "";
@@ -436,23 +449,28 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		String checkMaNV = cbbNhanVien.getSelectedItem() != null ? cbbNhanVien.getSelectedItem().toString() : "";
 		String checkTypeThongKe = cbbSapXep.getSelectedItem() != null ? cbbSapXep.getSelectedItem().toString() : "";
 
-		if (checkNam.equals("") && checkMaKH.equals("") && checkMaNV.equals("")) {
+		if (checkNam.equals("") && checkMaKH.equals("") && checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 			thongKeDon();
 		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && !checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeFullField();
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 
 		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeXYinMonth();
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 
 		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeXYinYear();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
@@ -462,89 +480,185 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeKHinDay();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeKHinMonth();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeKHinYear();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && !checkMaKH.equals("")
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeKH();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeNVinDay();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeNVinMonth();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeNVinYear();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeNV();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && checkMaKH.equals("")
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeDonInNgay();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && !checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeDonInMonth();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (!checkNam.equals("") && checkThang.equals("") && checkNgay.equals("") && checkMaKH.equals("")
 				&& checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
 
 			thongKeDonInYear();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (checkTypeThongKe.equals("Lợi nhuận cao nhất")) {
 
 			thongKeLoiNhuanCaoNhat();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (checkTypeThongKe.equals("NV chăm chỉ")) {
 
 			thongKeNVChamChi();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		} else if (checkTypeThongKe.equals("KH tiềm năng")) {
 
 			thongKeKHTiemNang();
-
+			txtTongTien.setText(String.valueOf(tinhTongDoanhThu()));
+			txtTongLoi.setText(String.valueOf(tinhTongLoiNhuan()));
 		}
 
+	}
+	private double tinhTongDoanhThu() {
+	    double tongDoanhThu = 0;
+	    // Duyệt qua từng dòng trong bảng
+	    for (int i = 0; i < model.getRowCount(); i++) {
+	        // Lấy giá trị ở cột "Doanh thu" từ mỗi dòng và cộng vào tổng doanh thu
+	        tongDoanhThu += Double.parseDouble(model.getValueAt(i, 5).toString());
+	    }
+	    return tongDoanhThu;
+	}
+
+	private double tinhTongLoiNhuan() {
+	    double tongLoiNhuan = 0;
+	    // Duyệt qua từng dòng trong bảng
+	    for (int i = 0; i < model.getRowCount(); i++) {
+	        // Lấy giá trị ở cột "Lợi nhuận" từ mỗi dòng và cộng vào tổng lợi nhuận
+	        tongLoiNhuan += Double.parseDouble(model.getValueAt(i, 6).toString());
+	    }
+	    return tongLoiNhuan;
 	}
 
 //	Top 3 Khách có số đơn nhiều nhất
 	private void thongKeKHTiemNang() {
-		// TODO Auto-generated method stub
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.thongKeKHTiemNang();
 
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Top 3 Nhân viên lập số đơn nhiều nhất
 	private void thongKeNVChamChi() {
-		// TODO Auto-generated method stub
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.thongKeNVChamChi();
 
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Top 3 Đơn hàng có lợi nhuận cao nhất
 	private void thongKeLoiNhuanCaoNhat() {
-		// TODO Auto-generated method stub
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.thongKeLoiNhuanCaoNhat();
 
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //  Khách Hàng X và Nhân Viên Y
@@ -572,14 +686,14 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				model.addRow(rowData);
 			}
 		}
-		
+
 		double tongTien = 0;
 		double tongLoi = 0;
 		for (HoaDon hoaDon : listHD) {
 			tongTien += hdDao.tinhTongTien(hoaDon);
 			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
-		
+
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
@@ -606,14 +720,14 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				model.addRow(rowData);
 			}
 		}
-		
+
 		double tongTien = 0;
 		double tongLoi = 0;
 		for (HoaDon hoaDon : listHD) {
 			tongTien += hdDao.tinhTongTien(hoaDon);
 			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
-		
+
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
@@ -639,18 +753,18 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				model.addRow(rowData);
 			}
 		}
-		
+
 		double tongTien = 0;
 		double tongLoi = 0;
 		for (HoaDon hoaDon : listHD) {
 			tongTien += hdDao.tinhTongTien(hoaDon);
 			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
-		
+
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
-
+	
 //	Thống kê đơn của KH X được lập bởi NV Y 
 	private void thongKeXY() {
 		String maNV = cbbNhanVien.getSelectedItem().toString();
@@ -669,14 +783,14 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				model.addRow(rowData);
 			}
 		}
-		
+
 		double tongTien = 0;
 		double tongLoi = 0;
 		for (HoaDon hoaDon : listHD) {
 			tongTien += hdDao.tinhTongTien(hoaDon);
 			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
-		
+
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
@@ -685,25 +799,132 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Thống kê đơn của KH theo ngày
 	private void thongKeKHinDay() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
+		String maKH = cbbKhachHang.getSelectedItem().toString();
+
+		LocalDate date = LocalDate.of(nam, thang, ngay);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findKHinDay(date, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê đơn của KH theo tháng
 	private void thongKeKHinMonth() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		String maKH = cbbKhachHang.getSelectedItem().toString();
+
+		LocalDate date = LocalDate.of(nam, thang, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findKHinMonth(date, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê đơn của KH theo năm
 	private void thongKeKHinYear() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		String maKH = cbbKhachHang.getSelectedItem().toString();
 
+		LocalDate date = LocalDate.of(nam, 1, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findKHinYear(date, maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
 
 //	Thống kê tất cả đơn của KH
 	private void thongKeKH() {
-		// TODO Auto-generated method stub
+		String maKH = cbbKhachHang.getSelectedItem().toString();
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findKH(maKH);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
@@ -711,25 +932,133 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Thống kê đơn Nhân Viên lập theo ngày
 	private void thongKeNVinDay() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+
+		LocalDate date = LocalDate.of(nam, thang, ngay);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findNVinDay(date, maNV);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê đơn Nhân Viên lập theo tháng
 	private void thongKeNVinMonth() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+
+		LocalDate date = LocalDate.of(nam, thang, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findNVinMonth(date, maNV);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê đơn Nhân Viên lập theo năm
 	private void thongKeNVinYear() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+
+		LocalDate date = LocalDate.of(nam, 1, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findNVinYear(date, maNV);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê tất cả đơn Nhân Viên đã lập
 	private void thongKeNV() {
-		// TODO Auto-generated method stub
+		String maNV = cbbNhanVien.getSelectedItem().toString();
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findNV(maNV);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
@@ -737,26 +1066,129 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Thống kê đơn theo ngày
 	private void thongKeDonInNgay() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
+
+		LocalDate date = LocalDate.of(nam, thang, ngay);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findinDay(date);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê đơn theo tháng
 	private void thongKeDonInMonth() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
+
+		LocalDate date = LocalDate.of(nam, thang, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findinMonth(date);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê đơn theo năm
 	private void thongKeDonInYear() {
-		// TODO Auto-generated method stub
+		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
+
+		LocalDate date = LocalDate.of(nam, 1, 1);
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.findinYear(date);
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
 
 //	Thống kê tất cả các đơn
 	private void thongKeDon() {
-		// TODO Auto-generated method stub
+
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+		List<HoaDon> listHD = hdDao.readFromTable();
+
+		if (listHD != null) {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			for (HoaDon hoaDon : listHD) {
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+						hoaDon.getNgayLap(), hoaDon.getNgayNhan(), hdDao.tinhTongTien(hoaDon),
+						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
+				model.addRow(rowData);
+			}
+		}
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		txtTongTien.setText(String.valueOf(tongTien));
+		txtTongLoi.setText(String.valueOf(tongLoi));
 
 	}
-
 }
