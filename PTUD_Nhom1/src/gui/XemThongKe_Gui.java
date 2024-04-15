@@ -411,7 +411,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 			cbbSapXep.setSelectedIndex(0);
 		}
 		if (e.getSource() == btnIn) {
-			checkThongKe();
+			inThongKeRaExcel();
 		}
 
 	}
