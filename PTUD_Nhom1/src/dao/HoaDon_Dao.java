@@ -58,7 +58,7 @@ public class HoaDon_Dao {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return listHD;
 		}
 	}
 

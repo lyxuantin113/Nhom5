@@ -191,7 +191,9 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxBoLocBtn = Box.createHorizontalBox();
 		boxBtn = Box.createHorizontalBox();
 		btnXemThongKe = new JButton("Xem Thống Kê");
+		btnXemThongKe.setBackground(new Color(0, 160, 255));
 		btnXoaRong = new JButton("Xóa Rỗng");
+		btnXoaRong.setBackground(new Color(0, 160, 255));
 		boxBtn.add(btnXemThongKe);
 		boxBtn.add(Box.createHorizontalStrut(20));
 		boxBtn.add(btnXoaRong);
@@ -234,6 +236,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		txtTongLoi.setEditable(false);
 
 		btnIn = new JButton("In thống kê");
+		btnIn.setBackground(new Color(0, 160, 255));
 		btnIn.setPreferredSize(new Dimension(100, 35));
 
 		boxTong.add(lblTongTien);
