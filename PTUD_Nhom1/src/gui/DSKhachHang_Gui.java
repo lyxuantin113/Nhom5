@@ -23,6 +23,8 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	private JTable table;
 	private JButton btnXoa;
 	private JTextField txtMaKH;
+	private JButton btnSua;
+	private JTextField txtTimKiem;
 	
 	public DSKhachHang_Gui() {
 		setSize(1070, 600);
@@ -105,30 +107,38 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		// Footer
 		JPanel pnFooter = new JPanel();
 		JLabel lblTimKiem = new JLabel("Tìm kiếm: ");
-		JTextField txtTimKiem = new JTextField(20);
+		txtTimKiem = new JTextField(20);
 		txtTimKiem.setPreferredSize(new Dimension(getWidth(), 30));
-		JButton btnTim = new JButton("Tìm");
+		btnSua = new JButton("Sửa");
 		btnXoa = new JButton("Xóa");
 		btnXoa.setBackground(new Color(0,160,255));
-		btnTim.setBackground(new Color(0,160,255));
+		btnSua.setBackground(new Color(0,160,255));
 		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnSua.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		pnFooter.add(lblTimKiem);
 		pnFooter.add(txtTimKiem);
-		pnFooter.add(btnTim);
+		pnFooter.add(btnSua);
 		pnFooter.add(btnXoa);
 		pnMain.add(pnFooter);
 
 		add(pnMain);
 
 		// Event
-		txtMaKH.addActionListener(this);
-		txtSDT.addActionListener(this);
-		txtTen.addActionListener(this);
+		
 		btnThem.addActionListener(this);
 		btnXoaTrang.addActionListener(this);
 		btnXoa.addActionListener(this);
+		btnSua.addActionListener(this);
+		table.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				int row = table.getSelectedRow();
+				txtMaKH.setEditable(false);
+				txtMaKH.setText((String) table.getValueAt(row, 0));
+				txtSDT.setText((String) table.getValueAt(row, 1));
+				txtTen.setText((String) table.getValueAt(row, 2));
+			}
+		});
 		ConnectDB.connect();
 		hienTable();
 	}
@@ -149,10 +159,8 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o.equals(btnXoaTrang)) {
-			txtMaKH.setText("");
-			txtSDT.setText("");
-			txtTen.setText("");
-			txtMaKH.requestFocus();
+			xoaTrang();
+			
 		}
 		if (o.equals(btnThem)) {
 			themKhachHang();
@@ -160,7 +168,48 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnXoa)) {
 			xoaKhachHang();
 		}
+		if (o.equals(btnSua)) {
+			suaKhachHang();
+		}
 
+	}
+
+	private void suaKhachHang() {
+		
+		String ma = txtMaKH.getText();
+		String sdt = txtSDT.getText();
+		String ten = txtTen.getText();
+		
+		if (ma.equals("") || sdt.equals("") || ten.equals("")) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin");
+		} else {
+			// Sửa trong database
+			KhachHang kh = new KhachHang(ma, sdt, ten);
+			KhachHang_Dao khachHangDao = new KhachHang_Dao();
+			boolean suaThanhCong = khachHangDao.updateKhachHang(kh);
+			if (suaThanhCong) {
+				// Sửa trong table
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				int row = table.getSelectedRow();
+				model.setValueAt(sdt, row, 1);
+				model.setValueAt(ten, row, 2);
+				JOptionPane.showMessageDialog(this, "Sửa khách hàng thành công");
+				xoaTrang();
+			} else {
+				JOptionPane.showMessageDialog(this, "Sửa khách hàng không thành công");
+			}
+		}
+		
+	}
+
+	private void xoaTrang() {
+		table.clearSelection();
+		txtMaKH.setEditable(true);
+		txtMaKH.setText("");
+		txtSDT.setText("");
+		txtTen.setText("");
+		txtMaKH.requestFocus();
+		
 	}
 
 	private void themKhachHang() {

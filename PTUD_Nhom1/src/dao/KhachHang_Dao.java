@@ -122,7 +122,7 @@ public class KhachHang_Dao {
 			String query = "SELECT * FROM KhachHang WHERE maKH = ?";
 			PreparedStatement stm = con.prepareStatement(query);
 			stm.setString(1, maKH);
-			ResultSet rs = stm.executeQuery(); // Sử dụng executeQuery() mà không có đối số
+			ResultSet rs = stm.executeQuery(); 
 			if (rs.next()) {
 				String sdtKH = rs.getString(2);
 				String tenKH = rs.getString(3);
@@ -134,5 +134,54 @@ public class KhachHang_Dao {
 			return null;
 		}
 	}
+
+	public KhachHang findKhachHangBySDT(String sdt) {
+		KhachHang kh = null;
+        try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return null;
+			}
+			String query = "SELECT * FROM KhachHang WHERE soDienThoai = ?";
+			PreparedStatement stm = con.prepareStatement(query);
+			stm.setString(1, sdt);
+			ResultSet rs = stm.executeQuery();
+			if (rs.next()) {
+				String maKH = rs.getString(1);
+				String tenKH = rs.getString(3);
+				kh = new KhachHang(maKH, sdt, tenKH);
+			}
+			return kh;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+        }
+    
+	}
+
+	public boolean updateKhachHang(KhachHang kh) {
+		try {
+            Connection con = ConnectDB.getInstance().getConnection();
+            if (con == null) {
+                System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+                return false;
+            }
+            String query = "UPDATE KhachHang SET soDienThoai = ?, hoTen = ? WHERE maKH = ?";
+            PreparedStatement stm = con.prepareStatement(query);
+            stm.setString(1, kh.getSoDienThoai());
+            stm.setString(2, kh.getHoTen());
+            stm.setString(3, kh.getMaKH());
+            int row = stm.executeUpdate();
+            if (row > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    
+	}
+	
 
 }
