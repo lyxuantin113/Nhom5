@@ -10,6 +10,7 @@ import java.util.List;
 
 import db.ConnectDB;
 import entity.NhanVien;
+import entity.TaiKhoan;
 
 public class NhanVien_Dao {
 	List<entity.NhanVien> dsnv;
@@ -45,6 +46,7 @@ public class NhanVien_Dao {
 	public List<entity.NhanVien> getNhanVien(String manv) {
 		Connection con = ConnectDB.getInstance().getConnection();
 		PreparedStatement stmt = null;
+		List<NhanVien> listNV = new ArrayList<>();
 		try {
 			String sql = "Select* from NhanVien where maNV = ?";
 
@@ -61,12 +63,13 @@ public class NhanVien_Dao {
 				String email = rs.getString(5);
 
 				NhanVien nv = new NhanVien(maNV, tenNV, sdt, chucVu, email);
-				dsnv.add(nv);
+				listNV.add(nv);
 			}
+			return listNV;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return dsnv;
+		return listNV;
 	}
 
 	public boolean createNhanVien(NhanVien nv) {
@@ -87,6 +90,11 @@ public class NhanVien_Dao {
 			stmt.setString(4, nv.getChucVu());
 			stmt.setString(5, nv.getEmail());
 			n = stmt.executeUpdate();
+			if(n > 0) {
+				TaiKhoan tk = new TaiKhoan(nv.getEmail(), nv.getSdtNV(), nv);
+				TaiKhoan_Dao tkDao = new TaiKhoan_Dao();
+				if(tkDao.createTaiKhoan(tk)) n+=1;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -57,6 +57,9 @@ public class ManHinh_GUI extends JFrame {
 //		Thống kê
 		cardPanel.add(new XemThongKe_Gui(), "Xem Thống Kê");
 
+//		Hệ thống
+		cardPanel.add(new DoiMatKhau_Gui(), "Đổi Mật Khẩu");
+		
 //		GUI
 		showMenu();
 		showGUI();
@@ -117,8 +120,16 @@ public class ManHinh_GUI extends JFrame {
 		iconThongKe = new ImageIcon(imageThongKe);
 		qlThongKe.setIcon(iconThongKe);
 
+//		MENU ITEM
+//		Menu Item đổi mật khẩu
+		JMenuItem doiMatKhau = new JMenuItem("Đổi Mật Khẩu");
+		ImageIcon iconChange = new ImageIcon("src//Icon//doiMK.png");
+		Image imageChange = iconChange.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
+		iconChange = new ImageIcon(imageChange);
+		doiMatKhau.setIcon(iconChange);
+		
 //		Menu Item Đăng Xuất
-		JMenuItem dangXuat = new JMenuItem("Đăng xuất");
+		JMenuItem dangXuat = new JMenuItem("Đăng Xuất");
 //		ICON ĐĂNG XUẤT
 		ImageIcon iconDX = new ImageIcon("src//Icon//dangXuat.png");
 		Image imageDX = iconDX.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
@@ -222,6 +233,9 @@ public class ManHinh_GUI extends JFrame {
 		
 //		ADD MENU ITEM VÀO MENU
 //		add Menu Item Hệ Thống
+		heThong.add(doiMatKhau);
+		doiMatKhau.setPreferredSize(new Dimension(160, 50));
+		
 		heThong.add(dangXuat);
 		dangXuat.setPreferredSize(new Dimension(160, 50));
 
@@ -312,6 +326,15 @@ public class ManHinh_GUI extends JFrame {
 		});
 		
 //		HỆ THỐNG
+		doiMatKhau.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(cardPanel, "Đổi Mật Khẩu");
+				
+			}
+		});
+		
 		dangXuat.addActionListener(new ActionListener() {
 
 			@Override
