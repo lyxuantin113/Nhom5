@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import db.ConnectDB;
+import entity.DonDat;
+import entity.HoaDon;
 import entity.NhanVien;
 import entity.TaiKhoan;
 
@@ -147,6 +149,24 @@ public class NhanVien_Dao {
 		int n = 0;
 		try {
 			con.setAutoCommit(false);
+			
+//			Kiểm tra các đơn hàng có mã NV? -> Update
+			HoaDon_Dao hdDao = new HoaDon_Dao();
+			List<HoaDon> listHD = hdDao.findKH(maNV);
+			if(listHD != null) {
+				for (HoaDon hoaDon : listHD) {
+					hdDao.updateKhachInHoaDon(hoaDon.getMaHoaDon());
+				}
+			}
+			
+//			Kiểm tra đơn đặt có mã NV? -> Update
+			DonDat_Dao ddDao = new DonDat_Dao();
+			List<DonDat> listDD = ddDao.findKH(maNV);
+			if(listHD != null) {
+				for (DonDat donDat : listDD) {
+					ddDao.updateKhachInDonDat(donDat.getMaDonDat());
+				}
+			}
 
 			stmtnv = con.prepareStatement("DELETE FROM NhanVien WHERE maNV = ?");
 			stmtnv.setString(1, maNV);

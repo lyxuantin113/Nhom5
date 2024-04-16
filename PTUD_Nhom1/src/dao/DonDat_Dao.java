@@ -206,6 +206,27 @@ public class DonDat_Dao {
 			return null;
 		}
 	}
+	
+	public List<DonDat> findKH(String maKH) {
+		List<DonDat> listDD = new ArrayList<DonDat>();
+		String query = "SELECT * FROM DonDat WHERE maKH = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maKH);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				listDD.add(findByID(maHD));
+			}
+			return listDD;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public List<DonDat> getDSDD() {
 		return dsdd;
@@ -230,5 +251,29 @@ public class DonDat_Dao {
 			loiNhuan += (giaBan - giaNhap) * soLuong;
 		}
 		return loiNhuan;
+	}
+
+	public void updateKhachInDonDat(String maDD) {
+		String query = "Update DonDat Set maKH = ? Where maDonDat = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, "KH00000");
+			pstmt.setString(2, maDD);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateNhanVienInDonDat(String maDD) {
+		String query = "Update DonDat Set maNV = ? Where maDonDat = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, "NV000");
+			pstmt.setString(2, maDD);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
