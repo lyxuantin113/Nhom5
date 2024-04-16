@@ -25,6 +25,8 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	private JTextField txtMaKH;
 	private JButton btnSua;
 	private JTextField txtTimKiem;
+	private JButton btnTim;
+	private JButton btnLamMoi;
 	
 	public DSKhachHang_Gui() {
 		setSize(1070, 600);
@@ -111,13 +113,22 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		txtTimKiem.setPreferredSize(new Dimension(getWidth(), 30));
 		btnSua = new JButton("Sửa");
 		btnXoa = new JButton("Xóa");
+		btnTim = new JButton("Tìm");
+		btnLamMoi = new JButton("Làm mới");
+		btnLamMoi.setBackground(new Color(0,160,255));
+		btnLamMoi.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
 		btnXoa.setBackground(new Color(0,160,255));
 		btnSua.setBackground(new Color(0,160,255));
+		btnTim.setBackground(new Color(0,160,255));
 		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnSua.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		pnFooter.add(lblTimKiem);
 		pnFooter.add(txtTimKiem);
+		pnFooter.add(btnTim);
+		pnFooter.add(btnLamMoi);
 		pnFooter.add(btnSua);
 		pnFooter.add(btnXoa);
 		pnMain.add(pnFooter);
@@ -130,6 +141,8 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		btnXoaTrang.addActionListener(this);
 		btnXoa.addActionListener(this);
 		btnSua.addActionListener(this);
+		btnTim.addActionListener(this);
+		btnLamMoi.addActionListener(this);
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
 				int row = table.getSelectedRow();
@@ -162,6 +175,9 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 			xoaTrang();
 			
 		}
+		if (o.equals(btnTim)) {
+			timKiem();
+		}
 		if (o.equals(btnThem)) {
 			themKhachHang();
 		}
@@ -171,7 +187,25 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnSua)) {
 			suaKhachHang();
 		}
+		if (o.equals(btnLamMoi)) {
+			txtTimKiem.setText("");
+			table.clearSelection();
+			hienTable();
+		}
 
+	}
+
+	private void timKiem() {
+		String tim = txtTimKiem.getText();
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		model.setRowCount(0);
+		List<KhachHang> dsKH = new KhachHang_Dao().readFromTable();
+		for (KhachHang kh : dsKH) {
+			if (kh.getMaKH().contains(tim) || kh.getSoDienThoai().contains(tim) || kh.getHoTen().contains(tim)) {
+				model.addRow(new Object[] { kh.getMaKH(), kh.getSoDienThoai(), kh.getHoTen() });
+			}
+		}
+		
 	}
 
 	private void suaKhachHang() {
