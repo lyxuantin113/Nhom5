@@ -196,6 +196,30 @@ public class HoaDon_Dao {
 		}
 	}
 
+	public void updateKhachInHoaDon(String maHD) {
+		String query = "Update HoaDon Set maKH = ? Where maHoaDon = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, "KH00000");
+			pstmt.setString(2, maHD);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateNhanVienInHoaDon(String maHD) {
+		String query = "Update HoaDon Set maNV = ? Where maHoaDon = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, "NV000");
+			pstmt.setString(2, maHD);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 //	THỐNG KÊ FULL FIELD
 	public List<HoaDon> findTKFullField(LocalDate ngayLap, String maNV, String maKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
@@ -590,7 +614,8 @@ public class HoaDon_Dao {
 		// Đếm số đơn hàng của mỗi khách hàng
 		for (HoaDon hoaDon : allHoaDon) {
 			String maKH = hoaDon.getMaKH().getMaKH();
-			khachHangCountMap.put(maKH, khachHangCountMap.getOrDefault(maKH, 0) + 1);
+			if (!maKH.equals("KH00000"))
+				khachHangCountMap.put(maKH, khachHangCountMap.getOrDefault(maKH, 0) + 1);
 		}
 
 		// Sắp xếp theo số đơn hàng giảm dần và chọn ra khách hàng tiềm năng có số đơn
@@ -626,7 +651,8 @@ public class HoaDon_Dao {
 		// Đếm số đơn hàng của mỗi nhân viên
 		for (HoaDon hoaDon : allHoaDon) {
 			String maNV = hoaDon.getMaNV().getMaNV();
-			nhanVienCountMap.put(maNV, nhanVienCountMap.getOrDefault(maNV, 0) + 1);
+			if (!maNV.equals("NV000"))
+				nhanVienCountMap.put(maNV, nhanVienCountMap.getOrDefault(maNV, 0) + 1);
 		}
 
 		// Sắp xếp theo số đơn hàng giảm dần và chọn ra top 3 nhân viên lập số đơn nhiều
@@ -648,27 +674,40 @@ public class HoaDon_Dao {
 
 		return topHoaDonList;
 	}
+
 	public List<HoaDon> thongKeLoiNhuanCaoNhat() {
-	    // Khởi tạo một map để lưu lợi nhuận của mỗi đơn hàng
-	    Map<String, Double> loiNhuanMap = new HashMap<>();
+		// Khởi tạo một map để lưu lợi nhuận của mỗi đơn hàng
+		Map<String, Double> loiNhuanMap = new HashMap<>();
 
-	    // Lấy danh sách tất cả các hóa đơn từ cơ sở dữ liệu
-	    List<HoaDon> allHoaDon = readFromTable();
+		// Lấy danh sách tất cả các hóa đơn từ cơ sở dữ liệu
+		List<HoaDon> allHoaDon = readFromTable();
 
-	    // Tính lợi nhuận cho mỗi đơn hàng
-	    for (HoaDon hoaDon : allHoaDon) {
-	        double loiNhuan = tinhLoiNhuanChoHoaDon(hoaDon);
-	        loiNhuanMap.put(hoaDon.getMaHoaDon(), loiNhuan);
-	    }
+		// Tính lợi nhuận cho mỗi đơn hàng
+		for (HoaDon hoaDon : allHoaDon) {
+			double loiNhuan = tinhLoiNhuanChoHoaDon(hoaDon);
+			loiNhuanMap.put(hoaDon.getMaHoaDon(), loiNhuan);
+		}
 
-	    // Sắp xếp theo lợi nhuận giảm dần và chọn ra top 3 đơn hàng có lợi nhuận cao nhất
-	    List<HoaDon> top3HoaDon = loiNhuanMap.entrySet().stream()
-	            .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-	            .limit(3)
-	            .map(e -> findByID(e.getKey()))
-	            .collect(Collectors.toList());
+		// Sắp xếp theo lợi nhuận giảm dần và chọn ra top 3 đơn hàng có lợi nhuận cao
+		// nhất
+		List<HoaDon> top3HoaDon = loiNhuanMap.entrySet().stream()
+				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).limit(3).map(e -> findByID(e.getKey()))
+				.collect(Collectors.toList());
 
-	    return top3HoaDon;
+		return top3HoaDon;
+	}
+
+	public boolean checkThuoc(String maThuoc) {
+		String query = "SELECT * FROM ChiTietHoaDon WHERE maThuoc = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maThuoc);
+			ResultSet rs = pstmt.executeQuery();
+			return rs.next();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import dao.NhaCungCap_Dao;
+import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.NhaCungCap;
 
@@ -193,6 +194,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	private void xoa() {
 		String maNCC = txtMa.getText();
 		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		if (maNCC.equals("")) {
 			JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xóa");
 			return;
@@ -201,10 +203,15 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 			int chon = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa", "Xác nhận",
 					JOptionPane.YES_NO_OPTION);
 			if (chon == JOptionPane.YES_OPTION) {
+				if (thuocDao.searchNCC(maNCC)) {
+					JOptionPane.showMessageDialog(null, "Không thể xóa nhà cung cấp này vì có thuốc liên quan");
+					return;
+				}
 				nccDao.deleteNCC(maNCC);
 				JOptionPane.showMessageDialog(null, "Xóa thành công");
 				hienThiDanhSachNCC();
 				xoaTrang();
+
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "Không tìm thấy nhà cung cấp cần xóa");
@@ -243,9 +250,9 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	}
 
 	private void themNCC() {
-		if(!xuLyDuLieu())
+		if (!xuLyDuLieu())
 			return;
-		
+
 		String ma = txtMa.getText();
 		String ten = txtTen.getText();
 		String diaChi = txtDiaChi.getText();
@@ -261,13 +268,11 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 			nccDao.addNCC(ncc);
 			xoaTrang();
 			hienThiDanhSachNCC();
-			
-			
+
 		} else {
 			JOptionPane.showMessageDialog(null, "Mã nhà cung cấp đã tồn tại");
 		}
-		
-		
+
 	}
 
 	private boolean xuLyDuLieu() {
@@ -304,7 +309,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 			txtSDT.requestFocus();
 			return false;
 		}
-		
+
 		return true;
 	}
 

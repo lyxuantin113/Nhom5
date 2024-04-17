@@ -143,6 +143,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 	private void timThuoc() {
 		// Lấy thông tin tìm kiếm
 		String thongTin = txtThongTin.getText();
+		
 		// Lấy cách tìm kiếm
 		String cachTim = (String) cbbCachTim.getSelectedItem();
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
@@ -152,15 +153,17 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 			return;
 		} else {
 			if (cachTim.equals("Mã thuốc")) {
-				List<Thuoc> listThuoc = thuocDao.timTheoMa(thongTin);
-				if (listThuoc!=null) {
-					for (Thuoc thuoc : listThuoc) {						
-						DefaultTableModel model = (DefaultTableModel) table.getModel();
-						model.setRowCount(0);
-						Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-								thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
-								thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
-						model.addRow(rowData);
+				if (thuocDao.timTheoMaTuyetDoi(thongTin)) {
+					DefaultTableModel model = (DefaultTableModel) table.getModel();
+					model.setRowCount(0);
+					JOptionPane.showMessageDialog(this, "Tìm thấy mã thuốc.");
+					for (Thuoc thuoc : dsThuoc) {						
+						if (thuoc.getMaThuoc().contains(thongTin)) {
+							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
+							model.addRow(rowData);
+						}
 					}
 				} else {
 					JOptionPane.showMessageDialog(this, "Không tìm thấy mã thuốc.");
@@ -172,6 +175,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 				if (thuocDao.timTheoTen(thongTin)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
+					JOptionPane.showMessageDialog(this, "Tìm thấy tên thuốc.");
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getTenThuoc().contains(thongTin)) {
 							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
@@ -189,6 +193,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 				if (thuocDao.timTheoLoai(thongTin)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
+					JOptionPane.showMessageDialog(this, "Tìm thấy loại thuốc.");
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getLoaiThuoc().contains(thongTin)) {
 							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
@@ -206,6 +211,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 				if (thuocDao.timTheoNCC(thongTin)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
+					JOptionPane.showMessageDialog(this, "Tìm thấy nhà cung c.");
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getMaNCC().contains(thongTin)) {
 							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),

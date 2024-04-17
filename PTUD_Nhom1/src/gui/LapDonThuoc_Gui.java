@@ -41,17 +41,17 @@ import entity.Thuoc;
 
 public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseListener {
 	JButton btnThem;
-	private JTextField tfMaThuoc;
-	private JTextField tfSoLuong;
+	private JTextField txtMaThuoc;
+	private JTextField txtSoLuong;
 	private DefaultTableModel modelHoaDon;
-	private JTable tableHoaDon;
+	private JTable tblHoaDon;
 	private JScrollPane scrollHoaDon;
-	private JTextField tfTong;
-	private JTextField tfNgayLap;
-	private JTextField tfNgayNhan;
-	private JTextField tfMaNV;
-	private JTextField tfTenKH;
-	private JTextField tfSDT;
+	private JTextField txtTong;
+	private JTextField txtNgayLap;
+	private JTextField txtNgayNhan;
+	private JTextField txtMaNV;
+	private JTextField txtTenKH;
+	private JTextField txtSDT;
 	private JButton btnLapHD;
 	private JButton btnLapDD;
 	private JButton btnXoa;
@@ -98,7 +98,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 //		Mã Thuốc
 		JLabel lbMaThuoc = new JLabel("Mã Thuốc: ");
 		lbMaThuoc.setPreferredSize(new Dimension(90, 0));
-		tfMaThuoc = new JTextField(15);
+		txtMaThuoc = new JTextField(15);
 		btnShowThuoc = new JButton("+");
 		btnShowThuoc.setBackground(new Color(0, 160, 255));
 		btnShowThuoc.setPreferredSize(new Dimension(30, 0));
@@ -106,18 +106,18 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(lbMaThuoc);
 		boxNhap.add(Box.createHorizontalStrut(5));
-		boxNhap.add(tfMaThuoc);
+		boxNhap.add(txtMaThuoc);
 		boxNhap.add(btnShowThuoc);
 		boxNhap.add(Box.createHorizontalStrut(30));
 
 //		Số lượng
 		JLabel lbSoLuong = new JLabel("Số lượng: ");
 		lbSoLuong.setPreferredSize(lbMaThuoc.getPreferredSize());
-		tfSoLuong = new JTextField(15);
+		txtSoLuong = new JTextField(15);
 		boxNhap.add(Box.createHorizontalStrut(30));
 		boxNhap.add(lbSoLuong);
 		boxNhap.add(Box.createHorizontalStrut(5));
-		boxNhap.add(tfSoLuong);
+		boxNhap.add(txtSoLuong);
 		boxNhap.add(Box.createHorizontalStrut(30));
 
 //		BUTTON Thêm, xóa thuốc trong danh sách
@@ -143,12 +143,12 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		Box boxTableHoaDon = Box.createVerticalBox();
 		String[] headerHoaDon = "Mã thuốc;Tên thuốc;Loại;Đơn giá;Đơn vị;Số lượng;Thành tiền".split(";");
 		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
-		tableHoaDon = new JTable(modelHoaDon);
+		tblHoaDon = new JTable(modelHoaDon);
 		scrollHoaDon = new JScrollPane();
-		scrollHoaDon.setViewportView(tableHoaDon = new JTable(modelHoaDon));
+		scrollHoaDon.setViewportView(tblHoaDon = new JTable(modelHoaDon));
 		scrollHoaDon.setPreferredSize(new Dimension(1100, 270));
-		tableHoaDon.setRowHeight(20);
-		tableHoaDon.setAutoCreateRowSorter(true);
+		tblHoaDon.setRowHeight(20);
+		tblHoaDon.setAutoCreateRowSorter(true);
 
 		boxTableHoaDon.add(Box.createVerticalStrut(10));
 		boxTableHoaDon.add(scrollHoaDon);
@@ -172,22 +172,22 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 //		Tổng thành tiền
 		JLabel lbTong = new JLabel("Tổng thành tiền:");
 		lbTong.setPreferredSize(new Dimension(100, 30));
-		tfTong = new JTextField(20);
-		tfTong.setEditable(false);
-		tfTong.setText(0 + "");
+		txtTong = new JTextField(20);
+		txtTong.setEditable(false);
+		txtTong.setText(0 + "");
 		boxTong.add(Box.createHorizontalStrut(10));
 		boxTong.add(lbTong);
-		boxTong.add(tfTong);
+		boxTong.add(txtTong);
 
 //		Ngày Lập
 		JLabel lbNgayLap = new JLabel("Ngày Lập HD: ");
 		lbNgayLap.setPreferredSize(new Dimension(100, 30));
-		tfNgayLap = new JTextField(20);
-		tfNgayLap.setText(LocalDate.now().toString());
-		tfNgayLap.setEditable(false);
+		txtNgayLap = new JTextField(20);
+		txtNgayLap.setText(LocalDate.now().toString());
+		txtNgayLap.setEditable(false);
 		boxTong.add(Box.createHorizontalStrut(30));
 		boxTong.add(lbNgayLap);
-		boxTong.add(tfNgayLap);
+		boxTong.add(txtNgayLap);
 
 		pnEndHD.add(boxTong);
 		pnEndHD.add(Box.createVerticalStrut(10));
@@ -196,37 +196,37 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 //		Mã NV
 		JLabel lbMaNV = new JLabel("Mã Nhân Viên: ");
 		lbMaNV.setPreferredSize(new Dimension(100, 30));
-		tfMaNV = new JTextField(20);
+		txtMaNV = new JTextField(20);
 		boxMa.add(Box.createHorizontalStrut(10));
 		boxMa.add(lbMaNV);
-		boxMa.add(tfMaNV);
+		boxMa.add(txtMaNV);
 		pnEndHD.add(boxMa);
 		pnEndHD.add(Box.createVerticalStrut(10));
 
 //		Ngày Nhận
 		JLabel lbNgayNhan = new JLabel("Ngày Nhận: ");
 		lbNgayNhan.setPreferredSize(new Dimension(100, 30));
-		tfNgayNhan = new JTextField(20);
+		txtNgayNhan = new JTextField(20);
 		boxMa.add(Box.createHorizontalStrut(30));
 		boxMa.add(lbNgayNhan);
-		boxMa.add(tfNgayNhan);
+		boxMa.add(txtNgayNhan);
 
 //		Box 3
 //		Tên Khách Hàng
 		JLabel lbTenKH = new JLabel("Tên Khách: ");
 		lbTenKH.setPreferredSize(new Dimension(100, 30));
-		tfTenKH = new JTextField(20);
+		txtTenKH = new JTextField(20);
 		boxKH.add(Box.createHorizontalStrut(10));
 		boxKH.add(lbTenKH);
-		boxKH.add(tfTenKH);
+		boxKH.add(txtTenKH);
 
 //		Số Điện Thoại KH
 		JLabel lbSDT = new JLabel("Số ĐT Khách:");
 		lbSDT.setPreferredSize(new Dimension(100, 30));
-		tfSDT = new JTextField(20);
+		txtSDT = new JTextField(20);
 		boxKH.add(Box.createHorizontalStrut(30));
 		boxKH.add(lbSDT);
-		boxKH.add(tfSDT);
+		boxKH.add(txtSDT);
 		pnEndHD.add(boxKH);
 		pnEndHD.add(Box.createVerticalStrut(5));
 
@@ -273,14 +273,14 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		btnLapHD.addActionListener(this);
 		btnLapDD.addActionListener(this);
 //		tableThuoc.addMouseListener(this);
-		tableHoaDon.addMouseListener(this);
+		tblHoaDon.addMouseListener(this);
 
 		ConnectDB.connect();
 		hienTableHoaDon();
 	}
 
 	private void hienTableHoaDon() {
-		DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
+		DefaultTableModel model = (DefaultTableModel) tblHoaDon.getModel();
 		model.setRowCount(0);
 
 		ChiTietHoaDon_Dao cthdDao = new ChiTietHoaDon_Dao();
@@ -334,37 +334,37 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		int rowSelected = tblFrameThuoc.getSelectedRow();
 		String ma = (String) modelFrame.getValueAt(rowSelected, 1);
 		newFrame.setVisible(false);
-		tfMaThuoc.setText(ma);
+		txtMaThuoc.setText(ma);
 	}
 
 	public void xoaTrangThuoc() {
-		tfMaThuoc.setText("");
-		tfSoLuong.setText("");
-		tfMaThuoc.requestFocus();
+		txtMaThuoc.setText("");
+		txtSoLuong.setText("");
+		txtMaThuoc.requestFocus();
 	}
 
 	public void xoaTrangTatCa() {
-		tfMaThuoc.setText("");
-		tfSoLuong.setText("");
-		tfMaNV.setText("");
-		tfTenKH.setText("");
-		tfSDT.setText("");
-		tfMaThuoc.requestFocus();
+		txtMaThuoc.setText("");
+		txtSoLuong.setText("");
+		txtMaNV.setText("");
+		txtTenKH.setText("");
+		txtSDT.setText("");
+		txtMaThuoc.requestFocus();
 	}
 
 	// KIỂM TRA VIỆC THÊM XÓA THUỐC VÀO ĐƠN
 	public boolean checkQuatity() {
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		List<Thuoc> listThuoc = thuocDao.timTheoMa(tfMaThuoc.getText()); // Tim Thuoc
+		List<Thuoc> listThuoc = thuocDao.timTheoMa(txtMaThuoc.getText()); // Tim Thuoc
 		for (Thuoc thuoc : listThuoc) {
-			if (thuoc.getSoLuongTon() < Integer.parseInt(tfSoLuong.getText())) {
+			if (thuoc.getSoLuongTon() < Integer.parseInt(txtSoLuong.getText())) {
 				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng thuốc yêu cầu vượt quá thuốc tồn kho!");
 				return false;
 			}
 		}
 
 		try {
-			int soLuongThuoc = Integer.parseInt(tfSoLuong.getText());
+			int soLuongThuoc = Integer.parseInt(txtSoLuong.getText());
 			if (soLuongThuoc <= 0) {
 				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng phải > 0");
 				return false;
@@ -377,15 +377,15 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	}
 
 	public boolean checkDate() {
-		if (tfNgayNhan.getText().equals("")) {
+		if (txtNgayNhan.getText().equals("")) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập Ngày lập");
 			return false;
 		}
 
 		try {
-			LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
-			LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
-			String ngayNhanText = tfNgayNhan.getText();
+			LocalDate ngayLapHD = LocalDate.parse(txtNgayLap.getText());
+			LocalDate ngayNhanHD = LocalDate.parse(txtNgayNhan.getText());
+			String ngayNhanText = txtNgayNhan.getText();
 
 			if (ngayLapHD.isAfter(ngayNhanHD)) {
 				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận phải sau Ngày lập");
@@ -410,9 +410,9 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	}
 
 	public boolean checkValidLap() {
-		String maNV = tfMaNV.getText();
-		String tenKhach = tfTenKH.getText();
-		String sdt = tfSDT.getText();
+		String maNV = txtMaNV.getText();
+		String tenKhach = txtTenKH.getText();
+		String sdt = txtSDT.getText();
 
 		NhanVien_Dao nvDao = new NhanVien_Dao();
 
@@ -437,7 +437,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 //	XỬ LÝ SỰ KIỆN
 	public boolean hasKhach() {
-		if (tfTenKH.getText().equals("") || tfSDT.getText().equals("")) {
+		if (txtTenKH.getText().equals("") || txtSDT.getText().equals("")) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Đơn đặt phải có đầy đủ thông tin Khách hàng");
 			return false;
 		}
@@ -445,7 +445,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	}
 
 	public boolean hasThuoc() {
-		if (tfMaThuoc.getText().equals("")) {
+		if (txtMaThuoc.getText().equals("")) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập thông tin thuốc!");
 			return false;
 		}
@@ -455,9 +455,9 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void addOrderDetail() {
 
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		String maThuoc = tfMaThuoc.getText();
+		String maThuoc = txtMaThuoc.getText();
 		Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
-		int soLuong = Integer.parseInt(tfSoLuong.getText());
+		int soLuong = Integer.parseInt(txtSoLuong.getText());
 		ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
 		ChiTietDonDat ctdd = new ChiTietDonDat(thuoc, soLuong);
 
@@ -512,17 +512,17 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
 			total += Double.parseDouble(modelHoaDon.getValueAt(i, 6).toString());
 		}
-		tfTong.setText(total + "");
+		txtTong.setText(total + "");
 
 	}
 
 	public void deleteOrderDetail() {
-		int selectedRow = tableHoaDon.getSelectedRow();
+		int selectedRow = tblHoaDon.getSelectedRow();
 		if (selectedRow != -1) {
 			Thuoc_Dao thuocDao = new Thuoc_Dao();
-			String maThuoc = (String) tableHoaDon.getValueAt(selectedRow, 0);
+			String maThuoc = (String) tblHoaDon.getValueAt(selectedRow, 0);
 			Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
-			int soLuong = Integer.parseInt(tableHoaDon.getValueAt(selectedRow, 5).toString());
+			int soLuong = Integer.parseInt(tblHoaDon.getValueAt(selectedRow, 5).toString());
 
 			ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
 			ChiTietDonDat ctdd = new ChiTietDonDat(thuoc, soLuong);
@@ -536,7 +536,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
 				total += Double.parseDouble(modelHoaDon.getValueAt(i, 6).toString());
 			}
-			tfTong.setText(total + "");
+			txtTong.setText(total + "");
 
 		} else
 			JOptionPane.showMessageDialog(null, "Lưu ý: Chưa có cột được chọn!");
@@ -546,24 +546,14 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private void lapHoaDon() {
 		KhachHang_Dao khachHangDao = new KhachHang_Dao();
 		List<KhachHang> listKH = khachHangDao.getDSKH();
-		String tenKH = tfTenKH.getText();
-		String sdtKH = tfSDT.getText();
+		String tenKH = txtTenKH.getText();
+		String sdtKH = txtSDT.getText();
 		KhachHang kh = khachHangDao.findBySDT(sdtKH);
-		if (kh == null && sdtKH.equals("")) {
+		if(tenKH.equals("") && sdtKH.equals("")) {
+			kh = khachHangDao.findById("KH00000");
+		}
+		else if (kh == null && !tenKH.equals("")) {
 			kh = new KhachHang("", tenKH);
-			int i = 0;
-			while (i < listKH.size()) {
-				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
-					kh.setMaKH();
-					i = 0;
-				} else
-					i++;
-			}
-			khachHangDao.addKhachHang(kh);
-		} else if (kh == null && sdtKH.equals("") && tenKH.equals("")) {
-			kh = null;
-		} else if (kh == null) {
-			kh = new KhachHang(sdtKH, tenKH);
 			int i = 0;
 			while (i < listKH.size()) {
 				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
@@ -576,10 +566,10 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		}
 
 		NhanVien_Dao nhanVienDao = new NhanVien_Dao();
-		String maNV = tfMaNV.getText();
+		String maNV = txtMaNV.getText();
 		NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
 
-		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
+		LocalDate ngayLapHD = LocalDate.parse(txtNgayLap.getText());
 		LocalDate ngayNhanHD = ngayLapHD;
 
 		HoaDon_Dao hoaDonDao = new HoaDon_Dao();
@@ -610,8 +600,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private void lapDonDat() {
 		KhachHang_Dao khachHangDao = new KhachHang_Dao();
 		List<KhachHang> listKH = khachHangDao.getDSKH();
-		String tenKH = tfTenKH.getText();
-		String sdtKH = tfSDT.getText();
+		String tenKH = txtTenKH.getText();
+		String sdtKH = txtSDT.getText();
 		KhachHang kh = khachHangDao.findBySDT(sdtKH);
 		if (kh == null) {
 			kh = new KhachHang(sdtKH, tenKH);
@@ -627,11 +617,11 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		}
 
 		NhanVien_Dao nhanVienDao = new NhanVien_Dao();
-		String maNV = tfMaNV.getText();
+		String maNV = txtMaNV.getText();
 		NhanVien nv = nhanVienDao.getNhanVien(maNV).get(0);
 
-		LocalDate ngayLapHD = LocalDate.parse(tfNgayLap.getText());
-		LocalDate ngayNhanHD = LocalDate.parse(tfNgayNhan.getText());
+		LocalDate ngayLapHD = LocalDate.parse(txtNgayLap.getText());
+		LocalDate ngayNhanHD = LocalDate.parse(txtNgayNhan.getText());
 
 		DonDat_Dao donDatDao = new DonDat_Dao();
 		DonDat donDat = new DonDat(kh, nv, ngayLapHD, ngayNhanHD, tempListDD);
@@ -833,11 +823,11 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 //		Bắt sự kiện Mouse cho Danh Sách Thuốc
-		int rowSelectedDon = tableHoaDon.getSelectedRow();
+		int rowSelectedDon = tblHoaDon.getSelectedRow();
 
 		if (rowSelectedDon != -1) {
-			tfMaThuoc.setText((String) tableHoaDon.getValueAt(rowSelectedDon, 0));
-			tfSoLuong.setText((String) tableHoaDon.getValueAt(rowSelectedDon, 5));
+			txtMaThuoc.setText((String) tblHoaDon.getValueAt(rowSelectedDon, 0));
+			txtSoLuong.setText((String) tblHoaDon.getValueAt(rowSelectedDon, 5));
 		}
 
 	}

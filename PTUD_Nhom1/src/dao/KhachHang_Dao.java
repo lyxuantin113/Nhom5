@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import db.ConnectDB;
+import entity.DonDat;
+import entity.HoaDon;
 import entity.KhachHang;
 
 public class KhachHang_Dao {
@@ -72,6 +74,25 @@ public class KhachHang_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
 			}
+			
+//			Kiểm tra các đơn hàng có mã KH? -> Update
+			HoaDon_Dao hdDao = new HoaDon_Dao();
+			List<HoaDon> listHD = hdDao.findKH(kh.getMaKH());
+			if(listHD != null) {
+				for (HoaDon hoaDon : listHD) {
+					hdDao.updateKhachInHoaDon(hoaDon.getMaHoaDon());
+				}
+			}
+			
+//			Kiểm tra đơn đặt có mã KH? -> Update
+			DonDat_Dao ddDao = new DonDat_Dao();
+			List<DonDat> listDD = ddDao.findKH(kh.getMaKH());
+			if(listHD != null) {
+				for (DonDat donDat : listDD) {
+					ddDao.updateKhachInDonDat(donDat.getMaDonDat());
+				}
+			}
+			
 			String query = "DELETE FROM KhachHang WHERE maKH = '" + kh.getMaKH() + "'";
 			try (Statement stm = con.createStatement()) {
 				stm.executeUpdate(query);

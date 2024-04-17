@@ -236,7 +236,7 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
 			}
-			String query = "select * from Thuoc where tenNCC = '" + ncc + "'";
+			String query = "select * from Thuoc where maNCC = '" + ncc + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			if (rs.next()) {
@@ -351,6 +351,42 @@ public class Thuoc_Dao {
 		}
 		return thuoc;
 
+	}
+
+	public boolean searchNCC(String maNCC) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from Thuoc where maNCC = '" + maNCC + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Boolean timTheoMaTuyetDoi(String ma) {
+		
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return false;
+			}
+			String query = "select * from Thuoc where maThuoc = '" + ma + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }
