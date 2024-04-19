@@ -551,6 +551,17 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		KhachHang kh = khachHangDao.findBySDT(sdtKH);
 		if(tenKH.equals("") && sdtKH.equals("")) {
 			kh = khachHangDao.findById("KH00000");
+		} else if (kh == null && !sdtKH.equals("")) {
+			kh = new KhachHang(sdtKH, tenKH);
+			int i = 0;
+			while (i < listKH.size()) {
+				if (listKH.get(i).getMaKH().equalsIgnoreCase(kh.getMaKH())) {
+					kh.setMaKH();
+					i = 0;
+				} else
+					i++;
+			}
+			khachHangDao.addKhachHang(kh);
 		}
 		else if (kh == null && !tenKH.equals("")) {
 			kh = new KhachHang("", tenKH);

@@ -98,7 +98,7 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 		Box boxChucVu = Box.createHorizontalBox();
 		JLabel lbChucVu = new JLabel("Chức Vụ: ");
 		lbChucVu.setPreferredSize(new Dimension(100, -10));
-		String[] chucVu = { "Nhân viên bán hàng", "Nhân viên quản lí" };
+		String[] chucVu = { "Nhan vien ban hang", "Nhan vien quan ly" };
 		cbbChucVu = new JComboBox<>(chucVu);
 //		txtChucVu.setPreferredSize(new Dimension(0, 10));
 		boxChucVu.add(Box.createHorizontalStrut(15));
@@ -242,12 +242,12 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 
 			NhanVien n = new NhanVien(ma, ten, sdt, chucVu, email);
 //			try {
-			String regexMa = "^NV[0-9]{8}$";
+			String regexMa = "^NV[0-9]{3}$";
 			if (txtMaNV.getText().equals("")) {
 				JOptionPane.showMessageDialog(this, "Mã không được rỗng!");
 				txtMaNV.requestFocus();
 			} else if (!Pattern.matches(regexMa, txtMaNV.getText())) {
-				JOptionPane.showMessageDialog(this, "Mã phải có dạng NVXXXXXXXX!");
+				JOptionPane.showMessageDialog(this, "Mã phải có dạng NVXXX!");
 				txtMaNV.selectAll();
 				txtMaNV.requestFocus();
 			}
@@ -275,7 +275,7 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 			if (row != -1) {
 				String maNV = (String) tableNhanVien.getModel().getValueAt(row, 0);
 				int hoiNhac = JOptionPane.showConfirmDialog(this,
-						"Chắn chắn xóa?\n*Lưu ý: Nếu Nhân viên bị xóa thì những Đơn hàng đang được lập bởi Nhân viên đó cũng sẽ bị xóa.",
+						"Chắn chắn xóa?\n*Bạn muốn xóa nhân viên này?",
 						"Chú ý", JOptionPane.YES_NO_OPTION);
 				if (hoiNhac == JOptionPane.YES_OPTION)
 					if (dsNV.deleteNhanVien(maNV)) {
