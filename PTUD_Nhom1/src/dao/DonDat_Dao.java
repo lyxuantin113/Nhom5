@@ -276,4 +276,19 @@ public class DonDat_Dao {
 			e.printStackTrace();
 		}
 	}
+
+	public boolean checkThuoc(String maThuoc) {
+		String query = "Select * from Thuoc where maThuoc = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maThuoc);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

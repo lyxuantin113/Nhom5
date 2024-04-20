@@ -3,7 +3,7 @@ package entity;
 import java.time.LocalDate;
 
 public class ChiTietPhieuNhapThuoc {
-	private String maCTPNT;
+	private String maPhieuNhap;
 	private String maThuoc;
 	private int soLuong;
 	private double giaNhap;
@@ -12,12 +12,12 @@ public class ChiTietPhieuNhapThuoc {
 	private double thanhTien;
 	
 	
-	public String getMaCTPNT() {
-		return maCTPNT;
+	
+	public String getMaPhieuNhap() {
+		return maPhieuNhap;
 	}
-
-	public void setMaCTPNT(String maCTPNT) {
-		this.maCTPNT = maCTPNT;
+	public void setMaPhieuNhap(String maPhieuNhap) {
+		this.maPhieuNhap = maPhieuNhap;
 	}
 	public String getMaThuoc() {
 		return maThuoc;
@@ -58,10 +58,10 @@ public class ChiTietPhieuNhapThuoc {
 	}
 	
 
-	public ChiTietPhieuNhapThuoc(String maCTPNT,String maThuoc, int soLuong, double giaNhap, LocalDate hsd,
+	public ChiTietPhieuNhapThuoc(String maPhieuNhap,String maThuoc, int soLuong, double giaNhap, LocalDate hsd,
 			String donVi, double thanhTien) {
 		super();
-		this.maCTPNT = maCTPNT;
+		this.maPhieuNhap = maPhieuNhap;
 		this.maThuoc = maThuoc;
 		this.soLuong = soLuong;
 		
@@ -78,7 +78,7 @@ public class ChiTietPhieuNhapThuoc {
 
 	@Override
 	public String toString() {
-		return "ChiTietPhieuNhapThuoc [maCTPNT=" + maCTPNT + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong
+		return "ChiTietPhieuNhapThuoc [maPhieuNhap=" + maPhieuNhap + ", maThuoc=" + maThuoc + ", soLuong=" + soLuong
 				 +  ", giaNhap=" + giaNhap + ", hsd=" + hsd + ", donVi=" + donVi
 				+ ", thanhTien=" + thanhTien + "]";
 	}

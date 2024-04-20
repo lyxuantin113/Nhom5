@@ -254,7 +254,7 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 			if (check() == true) {
 				if (dsNV.createNhanVien(n)) {
 							String taiKhoan = n.getMaNV();
-							String matKhau = taiKhoan.substring(2, 8);
+							String matKhau = taiKhoan.substring(2, 5);
 							TaiKhoan tk = new TaiKhoan(taiKhoan, matKhau, n);
 							dsTK.createTaiKhoan(tk);
 					String[] row = { n.getMaNV() + "", n.getTenNV() + "", n.getSdtNV() + "", n.getChucVu() + "",

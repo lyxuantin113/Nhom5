@@ -68,6 +68,7 @@ public class NhaCungCap_Dao {
 				return;
 			}
 			String query = "delete from NhaCungCap where MaNCC = '" + maNCC + "'";
+			
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			for (NhaCungCap ncc : dsNCC) {

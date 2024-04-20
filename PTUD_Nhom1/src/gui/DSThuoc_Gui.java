@@ -15,9 +15,11 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-
+import dao.DonDat_Dao;
+import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
 import dao.NhaCungCap_Dao;
+import dao.PhieuNhapThuoc_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.KhachHang;
@@ -41,6 +43,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	private JComboBox<String> cbbLoai;
 	private JComboBox<String> cbbNCC;
 	private JButton btnSua;
+	private JButton btnLamMoi;
 
 	public DSThuoc_Gui() {
 		setSize(1070, 600);
@@ -230,18 +233,23 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		btnTim = new JButton("Tìm");
 		btnXoa = new JButton("Xóa");
 		btnSua = new JButton("Sửa");
+		btnLamMoi = new JButton("Làm mới");
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnTim.setBackground(new Color(0, 160, 255));
 		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXoa.setBackground(new Color(0, 160, 255));
 		btnSua.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnSua.setBackground(new Color(0, 160, 255));
+		btnLamMoi.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnLamMoi.setBackground(new Color(0, 160, 255));
+		
 		pnFooter.add(lblTimKiem);
 		pnFooter.add(txtTimKiem);
 		
 		pnFooter.add(btnTim);
 		pnFooter.add(btnXoa);
 		pnFooter.add(btnSua);
+		pnFooter.add(btnLamMoi);
 		pnMain.add(pnFooter, BorderLayout.SOUTH);
 
 		pnCenter.add(pnCenterTop);
@@ -259,6 +267,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		btnTim.addActionListener(this);
 		btnXoa.addActionListener(this);
 		btnSua.addActionListener(this);
+		btnLamMoi.addActionListener(this);
 		cbbNCC.addActionListener(this);
 		
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -320,6 +329,10 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnSua)) {
 			updateThuoc();
 		}
+		if (o.equals(btnLamMoi)) {
+			hienTable();
+			xoaTrang();
+		}
 
 	}
 
@@ -379,12 +392,43 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa không?", "Chú ý",
 				JOptionPane.YES_NO_OPTION);
 		if (hoi == JOptionPane.YES_OPTION) {
-			String maThuoc = txtMa.getText();
-			Thuoc_Dao thuocDao = new Thuoc_Dao();
-			thuocDao.deleteThuoc(maThuoc);
-			xoaTrang();
-			hienTable();
+			if (!checkTonTai()) {
+				String maThuoc = txtMa.getText();
+				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				thuocDao.deleteThuoc(maThuoc);
+				xoaTrang();
+				hienTable();
+			}
+			
 		}
+	}
+
+	private boolean checkTonTai() {
+		String maThuoc = txtMa.getText();
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		HoaDon_Dao hoaDonDao = new HoaDon_Dao();
+		DonDat_Dao donDatDao = new DonDat_Dao();
+		PhieuNhapThuoc_Dao phieuNhapThuocDao = new PhieuNhapThuoc_Dao();
+		
+		if (phieuNhapThuocDao.checkThuoc(maThuoc)) {
+			JOptionPane.showMessageDialog(this, "Không thể xóa thuốc này vì có phiếu nhập thuốc chưa nhận tồn tại thuốc này");
+			return true;
+		}
+		
+		if (donDatDao.checkThuoc(maThuoc)) {
+			JOptionPane.showMessageDialog(this, "Không thể xóa thuốc này vì có đơn đặt hàng liên quan");
+			return true;
+		}
+		if (hoaDonDao.checkThuoc(maThuoc)) {
+			JOptionPane.showMessageDialog(this, "Không thể xóa thuốc này vì có hóa đơn liên quan");
+			return true;
+		} else
+		if (!thuocDao.checkThuoc(maThuoc)) {
+			JOptionPane.showMessageDialog(this, "Mã thuốc không tồn tại");
+			return true;
+		}
+	
+		return false;
 	}
 
 	private void addThuoc() {

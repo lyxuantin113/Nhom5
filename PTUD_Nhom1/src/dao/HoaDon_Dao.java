@@ -697,4 +697,17 @@ public class HoaDon_Dao {
 		return top3HoaDon;
 	}
 
+	public boolean checkThuoc(String maThuoc) {
+		String query = "SELECT * FROM ChiTietHoaDon WHERE maThuoc = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, maThuoc);
+			ResultSet rs = pstmt.executeQuery();
+			return rs.next();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

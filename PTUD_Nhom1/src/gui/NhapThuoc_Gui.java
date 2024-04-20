@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import dao.NhaCungCap_Dao;
+import dao.NhanVien_Dao;
 import dao.PhieuNhapThuoc_Dao;
 import dao.ChiTietPhieuNhapThuoc_Dao;
 import dao.Thuoc_Dao;
@@ -44,6 +45,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 	private JComboBox<String> cbbMaThuoc;
 	private JButton btnSua;
 	private JButton btnXacNhan;
+	private JButton btnLamMoi;
 
 	public NhapThuoc_Gui() {
 		setSize(1070, 600);
@@ -100,10 +102,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		lblNgayNhap.setPreferredSize(new Dimension(90, 25));
 		txtNgayNhap = new JTextField(20);
 		// Lấy ngày hiện tại
-		Date date = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		String strDate = formatter.format(date);
-		txtNgayNhap.setText(strDate);
+		LocalDate date =  LocalDate.now();
+		txtNgayNhap.setText(date.toString());
 		txtNgayNhap.setEnabled(false);
 		b11.add(Box.createHorizontalStrut(10));
 		b11.add(lblNgayNhap);
@@ -287,7 +287,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		pnButton.add(btnXoaTrang);
 		pnCenterBot.add(pnButton);
 		// TABLE
-		String[] headers = { "Mã thuốc", "Giá nhập", "Hạn sử dụng", "Số lượng", "Đơn vị", "Thành tiền", "Mã CTPNT" };
+		String[] headers = { "Mã thuốc", "Mã phiếu nhập", "Giá nhập", "Hạn sử dụng", "Số lượng", "Đơn vị",
+				"Thành tiền" };
 		DefaultTableModel model = new DefaultTableModel(headers, 0);
 		table = new JTable(model);
 		JScrollPane sp = new JScrollPane(table);
@@ -300,6 +301,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		btnXoa = new JButton("Xóa");
 		btnSua = new JButton("Sửa");
 		btnXacNhan = new JButton("Xác nhận");
+
 		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXoa.setBackground(new Color(0, 160, 255));
 		btnSua.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -307,9 +309,12 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		btnXacNhan.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXacNhan.setBackground(new Color(0, 160, 255));
 
+		
+
 		pnFooter.add(btnXoa);
 		pnFooter.add(btnSua);
 		pnFooter.add(btnXacNhan);
+
 		pnMain.add(pnFooter, BorderLayout.SOUTH);
 
 		pnCenter.add(pnCenterTop);
@@ -328,27 +333,28 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		btnXacNhan.addActionListener(this);
 		btnTao.addActionListener(this);
 		btnHuy.addActionListener(this);
-		table.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				int row = table.getSelectedRow();
-				String ma = table.getValueAt(row, 0).toString();
-				String giaNhap = table.getValueAt(row, 1).toString();
-				String hsd = table.getValueAt(row, 2).toString();
-				String soLuong = table.getValueAt(row, 3).toString();
-				String donVi = table.getValueAt(row, 4).toString();
-				String thanhTien = table.getValueAt(row, 5).toString();
-				String maCTPNT = table.getValueAt(row, 6).toString();
-				cbbMaThuoc.setSelectedItem(ma);
-				txtGiaNhap.setText(giaNhap);
-				txtHSD.setText(hsd);
-				txtSoLuong.setText(soLuong);
-				cbbDonVi.setSelectedItem(donVi);
-				txtThanhTien.setText(thanhTien);
-				txtMaCTPNT.setText(maCTPNT);
-			}
-		});
-//		cbbMaThuoc.addActionListener(this);
-			
+//		btnLamMoi.addActionListener(this);
+//		table.addMouseListener(new java.awt.event.MouseAdapter() {
+//			public void mouseClicked(java.awt.event.MouseEvent evt) {
+//				int row = table.getSelectedRow();
+//				String ma = table.getValueAt(row, 0).toString();
+//				String giaNhap = table.getValueAt(row, 1).toString();
+//				String hsd = table.getValueAt(row, 2).toString();
+//				String soLuong = table.getValueAt(row, 3).toString();
+//				String donVi = table.getValueAt(row, 4).toString();
+//				String thanhTien = table.getValueAt(row, 5).toString();
+//				String maCTPNT = table.getValueAt(row, 6).toString();
+//				cbbMaThuoc.setSelectedItem(ma);
+//				txtGiaNhap.setText(giaNhap);
+//				txtHSD.setText(hsd);
+//				txtSoLuong.setText(soLuong);
+//				cbbDonVi.setSelectedItem(donVi);
+//				txtThanhTien.setText(thanhTien);
+//				txtMaCTPNT.setText(maCTPNT);
+//			}
+//		});
+		cbbMaThuoc.addActionListener(this);
+
 //		table.addMouseListener(new java.awt.event.MouseAdapter() {
 //			public void mouseClicked(java.awt.event.MouseEvent evt) {
 //				int row = table.getSelectedRow();
@@ -376,6 +382,11 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		addCombobox();
 	}
 
+	private LocalDate LocalDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void addCombobox() {
 		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
 		for (NhaCungCap ncc : nccDao.readFromTable()) {
@@ -389,14 +400,11 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		// Lấy dữ liệu từ database
 		ChiTietPhieuNhapThuoc_Dao pntDao = new ChiTietPhieuNhapThuoc_Dao();
 		for (ChiTietPhieuNhapThuoc ct : pntDao.readFromTable(maPhieuNhap)) {
-			model.addRow(new Object[] { ct.getMaThuoc(), ct.getGiaNhap(), ct.getHsd(), ct.getSoLuong(), ct.getDonVi(),
-					ct.getThanhTien(), ct.getMaCTPNT() });
+			model.addRow(new Object[] { ct.getMaThuoc(), ct.getMaPhieuNhap(), ct.getSoLuong(), ct.getGiaNhap(),
+					ct.getHsd(), ct.getDonVi(), ct.getThanhTien() });
 		}
-		
 
 	}
-
-	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -423,20 +431,24 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnXacNhan)) {
 			xacNhan();
 		}
+//		if (o.equals(btnLamMoi)) {
+////            hienTable();
+//        }
+		
 	}
 
 	private void xacNhan() {
 		// Kiểm tra số lượng chi tiết phiếu nhập
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int rowCounts = model.getRowCount();
-		if (rowCounts <1) {
+		if (rowCounts < 1) {
 			JOptionPane.showMessageDialog(this, "Phải có ít nhất 1 thông tin thuốc.");
 			return;
 		} else {
 			JOptionPane.showMessageDialog(this, "Xác nhận thành công.");
 			XoaTrangToanBo();
 		}
-		
+
 	}
 
 	private void XoaTrangToanBo() {
@@ -460,9 +472,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		txtThanhTien.setText("");
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.setRowCount(0);
-		
-		
-		
+
 	}
 
 	private void huy() {
@@ -549,39 +559,82 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		}
 
 	}
-	
+
 	private void taoPhieu() {
+		if (checkDataPhieuNhap()) {
+			String maPNT = txtMaPNT.getText();
+			String maNV = txtMaNV.getText();
+			LocalDate ngayNhap = LocalDate.parse(txtNgayNhap.getText());
+			String maNCC = cbbNCC.getSelectedItem().toString();
+			Double tongTien = 0.0;
+			Boolean trangThai = false;
+
+			NhanVien_Dao nvDao = new NhanVien_Dao();
+			if (!nvDao.maNhanVienDaTonTai(maNV)) {
+				JOptionPane.showMessageDialog(this, "Mã nhân viên không tồn tại.");
+				return;
+			}
+
+			PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPNT, maNCC, maNV, ngayNhap, tongTien, trangThai);
+			PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+
+			if (pntDao.findMaPhieuNhap(maPNT)) {
+				JOptionPane.showMessageDialog(this, "Mã phiếu nhập đã tồn tại.");
+				return;
+			}
+			if (pntDao.create(pnt)) {
+				JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công.");
+				txtMaPNT.setEnabled(false);
+				txtMaNV.setEnabled(false);
+				txtNgayNhap.setEnabled(false);
+				cbbNCC.setEnabled(false);
+				txtTongTien.setEnabled(false);
+				cbbMaThuoc.setEnabled(true);
+//				txtTen.setEnabled(true);
+				txtGiaNhap.setEnabled(true);
+				txtHSD.setEnabled(true);
+				txtSoLuong.setEnabled(true);
+				cbbDonVi.setEnabled(true);
+				txtMaCTPNT.setText(maPNT);
+				// Add mã thuốc theo ncc vào combobox
+				addMaThuoc(maNCC);
+
+				hienTable(maPNT);
+
+			} else {
+				JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại.");
+			}
+		}
+
+	}
+
+	private boolean checkDataPhieuNhap() {
 		String maPNT = txtMaPNT.getText();
 		String maNV = txtMaNV.getText();
-		LocalDate ngayNhap = LocalDate.now();
-		String maNCC = cbbNCC.getSelectedItem().toString();
-		Double tongTien = 0.0;
-		Boolean trangThai = false;
-
-		PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPNT, maNCC, maNV, ngayNhap, tongTien, trangThai);
-		PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
-		if (pntDao.create(pnt)) {
-			JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công.");
-			txtMaPNT.setEnabled(false);
-			txtMaNV.setEnabled(false);
-			txtNgayNhap.setEnabled(false);
-			cbbNCC.setEnabled(false);
-			txtTongTien.setEnabled(false);
-			cbbMaThuoc.setEnabled(true);
-//			txtTen.setEnabled(true);
-			txtGiaNhap.setEnabled(true);
-			txtHSD.setEnabled(true);
-			txtSoLuong.setEnabled(true);
-			cbbDonVi.setEnabled(true);
-			txtMaCTPNT.setText(maPNT);
-			// Add mã thuốc theo ncc vào combobox
-			addMaThuoc(maNCC);
-			
-			hienTable(maPNT);
-
-		} else {
-			JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại.");
+		try {
+			LocalDate ngayNhap = LocalDate.parse(txtNgayNhap.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Ngày nhập không hợp lệ.");
+			return false;
 		}
+		LocalDate ngayNhap = LocalDate.parse(txtNgayNhap.getText());
+		
+		
+
+		if (maPNT.isEmpty() || maNV.isEmpty()  || ngayNhap == null) {
+			JOptionPane.showMessageDialog(this, "Không được để trống thông tin.");
+			return false;
+		}
+		
+
+		
+		String check = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
+		if (!txtNgayNhap.getText().matches(check)) {
+			JOptionPane.showMessageDialog(this, "Ngày nhập không hợp lệ (dd-MM-yyyy).");
+			return false;
+		}
+
+		return true;
 
 	}
 
@@ -601,15 +654,16 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 				capNhatGiaNhap();
 			}
 		});
-		
+
 	}
+
 	private void capNhatGiaNhap() {
 		// Lấy giá nhập theo mã thuốc
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		Thuoc thuoc = thuocDao.readFromTable(cbbMaThuoc.getSelectedItem().toString());
 		txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
 		txtGiaNhap.setEnabled(false);
-	
+
 	}
 
 	private void xoaTrang() {
@@ -627,31 +681,90 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 	}
 
 	private void addThuocDat() {
-//		String maCTPNT = txtMa.getText();
+
+		if (checkData()) {
+			String ma = cbbMaThuoc.getSelectedItem().toString();
+			Double giaNhap = Double.parseDouble(txtGiaNhap.getText());
+			LocalDate hsd = LocalDate.parse(txtHSD.getText());
+			Integer soLuong = Integer.parseInt(txtSoLuong.getText());
+			String donVi = cbbDonVi.getSelectedItem().toString();
+			String maCTPNT = txtMaCTPNT.getText();
+			Double thanhTien = giaNhap * soLuong;
+			// Thêm vào database
+			ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, ma, soLuong, giaNhap, hsd, donVi, thanhTien);
+			ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
+			if (ctDao.findMaPhieuNhap(maCTPNT, ma)) {
+				JOptionPane.showMessageDialog(this, "Mã thuốc nhập đã tồn tại.");
+				return;
+			}
+			if (ctDao.create(ct)) {
+				JOptionPane.showMessageDialog(this, "Thêm thành công.");
+				// Cập nhật tổng tiền
+				PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+				PhieuNhapThuoc pnt = pntDao.timTheoMa(maCTPNT);
+				pnt.setTongTien(pnt.getTongTien() + thanhTien);
+				pntDao.updateTongTien(pnt);
+				txtTongTien.setText(pnt.getTongTien().toString());
+				// Cập nhật lại table
+				hienTable(maCTPNT);
+			} else {
+				JOptionPane.showMessageDialog(this, "Thêm thất bại.");
+			}
+		} else {
+			JOptionPane.showMessageDialog(this, "Thêm thất bại.");
+			return;
+		}
+
+	}
+
+	private boolean checkData() {
 		String ma = cbbMaThuoc.getSelectedItem().toString();
 		Double giaNhap = Double.parseDouble(txtGiaNhap.getText());
+		try {
+			LocalDate hsd = LocalDate.parse(txtHSD.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Hạn sử dụng không hợp lệ.");
+			return false;
+		}
+		try {
+			Integer soLuong = Integer.parseInt(txtSoLuong.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ.");
+			return false;
+		}
+		try {
+			Double thanhTien = giaNhap * Integer.parseInt(txtSoLuong.getText());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Thành tiền không hợp lệ.");
+			return false;
+		}
 		LocalDate hsd = LocalDate.parse(txtHSD.getText());
 		Integer soLuong = Integer.parseInt(txtSoLuong.getText());
 		String donVi = cbbDonVi.getSelectedItem().toString();
 		String maCTPNT = txtMaCTPNT.getText();
 		Double thanhTien = giaNhap * soLuong;
+		if (maCTPNT.isEmpty() || ma.isEmpty() || txtGiaNhap.getText().isEmpty() || txtHSD.getText().isEmpty()
+				|| txtSoLuong.getText().isEmpty() || donVi.isEmpty() || thanhTien == 0.0) {
+			JOptionPane.showMessageDialog(this, "Không được để trống thông tin.");
+			return false;
 
-		// Thêm vào database
-		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, ma, soLuong, giaNhap, hsd, donVi, thanhTien);
-		ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
-		if (ctDao.create(ct)) {
-			JOptionPane.showMessageDialog(this, "Thêm thành công.");
-			// Cập nhật tổng tiền
-			PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
-			PhieuNhapThuoc pnt = pntDao.readFromTable().get(pntDao.readFromTable().size() - 1);
-			pnt.setTongTien(pnt.getTongTien() + thanhTien);
-			pntDao.updateTongTien(pnt);
-			txtTongTien.setText(pnt.getTongTien().toString());
-			// Cập nhật lại table
-			hienTable(maCTPNT);
-		} else {
-			JOptionPane.showMessageDialog(this, "Thêm thất bại.");
 		}
+		if (hsd.isBefore(LocalDate.now())) {
+			JOptionPane.showMessageDialog(this, "Hạn sử dụng không hợp lệ.");
+			return false;
+		}
+		// kiểm tra hạn sử dụng có đúng format không
+		if (txtHSD.getText().length() != 10) {
+			JOptionPane.showMessageDialog(this, "Hạn sử dụng không hợp lệ.");
+			return false;
+		}
+		String check = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
+		if (!txtHSD.getText().matches(check)) {
+			JOptionPane.showMessageDialog(this, "Hạn sử dụng không hợp lệ.");
+			return false;
+		}
+
+		return true;
 	}
 
 }

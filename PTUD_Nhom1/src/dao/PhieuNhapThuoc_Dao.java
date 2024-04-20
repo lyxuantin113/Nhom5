@@ -22,7 +22,7 @@ public class PhieuNhapThuoc_Dao {
 	public List<PhieuNhapThuoc> readFromTable() {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
-			String query = "select * from PhieuNhapThuoc";
+			String query = "SELECT * FROM PhieuNhapThuoc";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			while (rs.next()) {
@@ -43,7 +43,61 @@ public class PhieuNhapThuoc_Dao {
 		return dsPNT;
 	}
 	
+	public PhieuNhapThuoc timTheoMa(String ma) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from PhieuNhapThuoc where maPhieuNhap = '" + ma + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				
+                PhieuNhapThuoc phieuNhapThuoc = new PhieuNhapThuoc();
+                
+                phieuNhapThuoc.setMaPhieuNhap(rs.getString(1));
+                phieuNhapThuoc.setMaNCC(rs.getString(2));
+                phieuNhapThuoc.setMaNV(rs.getString(3));
+                LocalDate d = rs.getDate(4).toLocalDate();
+                phieuNhapThuoc.setNgayNhap(d);
+                phieuNhapThuoc.setTongTien(rs.getDouble(5));
+                phieuNhapThuoc.setTrangThai(false);
+               
+                
+                
+                return phieuNhapThuoc;
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+		
+	}
 	
+	public List<PhieuNhapThuoc> readFromTableSort() {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "SELECT * FROM PhieuNhapThuoc ORDER BY trangThai DESC, maPhieuNhap ASC";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			while (rs.next()) {
+                String maPhieuNhap = rs.getString(1);
+                String maNCC = rs.getString(2);
+                String maNV = rs.getString(3);
+                LocalDate ngayNhap = rs.getDate(4).toLocalDate();
+                Double tongTien = rs.getDouble(5);
+                Boolean trangThai = rs.getBoolean(6);
+                
+                PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPhieuNhap, maNCC, maNV, ngayNhap, tongTien, trangThai);
+                dsPNT.add(pnt);
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dsPNT;
+	}
 	public List<PhieuNhapThuoc> getDSPNT() {
 		return dsPNT;
 	}
@@ -112,7 +166,7 @@ public class PhieuNhapThuoc_Dao {
 	public boolean delete(String maPNT) {
 	    try {
 	        Connection con = ConnectDB.getInstance().getConnection();
-	        String deleteChiTietQuery = "DELETE FROM ChiTietPhieuNhapThuoc WHERE maCTPNT IN (SELECT maPhieuNhap FROM PhieuNhapThuoc WHERE maPhieuNhap = ?)";
+	        String deleteChiTietQuery = "DELETE FROM ChiTietPhieuNhapThuoc WHERE maPhieuNhap IN (SELECT maPhieuNhap FROM PhieuNhapThuoc WHERE maPhieuNhap = ?)";
 	        String deletePhieuNhapQuery = "DELETE FROM PhieuNhapThuoc WHERE maPhieuNhap = ?";
 	        
 	        // Xóa các chi tiết phiếu nhập thuốc
@@ -142,5 +196,38 @@ public class PhieuNhapThuoc_Dao {
 	    }
 	    return false;
 	}
+
+	public boolean checkThuoc(String maThuoc) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query =   "SELECT * FROM Thuoc WHERE maThuoc = '" + maThuoc + "' AND trangThai = 'false'";
+
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean findMaPhieuNhap(String maPNT) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from PhieuNhapThuoc where maPhieuNhap = '" + maPNT + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	
 
 }
