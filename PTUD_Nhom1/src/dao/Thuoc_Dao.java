@@ -206,6 +206,37 @@ public class Thuoc_Dao {
 		}
 		return false;
 	}
+	
+	// Tìm thuốc theo tên trả về Thuoc
+		public Thuoc findByName(String ten) {
+			Thuoc t = null;
+			try {
+				Connection con = ConnectDB.getInstance().getConnection();
+				if (con == null) {
+					System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+					return null;
+				}
+				String query = "select * from Thuoc where tenThuoc = '" + ten + "'";
+				Statement stm = con.createStatement();
+				ResultSet rs = stm.executeQuery(query);
+				if (rs.next()) {
+					String ma = rs.getString(1);
+					String loai = rs.getString(3);
+					String donVi = rs.getString(4);
+					LocalDate hsd = rs.getDate(5).toLocalDate();
+					double giaNhap = rs.getDouble(6);
+					double giaBan = rs.getDouble(7);
+					int tonKho = rs.getInt(8);
+					String nuocSx = rs.getString(9);
+					String tenNCC = rs.getString(10);
+					t = new Thuoc(ma, ten, loai, donVi, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
+				}
+				return t;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 
 	// Tìm thuốc theo loại
 	public Boolean timTheoLoai(String loai) {
