@@ -27,6 +27,7 @@ import dao.KhachHang_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
+import db.JasperHoaDon;
 import entity.ChiTietDonDat;
 import entity.ChiTietHoaDon;
 import entity.DonDat;
@@ -34,6 +35,7 @@ import entity.HoaDon;
 import entity.KhachHang;
 import entity.NhanVien;
 import entity.Thuoc;
+import net.sf.jasperreports.engine.JRException;
 
 public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseListener, DocumentListener {
 
@@ -68,7 +70,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JButton btnResetFrame;
 	private JButton btnChonFrame;
 	private JTextField txtTimFrame;
-	protected DefaultTableModel modelFrame;
+	protected DefaultTableModel modelFrame = new DefaultTableModel();
 	protected JFrame newFrame;
 	private JLabel lblTenThuoc;
 	private JTextField txtTenThuoc;
@@ -76,6 +78,9 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JTextField txtLoaiThuoc;
 	private JTextField txtDonVi;
 	private JTextField txtHSD;
+
+//	JASPER REPORT
+	private HoaDon hoaDonReport;
 
 	public LapDonThuoc_Gui() {
 //		JPANEL
@@ -371,12 +376,14 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		if (o == btnLapHD) {
 			if (checkValidLap()) {
 				lapHoaDon();
+//				inHoaDonReport();
 				xoaTrangTatCa();
 			}
 		}
 		if (o == btnLapDD) {
 			if (checkDate() && checkValidLap() && hasKhach()) {
 				lapDonDat();
+//				inHoaDonReport();
 				xoaTrangTatCa();
 			}
 		}
@@ -601,7 +608,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			total += Double.parseDouble((String) modelHoaDon.getValueAt(i, 7));
 		}
 		txtTong.setText(total + "");
-		System.out.println(tempListDD);
 	}
 
 	public void deleteOrderDetail() {
@@ -626,8 +632,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 				total += Double.parseDouble(modelHoaDon.getValueAt(i, 7).toString());
 			}
 			txtTong.setText(total + "");
-
-			System.out.println(tempListDD);
 		} else
 			JOptionPane.showMessageDialog(null, "Lưu ý: Chưa có cột được chọn!");
 	}
@@ -692,6 +696,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			modelFrame.removeRow(i);
 		}
 
+		hoaDonReport = hoaDon;
 		resetTempListHD();
 		resetTempListDD();
 	}
@@ -1047,6 +1052,19 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	@Override
 	public void changedUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
+
+	}
+
+//	JASPER REPORT FUNCTION
+
+	private void inHoaDonReport() {
+		JasperHoaDon jpHoaDon = new JasperHoaDon();
+		try {
+			jpHoaDon.generateHoaDonReport(hoaDonReport);
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }

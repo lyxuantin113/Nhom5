@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_Letter" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3035ecfd-ad6c-4391-a099-65da8d3509f3">
+	<parameter name="maHoaDon" class="java.lang.String"/>
+	<parameter name="tenNhanVien" class="java.lang.String"/>
+	<parameter name="tenKhachHang" class="java.lang.String"/>
+	<parameter name="sdtKhachHang" class="java.lang.String"/>
+	<parameter name="ngayLap" class="java.sql.Date"/>
+	<parameter name="ngayNhan" class="java.sql.Date"/>
+	<parameter name="stt" class="java.lang.Integer"/>
+	<parameter name="tenThuoc" class="java.lang.String"/>
+	<parameter name="loaiThuoc" class="java.lang.String"/>
+	<parameter name="soLuong" class="java.lang.Integer"/>
+	<parameter name="donVi" class="java.lang.String"/>
+	<parameter name="thanhTien" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="thanhTien" class="java.lang.Double"/>
+	<field name="donVi" class="java.lang.String"/>
+	<field name="soLuong" class="java.lang.Integer"/>
+	<field name="loaiThuoc" class="java.lang.String"/>
+	<field name="tenThuoc" class="java.lang.String"/>
+	<field name="stt" class="java.lang.Integer"/>
+	<field name="ngayNhan" class="java.sql.Date"/>
+	<field name="ngayLap" class="java.sql.Date"/>
+	<field name="sdtKhachHang" class="java.lang.String"/>
+	<field name="tenKhachHang" class="java.lang.String"/>
+	<field name="tenNhanVien" class="java.lang.String"/>
+	<field name="maHoaDon" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="85" y="0" width="390" height="31" uuid="a67c2567-16d2-41f5-8977-d33e939823a5"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HỆ THỐNG THUỐC TÂY TTV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="94" y="31" width="370" height="20" uuid="5c645ff9-4120-4d69-bef8-05f3508d0008"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[141 Lê Đức Thọ, phường 6, quận Gò Vấp, TP.HCM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="58" width="200" height="30" uuid="15f63632-52af-4fce-951b-4d547611be98"/>
+				<textElement textAlignment="Center">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hóa Đơn]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="70" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="20" y="3" width="70" height="20" uuid="b7f8f6ba-5da5-49ad-956f-1d82ba2bc1e8"/>
+				<text><![CDATA[Mã hóa đơn:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="30" width="70" height="20" uuid="50b20100-5e83-4624-b3d8-64a0f6229aaf"/>
+				<text><![CDATA[Tên nhân viên:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="218" y="3" width="80" height="20" uuid="c45fc0f3-8976-441b-aba0-8d1310577f45">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<text><![CDATA[Tên khách hàng:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="218" y="30" width="79" height="21" uuid="ce86186e-24a6-415f-9ce9-d0c104975dc4"/>
+				<text><![CDATA[ĐT khách hàng:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="3" width="61" height="21" uuid="07ef419d-b115-4835-b292-b85c8eee714a"/>
+				<text><![CDATA[Ngày lập:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="30" width="61" height="21" uuid="7994d714-2601-4ba8-9f55-4f14f761e237"/>
+				<text><![CDATA[Ngày nhận:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="3" width="100" height="20" uuid="17f5fba3-1659-404a-929e-642f11c80626"/>
+				<textFieldExpression><![CDATA[$F{maHoaDon}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="298" y="3" width="107" height="21" uuid="916d7f2c-1856-48c5-8513-75261f16b4e5"/>
+				<textFieldExpression><![CDATA[$F{tenKhachHang}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="481" y="3" width="89" height="21" uuid="f2d1fdb9-34c3-4b7f-bbb3-c71fb28c79bd"/>
+				<textFieldExpression><![CDATA[$F{ngayLap}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="481" y="30" width="100" height="21" uuid="642a91b5-29bc-40d1-bf9c-b2feb7c14d85"/>
+				<textFieldExpression><![CDATA[$F{ngayNhan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="297" y="30" width="107" height="21" uuid="7bf461f8-4006-4179-b8b8-b1b24dbecb62"/>
+				<textFieldExpression><![CDATA[$F{sdtKhachHang}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="30" width="120" height="20" uuid="05dcc5a6-bafe-42bb-881c-67c45af7c9e9"/>
+				<textFieldExpression><![CDATA[$F{tenNhanVien}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<line>
+				<reportElement x="-11" y="8" width="591" height="1" uuid="f0453dea-1628-42a2-92a5-b658bfd50795"/>
+			</line>
+			<line>
+				<reportElement x="-11" y="42" width="591" height="1" uuid="12a47fcf-459f-4129-b10b-0f0232462a91"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="18" width="40" height="21" uuid="c7267888-3b8e-45ac-a1f1-41268704345f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[STT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="68" y="18" width="122" height="21" uuid="d48abeaf-63d7-40c6-bf98-3ddf3b77f83e">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Tên thuốc:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="18" width="129" height="21" uuid="103f737c-c0fa-453e-bcb3-7a4ebd021ea2">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Loại thuốc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="338" y="18" width="50" height="21" uuid="343cb532-283b-4f37-b463-c383d81cad60">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Số lượng]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="18" width="50" height="21" uuid="e7fc3a99-777e-4aa0-8da6-a70e9bc85bf6">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Đơn vị]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="510" y="18" width="50" height="21" uuid="92ba7b3e-b739-43e0-be8f-5d4a3fa4cce2">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Thành tiền]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="0" width="100" height="30" uuid="bf266fce-82a8-4db3-9100-2fa32bbfc6af">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f17ae02-51b4-4624-9bfb-5a0bd0970701"/>
+				</reportElement>
+				<text><![CDATA[stt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="99" y="0" width="100" height="30" uuid="3b735767-0bae-4fe7-adc6-c8a70f26a71c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1ee30e6d-94c6-425a-81a7-c56e66d61b74"/>
+				</reportElement>
+				<text><![CDATA[tenThuoc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="0" width="100" height="30" uuid="9bd4e41c-e05a-48c4-9e1f-e66b544ff6c7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="98730197-de62-448f-aa04-fe376531d33b"/>
+				</reportElement>
+				<text><![CDATA[loaiThuoc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="348" y="0" width="100" height="30" uuid="575a4432-e561-46a5-84a7-d7a810ca9045">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f81a3b1-232d-4931-a0f9-c5a799c378a9"/>
+				</reportElement>
+				<text><![CDATA[soLuong]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="0" width="100" height="30" uuid="f38543b6-1eb3-4101-9408-8e5d40e52be3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a9ca9820-8922-4b61-8797-450611c3d862"/>
+				</reportElement>
+				<text><![CDATA[donVi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="512" y="0" width="100" height="30" uuid="c60b81ad-ea88-4e1f-b55d-e397ded84bf1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="544576ab-5a62-402e-9326-b35c772e3303"/>
+				</reportElement>
+				<text><![CDATA[thanhTien]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="200" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="5" y="10" width="45" height="30" uuid="4123b333-1ac1-4f5c-ab75-1d4237feefe4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f17ae02-51b4-4624-9bfb-5a0bd0970701"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{stt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="68" y="10" width="122" height="30" uuid="742e9e6d-6d33-4d3a-a870-ead1e430d900">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1ee30e6d-94c6-425a-81a7-c56e66d61b74"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{tenThuoc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="197" y="10" width="129" height="30" uuid="83e4c6ce-48e1-4708-ba2e-15c81c776f4a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="98730197-de62-448f-aa04-fe376531d33b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{loaiThuoc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="338" y="10" width="48" height="30" uuid="2cb73c1c-a0b8-4b8d-9700-46a025c50fd2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f81a3b1-232d-4931-a0f9-c5a799c378a9"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{soLuong}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="404" y="10" width="51" height="30" uuid="316bf6c0-3729-4471-9307-3c333aeb3653">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a9ca9820-8922-4b61-8797-450611c3d862"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{donVi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="464" y="10" width="96" height="30" uuid="0dadda95-ef85-4c5e-b4de-c1e2d7a5b7fe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="544576ab-5a62-402e-9326-b35c772e3303"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{thanhTien}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="170" y="17" width="221" height="16" uuid="e828e44b-60eb-462a-8105-fcd7e0abfab7"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mọi thắc mắc vui lòng liên hệ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="235" y="33" width="91" height="21" uuid="5ff79c77-5239-414d-af9b-e3235e04e61a"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ĐT: 0912644361]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>
