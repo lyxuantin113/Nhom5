@@ -73,6 +73,34 @@ public class NhanVien_Dao {
 		}
 		return listNV;
 	}
+	
+	public NhanVien getNhanVienByName(String name) {
+		Connection con = ConnectDB.getInstance().getConnection();
+		PreparedStatement stmt = null;
+		NhanVien n = null;
+		try {
+			String sql = "Select* from NhanVien where tenNV = ?";
+
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, name);
+
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String sdt = rs.getString(3);
+				String chucVu = rs.getString(4);
+				String email = rs.getString(5);
+
+				n = new NhanVien(maNV, tenNV, sdt, chucVu, email);
+			}
+			return n;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public boolean createNhanVien(NhanVien nv) {
 		Connection con = ConnectDB.getInstance().getConnection();

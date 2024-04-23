@@ -152,7 +152,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //		Xem theo Khách hàng
 		boxKhachHang = Box.createHorizontalBox();
-		lblKhachHang = new JLabel("Mã khách hàng:");
+		lblKhachHang = new JLabel("SĐT Khách:");
 		lblKhachHang.setPreferredSize(new Dimension(100, 30));
 		cbbKhachHang = new JComboBox<>();
 		cbbKhachHang.setPreferredSize(new Dimension(100, 30));
@@ -162,7 +162,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //      Xem theo Nhân viên
 		boxNhanVien = Box.createHorizontalBox();
-		lblNhanVien = new JLabel("Mã nhân viên:");
+		lblNhanVien = new JLabel("Tên nhân viên:");
 		lblNhanVien.setPreferredSize(new Dimension(100, 30));
 		cbbNhanVien = new JComboBox<>();
 		cbbNhanVien.setPreferredSize(new Dimension(100, 30));
@@ -299,8 +299,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		// Xóa các dòng hiện tại trên bảng trước khi cập nhật dữ liệu mới
 		model.setRowCount(0);
 		// Khởi tạo danh sách để lưu trữ các mã khách hàng và mã nhân viên
-		Set<String> maKhachHangSet = new HashSet<>();
-		Set<String> maNhanVienSet = new HashSet<>();
+		Set<String> SDTKhachHangSet = new HashSet<>();
+		Set<String> tenNhanVienSet = new HashSet<>();
 		// Khởi tạo một Set để lưu trữ các năm đã xuất hiện
 		Set<Integer> namSet = new HashSet<>();
 
@@ -311,15 +311,15 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		for (HoaDon hoaDon : danhSachHoaDon) {
 			// Lấy năm từ ngày lập hóa đơn
 			int nam = hoaDon.getNgayLap().getYear();
-			// Lấy mã khách hàng và mã nhân viên từ hóa đơn
-			String maKhachHang = hoaDon.getMaKH().getMaKH();
-			String maNhanVien = hoaDon.getMaNV().getMaNV();
+			// Lấy sdt khách hàng và tên nhân viên từ hóa đơn
+			String sdtKhachHang = hoaDon.getMaKH().getSoDienThoai();
+			String tenNV = hoaDon.getMaNV().getTenNV();
 
 			// Thêm năm vào Set
 			namSet.add(nam);
-			// Thêm mã khách hàng và mã nhân viên vào danh sách (nếu chưa có)
-			maKhachHangSet.add(maKhachHang);
-			maNhanVienSet.add(maNhanVien);
+			// Thêm sdt khách hàng và tên nhân viên vào danh sách (nếu chưa có)
+			SDTKhachHangSet.add(sdtKhachHang);
+			tenNhanVienSet.add(tenNV);
 
 			// Tính doanh thu và lợi nhuận cho hóa đơn hiện tại
 			double doanhThu = dsHD.tinhTongTien(hoaDon);
@@ -353,13 +353,13 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 			cbbNam.addItem(String.valueOf(nam));
 		}
 		// Thêm các mã khách hàng vào Combobox của Khách hàng
-		for (String maKH : maKhachHangSet) {
-			cbbKhachHang.addItem(maKH);
+		for (String sdtKhach : SDTKhachHangSet) {
+			cbbKhachHang.addItem(sdtKhach);
 		}
 
 		// Thêm các mã nhân viên vào Combobox của Nhân viên
-		for (String maNV : maNhanVienSet) {
-			cbbNhanVien.addItem(maNV);
+		for (String tenNV : tenNhanVienSet) {
+			cbbNhanVien.addItem(tenNV);
 		}
 	}
 
@@ -668,13 +668,18 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findTKFullField(date, maNV, maKH);
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang kh = khDao.findBySDT(sdtKhach);
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
+		
+		List<HoaDon> listHD = hdDao.findTKFullField(date, nv.getMaNV(), kh.getMaKH());
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -702,13 +707,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeXYinMonth() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, thang, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findXYinMonth(date, maNV, maKH);
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang kh = khDao.findBySDT(sdtKhach);
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
+		List<HoaDon> listHD = hdDao.findXYinMonth(date, nv.getMaNV(), kh.getSoDienThoai());
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -735,13 +744,18 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 //	Thống kê đơn của KH X được lập bởi NV Y theo năm
 	private void thongKeXYinYear() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findXYinYear(date, maNV, maKH);
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang kh = khDao.findBySDT(sdtKhach);
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
+		
+		List<HoaDon> listHD = hdDao.findXYinYear(date, nv.getMaNV(), kh.getMaKH());
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -767,11 +781,16 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	
 //	Thống kê đơn của KH X được lập bởi NV Y 
 	private void thongKeXY() {
-		String maNV = cbbNhanVien.getSelectedItem().toString();
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findXByY(maNV, maKH);
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang kh = khDao.findBySDT(sdtKhach);
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
+		
+		List<HoaDon> listHD = hdDao.findXByY(nv.getMaNV(), kh.getMaKH());
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -802,12 +821,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKHinDay(date, maKH);
+		List<HoaDon> listHD = hdDao.findKHinDay(date, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -836,12 +855,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeKHinMonth() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, thang, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKHinMonth(date, maKH);
+		List<HoaDon> listHD = hdDao.findKHinMonth(date, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -869,12 +888,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 //	Thống kê đơn của KH theo năm
 	private void thongKeKHinYear() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKHinYear(date, maKH);
+		List<HoaDon> listHD = hdDao.findKHinYear(date, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -900,10 +919,10 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Thống kê tất cả đơn của KH
 	private void thongKeKH() {
-		String maKH = cbbKhachHang.getSelectedItem().toString();
+		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKH(maKH);
+		List<HoaDon> listHD = hdDao.findKH(sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();

@@ -247,7 +247,7 @@ public class HoaDon_Dao {
 //	Thống kê đơn của KH X được lập bởi NV Y theo tháng
 	public List<HoaDon> findXYinMonth(LocalDate ngayLap, String maNV, String maKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? AND maNV = ? AND maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND MONTH(ngayLap) = ? AND maNV = ? AND maKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getMonthValue());
