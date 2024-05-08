@@ -121,6 +121,8 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		jsplit.setLeftComponent(pnTableThuoc);
 		jsplit.setSize(1500, 470);
 		jsplit.setPreferredSize(new Dimension(950, 470)); // SET CHIỀU CAO TABLE
+		jsplit.setResizeWeight(0.0);
+		jsplit.setDividerSize(0);
 
 		pnCenterBot.add(jsplit);
 		pnCenterBot.add(Box.createVerticalStrut(10));

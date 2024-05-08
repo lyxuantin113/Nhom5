@@ -13,13 +13,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import dao.ChiTietDonDat_Dao;
-import dao.ChiTietHoaDon_Dao;
 import dao.DonDat_Dao;
 import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
@@ -29,10 +27,13 @@ import entity.ChiTietDonDat;
 import entity.ChiTietHoaDon;
 import entity.DonDat;
 import entity.HoaDon;
-import entity.Thuoc;
 
 public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6238333580670353303L;
 	private JComboBox<String> cbbTim;
 	private JButton btnReset;
 	private JButton btnHoanThanh;
@@ -40,7 +41,9 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 	private JTable tableDonDat;
 	private JTable tblThuoc;
 	private Thuoc_Dao thuocDao;
+	@SuppressWarnings("unused")
 	private NhanVien_Dao nhanVienDao;
+	@SuppressWarnings("unused")
 	private KhachHang_Dao khachHangDao;
 	private DonDat_Dao donDatDao;
 	private ChiTietDonDat_Dao ctddDao;
@@ -118,7 +121,9 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		jsplit.setLeftComponent(pnTableThuoc);
 		jsplit.setSize(1500, 470);
 		jsplit.setPreferredSize(new Dimension(950, 470)); // SET CHIỀU CAO TABLE
-
+		jsplit.setResizeWeight(0.0);
+		jsplit.setDividerSize(0);
+		
 		pnCenterBot.add(jsplit);
 		pnCenterBot.add(Box.createVerticalStrut(10));
 
@@ -244,27 +249,40 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 					JOptionPane.YES_NO_OPTION);
 			if (choice == JOptionPane.YES_OPTION) {
 				DonDat donDat = donDatDao.findByID(modelDonDat.getValueAt(rowSelected, 0).toString());
-
-				HoaDon_Dao hoaDonDao = new HoaDon_Dao();
-				HoaDon hoaDon = new HoaDon(donDat.getMaDonDat(), donDat.getMaKH(), donDat.getMaNV(),
-						donDat.getNgayLap(), donDat.getNgayNhan());
-
 				List<ChiTietDonDat> listCTDD = ctddDao.findByID(donDat.getMaDonDat());
-				List<ChiTietHoaDon> listCTHD = new ArrayList<ChiTietHoaDon>();
-				for (ChiTietDonDat ctdd : listCTDD) {
-					ChiTietHoaDon cthd = new ChiTietHoaDon(ctdd.getMaThuoc(), ctdd.getSoLuong());
-					listCTHD.add(cthd);
+				boolean flag = true;
+				
+				for (ChiTietDonDat chiTietDonDat : listCTDD) {
+					if (chiTietDonDat.getSoLuong() > chiTietDonDat.getMaThuoc().getSoLuongTon()) {
+						flag = false;
+						break;
+					}
 				}
 
-				hoaDon.setListChiTietHoaDon(listCTHD);
-				hoaDonDao.addOne(hoaDon);
+				if (flag) {
+					HoaDon_Dao hoaDonDao = new HoaDon_Dao();
+					HoaDon hoaDon = new HoaDon(donDat.getMaDonDat(), donDat.getMaKH(), donDat.getMaNV(),
+							donDat.getNgayLap(), donDat.getNgayNhan());
 
-				modelDonDat.removeRow(rowSelected);
+					List<ChiTietHoaDon> listCTHD = new ArrayList<ChiTietHoaDon>();
+					for (ChiTietDonDat ctdd : listCTDD) {
+						ChiTietHoaDon cthd = new ChiTietHoaDon(ctdd.getMaThuoc(), ctdd.getSoLuong());
+						thuocDao.updateThuocQuatity(ctdd.getMaThuoc().getMaThuoc(), ctdd.getSoLuong());
+						listCTHD.add(cthd);
+					}
 
-				ctddDao.deleteByID(donDat.getMaDonDat());
-				donDatDao.deleteByID(donDat.getMaDonDat());
+					hoaDon.setListChiTietHoaDon(listCTHD);
+					hoaDonDao.addOne(hoaDon);
 
-				JOptionPane.showMessageDialog(this, "Đơn hàng đã được xác nhận");
+					modelDonDat.removeRow(rowSelected);
+
+					ctddDao.deleteByID(donDat.getMaDonDat());
+					donDatDao.deleteByID(donDat.getMaDonDat());
+					
+					JOptionPane.showMessageDialog(this, "Đơn hàng đã được xác nhận");
+				} else {
+					JOptionPane.showMessageDialog(this, "Đơn hàng không thể Hoàn thành. Vui lòng kiểm tra số lượng từng loại thuốc trong đơn!");
+				}
 			}
 		}
 	}

@@ -1,16 +1,22 @@
 package dao;
 
+import java.io.File;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import db.ConnectDB;
-import entity.NhaCungCap;
 import entity.Thuoc;
 
 public class Thuoc_Dao {
@@ -62,6 +68,15 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
 			}
+
+			// Tạo mã QR từ thông tin của thuốc
+			String qrCodeContent = thuoc.getMaThuoc();
+			BitMatrix bitMatrix = generateQRCode(qrCodeContent);
+
+			// Lưu mã QR vào một tệp PNG
+			String qrCodeFilename = thuoc.getMaThuoc() + "_" + UUID.randomUUID().toString() + ".png";
+			MatrixToImageWriter.writeToPath(bitMatrix, "PNG", new File(qrCodeFilename).toPath());
+
 			String query = "insert into Thuoc values ('" + thuoc.getMaThuoc() + "', '" + thuoc.getTenThuoc() + "', '"
 					+ thuoc.getLoaiThuoc() + "', '" + thuoc.getDonVi() + "', '" + thuoc.getHSD() + "', "
 					+ thuoc.getGiaNhap() + ", " + thuoc.getGiaBan() + ", " + thuoc.getSoLuongTon() + ", '"
@@ -206,37 +221,37 @@ public class Thuoc_Dao {
 		}
 		return false;
 	}
-	
+
 	// Tìm thuốc theo tên trả về Thuoc
-		public Thuoc findByName(String ten) {
-			Thuoc t = null;
-			try {
-				Connection con = ConnectDB.getInstance().getConnection();
-				if (con == null) {
-					System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
-					return null;
-				}
-				String query = "select * from Thuoc where tenThuoc = '" + ten + "'";
-				Statement stm = con.createStatement();
-				ResultSet rs = stm.executeQuery(query);
-				if (rs.next()) {
-					String ma = rs.getString(1);
-					String loai = rs.getString(3);
-					String donVi = rs.getString(4);
-					LocalDate hsd = rs.getDate(5).toLocalDate();
-					double giaNhap = rs.getDouble(6);
-					double giaBan = rs.getDouble(7);
-					int tonKho = rs.getInt(8);
-					String nuocSx = rs.getString(9);
-					String tenNCC = rs.getString(10);
-					t = new Thuoc(ma, ten, loai, donVi, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
-				}
-				return t;
-			} catch (Exception e) {
-				e.printStackTrace();
+	public Thuoc findByName(String ten) {
+		Thuoc t = null;
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return null;
 			}
-			return null;
+			String query = "select * from Thuoc where tenThuoc = '" + ten + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String ma = rs.getString(1);
+				String loai = rs.getString(3);
+				String donVi = rs.getString(4);
+				LocalDate hsd = rs.getDate(5).toLocalDate();
+				double giaNhap = rs.getDouble(6);
+				double giaBan = rs.getDouble(7);
+				int tonKho = rs.getInt(8);
+				String nuocSx = rs.getString(9);
+				String tenNCC = rs.getString(10);
+				t = new Thuoc(ma, ten, loai, donVi, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
+			}
+			return t;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return null;
+	}
 
 	// Tìm thuốc theo loại
 	public Boolean timTheoLoai(String loai) {
@@ -400,7 +415,7 @@ public class Thuoc_Dao {
 	}
 
 	public Boolean timTheoMaTuyetDoi(String ma) {
-		
+
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
@@ -412,7 +427,7 @@ public class Thuoc_Dao {
 			ResultSet rs = stm.executeQuery(query);
 			if (rs.next()) {
 				return true;
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -420,4 +435,9 @@ public class Thuoc_Dao {
 		return false;
 	}
 
+	// Phương thức tạo mã QR từ nội dung cho trước
+	private BitMatrix generateQRCode(String qrCodeContent) throws WriterException {
+		QRCodeWriter qrCodeWriter = new QRCodeWriter();
+		return qrCodeWriter.encode(qrCodeContent, BarcodeFormat.QR_CODE, 200, 200);
+	}
 }

@@ -28,7 +28,6 @@ public class ManHinh_GUI extends JFrame {
 //		Add vào card
 		cardLayout = new CardLayout();
 		cardPanel = new JPanel(cardLayout);
-
 //		CÁC TAB		
 //		Trang Chủ 
 		cardPanel.add(new TrangChu_Gui(), "Trang Chủ");

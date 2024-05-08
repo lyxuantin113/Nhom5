@@ -9,16 +9,34 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoCapture;
+
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
 
 import dao.ChiTietHoaDon_Dao;
 import dao.DonDat_Dao;
@@ -27,7 +45,6 @@ import dao.KhachHang_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
-import db.JasperHoaDon;
 import entity.ChiTietDonDat;
 import entity.ChiTietHoaDon;
 import entity.DonDat;
@@ -80,7 +97,15 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JTextField txtHSD;
 
 //	JASPER REPORT
-	private HoaDon hoaDonReport;
+	private HoaDon hoaDonReport; //temp
+	
+//	Camera
+private JButton btnQR;
+private JFrame camFram;
+private JLabel videoLabel;
+private VideoCapture capture;
+private String maThuocQR;
+private JButton captureButton;
 
 	public LapDonThuoc_Gui() {
 //		JPANEL
@@ -115,7 +140,10 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		btnShowThuoc = new JButton("+");
 		btnShowThuoc.setBackground(new Color(0, 160, 255));
 		btnShowThuoc.setPreferredSize(new Dimension(30, 0));
-
+		btnQR = new JButton("QR");
+		btnQR.setBackground(new Color(0, 160, 255));
+		btnQR.setPreferredSize(new Dimension(30, 0));
+		
 		lblTenThuoc = new JLabel("Tên thuốc: ");
 		lblTenThuoc.setPreferredSize(new Dimension(90, 0));
 		txtTenThuoc = new JTextField(15);
@@ -131,6 +159,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		boxThuoc.add(Box.createHorizontalStrut(5));
 		boxThuoc.add(txtMaThuoc);
 		boxThuoc.add(btnShowThuoc);
+		boxThuoc.add(btnQR);
 		boxThuoc.add(Box.createHorizontalStrut(20));
 		boxThuoc.add(lblTenThuoc);
 		boxThuoc.add(Box.createHorizontalStrut(5));
@@ -308,6 +337,24 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		pnSouth.add(Box.createHorizontalStrut(100));
 		pnSouth.add(btnLapDD);
 
+//		EAST
+		JPanel pnEast = new JPanel();
+		pnEast.setLayout(new BorderLayout());
+
+		JButton btnOpenCamera = new JButton("Mở Camera");
+		btnOpenCamera.setBackground(new Color(0, 160, 255));
+		btnOpenCamera.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnOpenCamera.setPreferredSize(new Dimension(150, 35));
+
+		pnEast.add(btnOpenCamera, BorderLayout.NORTH);
+
+		btnOpenCamera.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openCamera();
+			}
+		});
+
 //		Add Center
 		pnCenter.add(Box.createVerticalStrut(5));
 		pnCenter.add(pnCenterTop, BorderLayout.NORTH);
@@ -328,6 +375,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 //		ADD ACTIONLISTENER
 		btnShowThuoc.addActionListener(this);
+		btnQR.addActionListener(this);
 //		btnTim.addActionListener(this);
 //		btnReset.addActionListener(this);
 		btnThem.addActionListener(this);
@@ -374,16 +422,14 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 		}
 		if (o == btnLapHD) {
-			if (checkValidLap()) {
+			if (checkValidLap() && recheckLapHD()) {
 				lapHoaDon();
-//				inHoaDonReport();
 				xoaTrangTatCa();
 			}
 		}
 		if (o == btnLapDD) {
 			if (checkDate() && checkValidLap() && hasKhach()) {
 				lapDonDat();
-//				inHoaDonReport();
 				xoaTrangTatCa();
 			}
 		}
@@ -392,6 +438,17 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		}
 		if (o.equals(btnChonFrame)) {
 			chonThuoc();
+		}
+		if (o.equals(btnQR)) {
+			openCamera();
+		}
+		if(o.equals(captureButton)) {
+			maThuocQR = captureAndSaveImage();
+			if(maThuocQR!=null) {
+				txtMaThuoc.setText(maThuocQR);
+			}
+			camFram.setVisible(false);
+			capture.release();
 		}
 	}
 
@@ -430,6 +487,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		txtLoaiThuoc.setText("");
 		txtDonVi.setText("");
 		txtHSD.setText("");
+		txtNgayNhan.setText("");
+		txtTong.setText("0");
 		txtMaThuoc.requestFocus();
 	}
 
@@ -451,31 +510,22 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			return false;
 		}
 
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		List<Thuoc> listThuoc = thuocDao.timTheoMa(txtMaThuoc.getText()); // Tim Thuoc
-		for (Thuoc thuoc : listThuoc) {
-			if (thuoc.getSoLuongTon() < Integer.parseInt(txtSoLuong.getText())) {
-				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng thuốc yêu cầu vượt quá thuốc tồn kho!");
-				return false;
-			}
-		}
-
 		try {
 			int soLuongThuoc = Integer.parseInt(txtSoLuong.getText());
 			if (soLuongThuoc <= 0) {
-				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng phải > 0");
+				JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng phải > 0.");
 				return false;
 			}
 			return true;
 		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Nhập số lượng là số");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Nhập số lượng là số.");
 			return false;
 		}
 	}
 
 	public boolean checkDate() {
 		if (txtNgayNhan.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập Ngày lập");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập Ngày lập.");
 			return false;
 		}
 
@@ -485,21 +535,21 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			String ngayNhanText = txtNgayNhan.getText();
 
 			if (ngayLapHD.isAfter(ngayNhanHD)) {
-				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận phải sau Ngày lập");
+				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận phải sau Ngày lập.");
 				return false;
 			}
 
 			if (ngayNhanText.equals("")) {
-				JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập ngày nhận (yyyy-MM-dd)");
+				JOptionPane.showMessageDialog(this, "Lưu ý: Vui lòng nhập ngày nhận (yyyy-MM-dd).");
 				return false;
 			}
 
 			if (!Pattern.matches("\\d{4}-\\d{2}-\\d{2}", ngayNhanText)) {
-				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận có định dạng là (yyyy-MM-dd)");
+				JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận có định dạng là (yyyy-MM-dd).");
 				return false;
 			}
 		} catch (DateTimeParseException e) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Ngày nhận sai định dạng ngày (yyyy-MM-dd)");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Thông tin ngày nhận sai! Hãy xem xét lại.");
 			return false;
 		}
 
@@ -514,19 +564,19 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		NhanVien_Dao nvDao = new NhanVien_Dao();
 
 		if (nvDao.getNhanVien(maNV).isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Mã nhân viên không tồn tại");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Mã nhân viên không tồn tại.");
 			return false;
 		}
 		if (maNV.equals("")) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập mã nhân viên");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập mã nhân viên.");
 			return false;
 		}
 		if (!Pattern.matches("([A-Z]{1}[a-z]+)( [A-Z]{1}[a-z]*)*", tenKhach) && !tenKhach.equals("")) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Tên Khách chưa đúng định dạng");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Tên Khách chưa đúng định dạng.");
 			return false;
 		}
 		if (!Pattern.matches("^((84|0)(3[2-9]|5[2689]|7[06789]|8[1-9]|9[0-9])\\d{7})$", sdt) && !sdt.equals("")) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Số điện thoại chưa đúng định dạng");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Số điện thoại chưa đúng định dạng.");
 			return false;
 		}
 
@@ -536,7 +586,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 //	XỬ LÝ SỰ KIỆN
 	public boolean hasKhach() {
 		if (txtTenKH.getText().equals("") || txtSDT.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Lưu ý: Đơn đặt phải có đầy đủ thông tin Khách hàng");
+			JOptionPane.showMessageDialog(this, "Lưu ý: Đơn đặt phải có đầy đủ thông tin Khách hàng.");
 			return false;
 		}
 		return true;
@@ -546,6 +596,16 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		if (txtMaThuoc.getText().equals("")) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập thông tin thuốc!");
 			return false;
+		}
+		return true;
+	}
+
+	public boolean recheckLapHD() {
+		for (ChiTietHoaDon chiTietHoaDon : tempListHD) {
+			if (chiTietHoaDon.getSoLuong() > chiTietHoaDon.getMaThuoc().getSoLuongTon()) {
+				JOptionPane.showMessageDialog(this, "Lưu ý: Có thuốc không đủ số lượng, không thể lập!");
+				return false;
+			}
 		}
 		return true;
 	}
@@ -566,7 +626,13 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 				int slHD = tempListHD.get(i).getSoLuong();
 
 				if (thuoc.getSoLuongTon() < slHD + soLuong) {
-					JOptionPane.showMessageDialog(this, "Lưu ý: Số lượng thuốc yêu cầu vượt quá thuốc tồn kho!");
+					int choice = JOptionPane.showConfirmDialog(this, "Xác nhận chọn thuốc",
+							"Lưu ý: Thuốc không đủ số lượng, chỉ \"Xác nhận\" khi \"Lập đơn đặt\" cho khách!",
+							JOptionPane.YES_NO_OPTION);
+					if (choice == JOptionPane.YES_OPTION) {
+						tempListHD.get(i).setSoLuong(slHD + soLuong);
+						tempListDD.get(i).setSoLuong(slHD + soLuong);
+					}
 					check++;
 					break;
 				} else {
@@ -579,13 +645,31 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		}
 
 		if (check == 0) {
-			tempListHD.add(cthd);
-			tempListDD.add(ctdd);
+			if (thuoc.getSoLuongTon() < Integer.parseInt(txtSoLuong.getText())) {
+				int choice = JOptionPane.showConfirmDialog(this, "Xác nhận chọn thuốc",
+						"Lưu ý: Thuốc không đủ số lượng, chỉ \"Xác nhận\" khi \"Lập đơn đặt\" cho khách!",
+						JOptionPane.YES_NO_OPTION);
+				if (choice == JOptionPane.YES_OPTION) {
+					tempListHD.add(cthd);
+					tempListDD.add(ctdd);
 
-			String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getGiaBan() + "",
-					thuoc.getDonVi(), thuoc.getHSD() + "", soLuong + "", thuoc.getGiaBan() * soLuong + "" };
-			modelHoaDon.addRow(rowData);
-			xoaTrangThuoc();
+					String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
+							thuoc.getGiaBan() + "", thuoc.getDonVi(), thuoc.getHSD() + "", soLuong + "",
+							thuoc.getGiaBan() * soLuong + "" };
+					modelHoaDon.addRow(rowData);
+					xoaTrangThuoc();
+				}
+			} else {
+				tempListHD.add(cthd);
+				tempListDD.add(ctdd);
+
+				String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
+						thuoc.getGiaBan() + "", thuoc.getDonVi(), thuoc.getHSD() + "", soLuong + "",
+						thuoc.getGiaBan() * soLuong + "" };
+				modelHoaDon.addRow(rowData);
+				xoaTrangThuoc();
+			}
+
 		} else {
 			int rowCount = modelHoaDon.getRowCount();
 			for (int i = rowCount - 1; i >= 0; i--) {
@@ -735,12 +819,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		int rowCount = modelHoaDon.getRowCount();
 		for (int i = rowCount - 1; i >= 0; i--) {
 			modelHoaDon.removeRow(i);
-		}
-
-//		Cập nhật số lượng trong kho
-		for (ChiTietDonDat chiTietDonDat : donDat.getListChiTietDonDat()) {
-			Thuoc_Dao thuocDao = new Thuoc_Dao();
-			thuocDao.updateThuocQuatity(chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getSoLuong());
 		}
 
 		int rowCount2 = modelFrame.getRowCount();
@@ -924,6 +1002,107 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 	}
 
+//	CAMERA
+	public void openCamera() {
+		camFram = new JFrame("Camera QR");
+		camFram.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		camFram.setSize(800, 600);
+		videoLabel = new JLabel();
+		camFram.add(videoLabel, BorderLayout.CENTER);
+
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+		capture = new VideoCapture(0); // Mở camera
+
+		if (!capture.isOpened()) {
+			System.out.println("Không thể kết nối đến camera.");
+			System.exit(-1);
+		}
+
+		new Thread(() -> {
+			Mat frame = new Mat();
+			BufferedImage bufImage;
+
+			while (true) {
+				capture.read(frame);
+
+				if (!frame.empty()) {
+					bufImage = Mat2BufferedImage(frame);
+
+					ImageIcon imageIcon = new ImageIcon(bufImage);
+					videoLabel.setIcon(imageIcon);
+				}
+			}
+		}).start();
+
+		// Tạo nút để chụp ảnh
+		captureButton = new JButton("Chụp Ảnh");
+		captureButton.addActionListener(this);
+
+		// Hiển thị nút trong cửa sổ
+		camFram.add(captureButton, BorderLayout.SOUTH);
+		camFram.setVisible(true);
+	}
+	
+	private String captureAndSaveImage() {
+		Mat frame = new Mat();
+		capture.read(frame); // Đọc frame từ camera
+
+		// Lưu frame thành file ảnh
+		LocalDateTime dateNow = LocalDateTime.now();
+		String filename = dateNow.getHour() + dateNow.getMinute() + dateNow.getSecond() + dateNow.getNano() + ".jpg";
+		Imgcodecs.imwrite(filename, frame);
+
+		String maThuoc = this.inThongTin(filename + ".png");
+		if (maThuoc == null) {
+			JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc!");
+			return null;
+		} else
+			return maThuoc;
+	}
+
+	private BufferedImage Mat2BufferedImage(Mat frame) {
+		int type = BufferedImage.TYPE_BYTE_GRAY;
+		if (frame.channels() > 1) {
+			type = BufferedImage.TYPE_3BYTE_BGR;
+		}
+		int bufferSize = frame.channels() * frame.cols() * frame.rows();
+		byte[] buffer = new byte[bufferSize];
+		frame.get(0, 0, buffer);
+
+		BufferedImage image = new BufferedImage(frame.cols(), frame.rows(), type);
+		final byte[] targetPixels = ((java.awt.image.DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		System.arraycopy(buffer, 0, targetPixels, 0, buffer.length);
+
+		return image;
+	}
+	
+	public String getMaThuocFromQR() {
+		return maThuocQR;
+	}
+	
+	public String inThongTin(String QRFilePath) {
+		try {
+			// Đọc file ảnh
+			File file = new File(QRFilePath);
+			BufferedImage image = ImageIO.read(file);
+
+			// Tạo đối tượng BinaryBitmap từ hình ảnh
+			BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
+
+			// Sử dụng MultiFormatReader để đọc mã QR code từ BinaryBitmap
+			MultiFormatReader reader = new MultiFormatReader();
+			Result result = reader.decode(binaryBitmap);
+
+			// Lấy thông tin từ kết quả giải mã
+			String content = result.getText();
+			return content;
+		} catch (IOException | NotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 //	MOUSE LISTENER
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -1055,16 +1234,4 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 	}
 
-//	JASPER REPORT FUNCTION
-
-	private void inHoaDonReport() {
-		JasperHoaDon jpHoaDon = new JasperHoaDon();
-		try {
-			jpHoaDon.generateHoaDonReport(hoaDonReport);
-		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 }
