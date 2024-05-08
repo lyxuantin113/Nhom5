@@ -44,6 +44,8 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	private JComboBox<String> cbbNCC;
 	private JButton btnSua;
 	private JButton btnLamMoi;
+	private JButton btnAddDonVi;
+	private JButton btnAddLoai;
 
 	public DSThuoc_Gui() {
 		setSize(1070, 600);
@@ -109,30 +111,43 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		JLabel lblLoai = new JLabel("Loại thuốc: ");
 		lblLoai.setPreferredSize(new Dimension(90, 25));
 		cbbLoai = new JComboBox<String>();
-		cbbLoai.setPreferredSize(new Dimension(395, 25));
-		cbbLoai.addItem("Thuoc cam");
-		cbbLoai.addItem("Thuoc ha sot");
-		cbbLoai.addItem("Thuoc giam dau");
-		cbbLoai.addItem("Thuoc khang sinh");
-		cbbLoai.addItem("Thuoc an than");
-		cbbLoai.addItem("Thuc pham chuc nang");
+		cbbLoai.setPreferredSize(new Dimension(360, 25));
+		btnAddLoai = new JButton("...");
+		btnAddLoai.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnAddLoai.setBackground(new Color(0, 160, 255));
+		btnAddLoai.setPreferredSize(new Dimension(30, 25));
+		
+//		cbbLoai.addItem("Thuoc cam");
+//		cbbLoai.addItem("Thuoc ha sot");
+//		cbbLoai.addItem("Thuoc giam dau");
+//		cbbLoai.addItem("Thuoc khang sinh");
+//		cbbLoai.addItem("Thuoc an than");
+//		cbbLoai.addItem("Thuc pham chuc nang");
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblLoai);
 		b2.add(cbbLoai);
+		b2.add(Box.createHorizontalStrut(5));
+		b2.add(btnAddLoai);
 
 		// Đơn vị
 		JLabel lblDonVi = new JLabel("Đơn vị:");
 		lblDonVi.setPreferredSize(new Dimension(90, 25));
 		cbbDonVi = new JComboBox<String>();
-		cbbDonVi.setPreferredSize(new Dimension(395, 25));
-		cbbDonVi.addItem("Vien");
-		cbbDonVi.addItem("Vi");
-		cbbDonVi.addItem("Hop");
-		cbbDonVi.addItem("Goi");
-		cbbDonVi.addItem("Chai");
+		cbbDonVi.setPreferredSize(new Dimension(360, 25));
+		btnAddDonVi = new JButton("...");
+		btnAddDonVi.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnAddDonVi.setBackground(new Color(0, 160, 255));
+		btnAddDonVi.setPreferredSize(new Dimension(30, 25));
+//		cbbDonVi.addItem("Vien");
+//		cbbDonVi.addItem("Vi");
+//		cbbDonVi.addItem("Hop");
+//		cbbDonVi.addItem("Goi");
+//		cbbDonVi.addItem("Chai");
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblDonVi);
 		b2.add(cbbDonVi);
+		b2.add(Box.createHorizontalStrut(5));
+		b2.add(btnAddDonVi);
 		pnCenterTop.add(b2);
 		pnCenterTop.add(Box.createVerticalStrut(5));
 
@@ -269,7 +284,8 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		btnSua.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		cbbNCC.addActionListener(this);
-		
+		btnAddDonVi.addActionListener(this);
+		btnAddLoai.addActionListener(this);
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
 				int row = table.rowAtPoint(evt.getPoint());
@@ -332,6 +348,12 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnLamMoi)) {
 			hienTable();
 			xoaTrang();
+		}
+		if (o.equals(btnAddDonVi)) {
+			new DonVi_Gui();
+		}
+		if (o.equals(btnAddLoai)) {
+			new LoaiThuoc_Gui();
 		}
 
 	}

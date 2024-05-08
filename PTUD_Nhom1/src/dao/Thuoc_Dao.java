@@ -21,6 +21,7 @@ import entity.Thuoc;
 
 public class Thuoc_Dao {
 	private List<Thuoc> dsThuoc;
+	Connection con = ConnectDB.getInstance().getConnection();
 
 	public Thuoc_Dao() {
 		dsThuoc = new ArrayList<Thuoc>();
@@ -28,7 +29,8 @@ public class Thuoc_Dao {
 
 	public List<Thuoc> readFromTable() {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			String query = "select * from Thuoc";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -63,7 +65,8 @@ public class Thuoc_Dao {
 	// Thêm thuốc vào database
 	public void addThuoc(Thuoc thuoc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
@@ -93,7 +96,8 @@ public class Thuoc_Dao {
 	// Xóa thuốc trong database
 	public boolean deleteThuoc(String maThuoc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
@@ -115,7 +119,8 @@ public class Thuoc_Dao {
 
 	public void updateThuoc(Thuoc thuoc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
@@ -150,7 +155,8 @@ public class Thuoc_Dao {
 
 	public void updateThuocQuatity(String maThuoc, int soLuongGiam) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
@@ -171,7 +177,8 @@ public class Thuoc_Dao {
 	public List<Thuoc> timTheoMa(String ma) {
 		List<Thuoc> listThuoc = new ArrayList<>();
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 //				return false;
@@ -204,7 +211,8 @@ public class Thuoc_Dao {
 	// Tìm thuốc theo tên
 	public Boolean timTheoTen(String ten) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
@@ -226,7 +234,8 @@ public class Thuoc_Dao {
 	public Thuoc findByName(String ten) {
 		Thuoc t = null;
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return null;
@@ -256,7 +265,8 @@ public class Thuoc_Dao {
 	// Tìm thuốc theo loại
 	public Boolean timTheoLoai(String loai) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
@@ -277,7 +287,8 @@ public class Thuoc_Dao {
 	// Tìm thuốc theo ncc
 	public Boolean timTheoNCC(String ncc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
@@ -299,7 +310,8 @@ public class Thuoc_Dao {
 	public List<Thuoc> getDSTByNCC(String ncc) {
 		List<Thuoc> ds = new ArrayList<Thuoc>();
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return null;
@@ -331,7 +343,8 @@ public class Thuoc_Dao {
 
 	public void updateTTThuoc(Thuoc thuoc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
@@ -350,7 +363,8 @@ public class Thuoc_Dao {
 
 	public boolean checkThuoc(String maThuoc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
@@ -372,7 +386,8 @@ public class Thuoc_Dao {
 	public Thuoc readFromTable(String string) {
 		Thuoc thuoc = null;
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			String query = "select * from Thuoc where maThuoc = '" + string + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -401,7 +416,8 @@ public class Thuoc_Dao {
 
 	public boolean searchNCC(String maNCC) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			String query = "select * from Thuoc where maNCC = '" + maNCC + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -417,7 +433,8 @@ public class Thuoc_Dao {
 	public Boolean timTheoMaTuyetDoi(String ma) {
 
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;

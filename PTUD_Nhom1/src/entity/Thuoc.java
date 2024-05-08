@@ -1,10 +1,11 @@
 package entity;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 public class Thuoc {
-	private String maThuoc, tenThuoc, loaiThuoc, donVi;
+	private String maThuoc, tenThuoc;
+	private String maLoai;
+	private String maDonVi;
 	private LocalDate HSD;
 	private double giaNhap;
 	private double giaBan;
@@ -14,14 +15,14 @@ public class Thuoc {
 
 	
 
-	public Thuoc(String maThuoc, String tenThuoc, String loaiThuoc, String donVi, LocalDate hSD, double giaNhap,
+	public Thuoc(String maThuoc, String tenThuoc, String maLoai, String maDonVi, LocalDate hSD, double giaNhap,
 			double giaBan, int soLuongTon, String nuocSanXuat, String maNCC) {
 		super();
 		this.maThuoc = maThuoc;
 		this.tenThuoc = tenThuoc;
-		this.loaiThuoc = loaiThuoc;
-		this.donVi = donVi;
-		HSD = hSD;
+		this.maLoai = maLoai;
+		this.maDonVi = maDonVi;
+		this.HSD = hSD;
 		this.giaNhap = giaNhap;
 		this.giaBan = giaBan;
 		this.soLuongTon = soLuongTon;
@@ -50,19 +51,19 @@ public class Thuoc {
 	}
 
 	public String getLoaiThuoc() {
-		return loaiThuoc;
+		return maLoai;
 	}
 
-	public void setLoaiThuoc(String loaiThuoc) {
-		this.loaiThuoc = loaiThuoc;
+	public void setLoaiThuoc(String maLoai) {
+		this.maLoai = maLoai;
 	}
 
 	public String getDonVi() {
-		return donVi;
+		return maDonVi;
 	}
 
-	public void setDonVi(String donVi) {
-		this.donVi = donVi;
+	public void setDonVi(String maDonVi) {
+		this.maDonVi = maDonVi;
 	}
 
 	
@@ -119,7 +120,7 @@ public class Thuoc {
 
 	@Override
 	public String toString() {
-		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", loaiThuoc=" + loaiThuoc + ", donVi=" + donVi
+		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", loaiThuoc=" + maLoai + ", donVi=" + maDonVi
 				+ ", HSD=" + HSD + ", giaNhap=" + giaNhap + ", giaBan=" + giaBan + ", soLuongTon=" + soLuongTon
 				+ ", nuocSanXuat=" + nuocSanXuat + ", maNCC=" + maNCC + "]";
 	}

@@ -224,6 +224,27 @@ public class NhanVien_Dao {
 		}
 		return n > 0;
 	}
+	public String getTenNV(String maNV) {
+		Connection con = ConnectDB.getInstance().getConnection();
+		PreparedStatement stmt = null;
+		String tenNV = "";
+		try {
+			String sql = "Select tenNV from NhanVien where maNV = ?";
+
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, maNV);
+
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				tenNV = rs.getString(1);
+			}
+			return tenNV;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tenNV;
+	}
 
 	
 }
