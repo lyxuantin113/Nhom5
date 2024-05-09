@@ -16,15 +16,19 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import dao.DonDat_Dao;
+import dao.DonVi_Dao;
 import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
+import dao.LoaiThuoc_Dao;
 import dao.NhaCungCap_Dao;
 import dao.PhieuNhapThuoc_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.KhachHang;
+import entity.LoaiThuoc;
 import entity.NhaCungCap;
 import entity.Thuoc;
+import entity.DonVi;
 
 public class DSThuoc_Gui extends JPanel implements ActionListener {
 	private JButton btnAdd;
@@ -46,6 +50,12 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	private JButton btnLamMoi;
 	private JButton btnAddDonVi;
 	private JButton btnAddLoai;
+	
+	private Thuoc_Dao thuocDao = new Thuoc_Dao();
+	private LoaiThuoc_Dao loaiThuocDao = new LoaiThuoc_Dao();
+	private NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+	private PhieuNhapThuoc_Dao phieuNhapThuocDao = new PhieuNhapThuoc_Dao();
+	private DonVi_Dao donViDao = new DonVi_Dao();
 
 	public DSThuoc_Gui() {
 		setSize(1070, 600);
@@ -116,13 +126,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		btnAddLoai.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnAddLoai.setBackground(new Color(0, 160, 255));
 		btnAddLoai.setPreferredSize(new Dimension(30, 25));
-		
-//		cbbLoai.addItem("Thuoc cam");
-//		cbbLoai.addItem("Thuoc ha sot");
-//		cbbLoai.addItem("Thuoc giam dau");
-//		cbbLoai.addItem("Thuoc khang sinh");
-//		cbbLoai.addItem("Thuoc an than");
-//		cbbLoai.addItem("Thuc pham chuc nang");
+
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblLoai);
 		b2.add(cbbLoai);
@@ -138,11 +142,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		btnAddDonVi.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnAddDonVi.setBackground(new Color(0, 160, 255));
 		btnAddDonVi.setPreferredSize(new Dimension(30, 25));
-//		cbbDonVi.addItem("Vien");
-//		cbbDonVi.addItem("Vi");
-//		cbbDonVi.addItem("Hop");
-//		cbbDonVi.addItem("Goi");
-//		cbbDonVi.addItem("Chai");
+
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(lblDonVi);
 		b2.add(cbbDonVi);
@@ -198,28 +198,6 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		pnCenterTop.add(b5);
 		pnCenterTop.add(Box.createVerticalStrut(5));
 
-//		// Thành tiền
-//		JLabel lblThanhTien = new JLabel("Thành tiền: ");
-//		lblThanhTien.setPreferredSize(new Dimension(90, 25));
-//		JTextField txtThanhTien = new JTextField(20);
-//		txtThanhTien.setEnabled(false);
-//		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
-//		lblNgayNhap.setPreferredSize(new Dimension(90, 25));
-//		JTextField txtNgayNhap = new JTextField(20);
-//		// Lấy ngày hiện tại
-//		Date date = new Date();
-//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//		String strDate = formatter.format(date);
-//		txtNgayNhap.setText(strDate);
-//		txtNgayNhap.setEnabled(false);
-//
-//		b5.add(Box.createHorizontalStrut(10));
-//		b5.add(lblThanhTien);
-//		b5.add(txtThanhTien);
-//		b5.add(Box.createHorizontalStrut(10));
-//		b5.add(lblNgayNhap);
-//		b5.add(txtNgayNhap);
-//
 
 		// BUTTON
 		JPanel pnButton = new JPanel();
@@ -304,23 +282,41 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		});
 		hienTable();
 		ConnectDB.connect();
+
+		
 	}
 
 	void hienTable() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.setRowCount(0);
-		// Lấy danh sách thuốc từ database
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		
+		// Lấy danh sách thuốc từ database
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
+		
 		for (Thuoc thuoc : dsThuoc) {
 			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 					thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(),
 					thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
 		}
-		// add combobox
-		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+		dsThuoc.clear();
+		// Add combobox
+		// Loai thuoc
+		cbbLoai.removeAllItems();
+		
+		List<LoaiThuoc> dsLoaiThuoc = loaiThuocDao.readFromTable();
+		for (LoaiThuoc lt : dsLoaiThuoc) {
+			cbbLoai.addItem(lt.getLoaiThuoc());
+		}
+		// Don vi
+		cbbDonVi.removeAllItems();
+		List<DonVi> dsDonVi = donViDao.readFromTable();
+		for (DonVi dv : dsDonVi) {
+			cbbDonVi.addItem(dv.getTenDonVi());
+		}
+		
+		// Nha cung cap
+		cbbNCC.removeAllItems();
 		List<NhaCungCap> dsNCC = nccDao.readFromTable();
 		for (NhaCungCap ncc : dsNCC) {
 			cbbNCC.addItem(ncc.getMaNCC());
@@ -378,7 +374,6 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 
 		
 		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn sửa không?", "Chú ý",
 				JOptionPane.YES_NO_OPTION);
 		if (hoi == JOptionPane.YES_OPTION) {
@@ -430,7 +425,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		HoaDon_Dao hoaDonDao = new HoaDon_Dao();
 		DonDat_Dao donDatDao = new DonDat_Dao();
-		PhieuNhapThuoc_Dao phieuNhapThuocDao = new PhieuNhapThuoc_Dao();
+		
 		
 		if (phieuNhapThuocDao.checkThuoc(maThuoc)) {
 			JOptionPane.showMessageDialog(this, "Không thể xóa thuốc này vì có phiếu nhập thuốc chưa nhận tồn tại thuốc này");
@@ -471,7 +466,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String maNCC = cbbNCC.getSelectedItem().toString();
 		
 		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		
 		if (thuocDao.checkThuoc(maThuoc)) {
 			JOptionPane.showMessageDialog(this, "Mã thuốc đã tồn tại");
 			return;
