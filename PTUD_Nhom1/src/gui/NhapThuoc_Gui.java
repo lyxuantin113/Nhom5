@@ -85,6 +85,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		JLabel lblMaNV = new JLabel("Mã nhân viên: ");
 		lblMaNV.setPreferredSize(new Dimension(90, 25));
 		txtMaNV = new JTextField(20);
+		txtMaNV.setEnabled(false);
 		b01.add(Box.createHorizontalStrut(10));
 		b01.add(lblMaNV);
 		b01.add(txtMaNV);
@@ -94,6 +95,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		JLabel lblMaPNT = new JLabel("Mã phiếu nhập: ");
 		lblMaPNT.setPreferredSize(new Dimension(90, 25));
 		txtMaPNT = new JTextField(20);
+		txtMaPNT.setEnabled(false);
 		b11.add(Box.createHorizontalStrut(10));
 		b11.add(lblMaPNT);
 		b11.add(txtMaPNT);
@@ -157,19 +159,11 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		// Mã thuốc
 		JLabel lblMa = new JLabel("Mã thuốc: ");
 		lblMa.setPreferredSize(new Dimension(90, 25));
-//		txtMa = new JTextField(20);
 		cbbMaThuoc = new JComboBox<String>();
 		cbbMaThuoc.setPreferredSize(new Dimension(395, 25));
 		b1.add(Box.createHorizontalStrut(10));
 		b1.add(lblMa);
 		b1.add(cbbMaThuoc);
-//		// Tên Thuốc
-//		JLabel lblTen = new JLabel("Tên thuốc: ");
-//		lblTen.setPreferredSize(new Dimension(90, 25));
-//		txtTen = new JTextField(20);
-//		b1.add(Box.createHorizontalStrut(10));
-//		b1.add(lblTen);
-//		b1.add(txtTen);
 		pnTTThuoc.add(b1);
 		pnTTThuoc.add(Box.createVerticalStrut(5));
 		// Giá nhập
@@ -212,42 +206,14 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		b3.add(lblDonVi);
 		b3.add(cbbDonVi);
 
-//		// Loại thuốc
-//		JLabel lblLoai = new JLabel("Loại thuốc: ");
-//		lblLoai.setPreferredSize(new Dimension(90, 25));
-//		JComboBox<String> cbbLoai = new JComboBox<String>();
-//		cbbLoai.setPreferredSize(new Dimension(395, 25));
-//		cbbLoai.addItem("Thuốc cảm");
-//		cbbLoai.addItem("Thuốc hạ sốt");
-//		cbbLoai.addItem("Thực phẩm chức năng");
-//		b4.add(Box.createHorizontalStrut(10));
-//		b4.add(lblLoai);
-//		b4.add(cbbLoai);
-//		
-//		
-//		JLabel lblXuatXu = new JLabel("Xuất xứ: ");
-//		lblXuatXu.setPreferredSize(new Dimension(90, 25));
-//		JTextField txtXuatXu = new JTextField(20);
-//		b4.add(Box.createHorizontalStrut(10));
-//		b4.add(lblXuatXu);
-//		b4.add(txtXuatXu);
-//		pnCenterTop.add(b4);
-//		pnCenterTop.add(Box.createVerticalStrut(5));
+
 
 		// Thành tiền
 		JLabel lblThanhTien = new JLabel("Thành tiền: ");
 		lblThanhTien.setPreferredSize(new Dimension(90, 25));
 		txtThanhTien = new JTextField(20);
 		txtThanhTien.setEnabled(false);
-//		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
-//		lblNgayNhap.setPreferredSize(new Dimension(90, 25));
-//		txtNgayNhap = new JTextField(20);
-//		// Lấy ngày hiện tại
-//		Date date = new Date();
-//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//		String strDate = formatter.format(date);
-//		txtNgayNhap.setText(strDate);
-//		txtNgayNhap.setEnabled(false);
+
 		// Mã CTPNT
 		JLabel lblMaCTPNT = new JLabel("Mã CTPNT: ");
 		lblMaCTPNT.setPreferredSize(new Dimension(90, 25));
@@ -260,14 +226,10 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		b5.add(lblMaCTPNT);
 		b5.add(txtMaCTPNT);
 
-//		b5.add(lblNgayNhap);
-//		b5.add(txtNgayNhap);
-
 		pnTTThuoc.add(b5);
 		pnCenterTop.add(pnTTThuoc);
 		// Set ko nhập
 		cbbMaThuoc.setEnabled(false);
-//		txtTen.setEnabled(false);
 		txtGiaNhap.setEnabled(false);
 		txtHSD.setEnabled(false);
 		txtSoLuong.setEnabled(false);
@@ -392,6 +354,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		for (NhaCungCap ncc : nccDao.readFromTable()) {
 			cbbNCC.addItem(ncc.getMaNCC());
 		}
+		taoMaPhieuNhap();
 	}
 
 	private void hienTable(String maPhieuNhap) {
@@ -403,7 +366,13 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			model.addRow(new Object[] { ct.getMaThuoc(), ct.getMaPhieuNhap(), ct.getSoLuong(), ct.getGiaNhap(),
 					ct.getHsd(), ct.getDonVi(), ct.getThanhTien() });
 		}
+		// Set mã
+		
 
+	}
+
+	private void taoMaPhieuNhap() {
+		txtMaPNT.setText(PhieuNhapThuoc_Dao.taoMaPhieuNhap());
 	}
 
 	@Override

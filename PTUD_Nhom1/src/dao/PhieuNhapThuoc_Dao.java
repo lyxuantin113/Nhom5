@@ -200,7 +200,11 @@ public class PhieuNhapThuoc_Dao {
 	public boolean checkThuoc(String maThuoc) {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
-			String query =   "SELECT * FROM Thuoc WHERE maThuoc = '" + maThuoc + "' AND trangThai = 'false'";
+			String query =  "SELECT * "
+					+ "FROM PhieuNhapThuoc p "
+					+ "JOIN ChiTietPhieuNhapThuoc c ON p.maPhieuNhap = c.maPhieuNhap "
+					+ "WHERE c.maThuoc = '" + maThuoc + "' AND p.trangThai = 0 ";
+					
 
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -226,6 +230,33 @@ public class PhieuNhapThuoc_Dao {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public static String taoMaPhieuNhap() {
+		String maPhieuNhap = "PN";
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select top 1 maPhieuNhap from PhieuNhapThuoc order by maPhieuNhap desc";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String maCu = rs.getString(1);
+				String so = maCu.substring(2);
+				int soMoi = Integer.parseInt(so) + 1;
+				if (soMoi < 10) {
+					maPhieuNhap += "00" + soMoi;
+				} else if (soMoi < 100) {
+					maPhieuNhap += "0" + soMoi;
+				} else if (soMoi < 1000) {
+					maPhieuNhap +=  + soMoi;
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return maPhieuNhap;
+		
 	}
 
 	

@@ -68,4 +68,40 @@ public class LoaiThuoc_Dao {
 			e.printStackTrace();
 		}
 	}
+
+	public boolean checkMaLoaiThuoc(String maLoai) {
+		
+		for (LoaiThuoc lt : dsLoaiThuoc) {
+			if (lt.getMaLoai().equals(maLoai)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String taoMaLoaiThuoc() {
+		
+		try {
+			String sql = "select max(maLoaiThuoc) from LoaiThuoc";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				String maLoaiThuoc = rs.getString(1);
+				String number = maLoaiThuoc.substring(2);
+				int num = Integer.parseInt(number);
+				num++;
+				if (num < 10) {
+					return "LT00" + num;
+				} else if (num < 100) {
+					return "LT0" + num;
+				} else {
+					return "LT" + num;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+    
+	}
 }

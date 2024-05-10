@@ -65,6 +65,7 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 	    
 	    JLabel lblMaDonVi = new JLabel("Mã đơn vị: ");
 	    txtMaDonVi = new JTextField(20);
+	    txtMaDonVi.setEditable(false);
 	    b1.add(lblMaDonVi);
 	    b1.add(txtMaDonVi);
 	    pnCenterTop.add(b1);
@@ -131,8 +132,14 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 			Object[] rowData = { dv.getMaDonVi(), dv.getTenDonVi(), dv.getQuyDoi() };
 			dtm.addRow(rowData);
 		}
+		txtTenDonVi.requestFocus();
+		taoMaDonVi();
 		
 		
+	}
+
+	private void taoMaDonVi() {
+		txtMaDonVi.setText(donViDao.taoMaDonVi());
 		
 	}
 
@@ -158,10 +165,11 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 	}
 
 	private void xoaTrang() {
-		txtMaDonVi.setText("");
+		txtMaDonVi.setText(donViDao.taoMaDonVi());
 		txtTenDonVi.setText("");
 		txtQuyDoi.setText("");
 		tblDonVi.clearSelection();
+		txtTenDonVi.requestFocus();
 	}
 
 	private void huy() {
@@ -220,6 +228,10 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 			String tenDonVi = txtTenDonVi.getText();
 			String quyDoi = txtQuyDoi.getText();
 			DonVi dv = new DonVi(maDonVi, tenDonVi, quyDoi);
+			if (donViDao.checkMaDonVi(maDonVi)) {
+				JOptionPane.showMessageDialog(null, "Mã đơn vị đã tồn tại");
+				return;
+			}
 			donViDao.addDonVi(dv);
 			JOptionPane.showMessageDialog(null, "Thêm đơn vị thành công");
 			xoaTrang();

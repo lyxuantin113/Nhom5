@@ -72,6 +72,7 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 	    
 	    JLabel lblMaLoaiThuoc = new JLabel("Mã loại thuốc: ");
 	    txtMaLoaiThuoc = new JTextField(20);
+	    txtMaLoaiThuoc.setEditable(false);
 	    b1.add(lblMaLoaiThuoc);
 	    b1.add(txtMaLoaiThuoc);
 	    pnCenterTop.add(b1);
@@ -138,7 +139,8 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 			Object[] rowData = { lt.getMaLoai(), lt.getLoaiThuoc(), lt.getMoTa() };
 			dtm.addRow(rowData);
 		}
-		
+		txtLoaiThuoc.requestFocus();
+		taoMaLoaiThuoc();
 	}
 
 	@Override
@@ -197,11 +199,11 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 	}
 
 	private void xoaTrang() {
-		txtMaLoaiThuoc.setText("");
+		taoMaLoaiThuoc();
 		txtLoaiThuoc.setText("");
 		txtMoTa.setText("");
 		tblLoaiThuoc.clearSelection();
-		
+		txtLoaiThuoc.requestFocus();
 	}
 
 	private void themLoaiThuoc() {
@@ -210,12 +212,22 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 			String loaiThuoc = txtLoaiThuoc.getText();
 			String moTa = txtMoTa.getText();
 			LoaiThuoc lt = new LoaiThuoc(maLoai, loaiThuoc, moTa);
+			if (loaiThuocDao.checkMaLoaiThuoc(maLoai)) {
+				JOptionPane.showMessageDialog(null, "Mã loại thuốc đã tồn tại");
+				return;
+			}
 			loaiThuocDao.addLoaiThuoc(lt);
 			JOptionPane.showMessageDialog(null, "Thêm loại thuốc thành công");
 			xoaTrang();
 			hienThiDanhSachLoaiThuoc();
 			
+			
 		}
+		
+	}
+
+	private void taoMaLoaiThuoc() {
+		txtMaLoaiThuoc.setText(loaiThuocDao.taoMaLoaiThuoc());
 		
 	}
 

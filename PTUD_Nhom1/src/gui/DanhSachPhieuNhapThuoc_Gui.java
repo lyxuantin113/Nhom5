@@ -150,7 +150,13 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			rowData[2] = pnt.getMaNV();
 			rowData[3] = pnt.getMaNCC();
 			rowData[4] = pnt.getTongTien();
-			rowData[5] = pnt.getTrangThai();
+			Boolean trangThai = pnt.getTrangThai();
+			if (trangThai == true) {
+				rowData[5] = "Đã nhận";
+			} else {
+				rowData[5] = "Chưa nhận";
+			}
+			
 			model.addRow(rowData);
 		}
 

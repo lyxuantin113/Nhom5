@@ -37,7 +37,9 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	private JButton btnTim;
 	private JButton btnXoa;
 	private JTextField txtTimKiem;
-
+	
+	private NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+	private Thuoc_Dao thuocDao = new Thuoc_Dao();
 	public ThemNCC_Gui() {
 		setSize(1070, 600);
 		setVisible(true);
@@ -71,6 +73,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		JLabel lblMa = new JLabel("Mã NCC: ");
 		lblMa.setPreferredSize(new Dimension(90, 25));
 		txtMa = new JTextField(20);
+		txtMa.setEditable(false);
 		b1.add(Box.createHorizontalStrut(10));
 		b1.add(lblMa);
 		b1.add(txtMa);
@@ -170,7 +173,14 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		for (NhaCungCap ncc : dsNCC) {
 			model.addRow(new Object[] { ncc.getMaNCC(), ncc.getTenNCC(), ncc.getDiaChiNCC(), ncc.getSdtNCC() });
 		}
+		// tạo mã tự động
+		taoMa();
+		
 
+	}
+
+	private void taoMa() {
+		txtMa.setText(NhaCungCap_Dao.taoMaNCC());
 	}
 
 	@Override
@@ -192,13 +202,14 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	}
 
 	private void xoa() {
-		String maNCC = txtMa.getText();
-		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		if (maNCC.equals("")) {
+		
+		
+		int row = table.getSelectedRow();
+		if (row == -1) {
 			JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần xóa");
 			return;
 		}
+		String maNCC = (String) table.getValueAt(row, 0);
 		if (nccDao.searchNCC(maNCC)) {
 			int chon = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa", "Xác nhận",
 					JOptionPane.YES_NO_OPTION);
@@ -241,11 +252,10 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	}
 
 	private void xoaTrang() {
-		txtMa.setText("");
+		txtMa.setText(NhaCungCap_Dao.taoMaNCC());
 		txtTen.setText("");
 		txtDiaChi.setText("");
 		txtSDT.setText("");
-		txtMa.requestFocus();
 
 	}
 
@@ -258,7 +268,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		String diaChi = txtDiaChi.getText();
 		String sdt = txtSDT.getText();
 		NhaCungCap ncc = new NhaCungCap(ma, ten, diaChi, sdt);
-		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+		
 		if (ma.equals("") || ten.equals("") || diaChi.equals("") || sdt.equals("")) {
 			JOptionPane.showMessageDialog(null, "Vui lòng nhập đủ thông tin");
 			return;

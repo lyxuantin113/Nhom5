@@ -698,12 +698,18 @@ public class HoaDon_Dao {
 	}
 
 	public boolean checkThuoc(String maThuoc) {
-		String query = "SELECT * FROM ChiTietHoaDon WHERE maThuoc = ?";
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maThuoc);
-			ResultSet rs = pstmt.executeQuery();
-			return rs.next();
+			String query =  "SELECT * "
+					+ "FROM HoaDon p "
+					+ "JOIN ChiTietHoaDon c ON p.maHoaDon = c.maHoaDon "
+					+ "WHERE c.maThuoc = '" + maThuoc + "'";
+					
+
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				return true;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

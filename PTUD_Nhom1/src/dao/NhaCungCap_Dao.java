@@ -124,4 +124,30 @@ public class NhaCungCap_Dao {
 		}
 		return false;
 	}
+
+	public static String taoMaNCC() {
+		String maNCC = "NCC";
+        try {
+            Connection con = ConnectDB.getInstance().getConnection();
+            String query = "select top 1 MaNCC from NhaCungCap order by MaNCC desc";
+            Statement stm = con.createStatement();
+            ResultSet rs = stm.executeQuery(query);
+            if (rs.next()) {
+                String ma = rs.getString(1);
+                int so = Integer.parseInt(ma.substring(3)) + 1;
+                if (so < 10) {
+                    maNCC += "0" + so;
+                } else if (so < 100) {
+                    maNCC += + so;
+                } else {
+                    maNCC += so;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return maNCC;
+		
+	
+	}
 }

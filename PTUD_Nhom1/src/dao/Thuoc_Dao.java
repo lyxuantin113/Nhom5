@@ -457,4 +457,33 @@ public class Thuoc_Dao {
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		return qrCodeWriter.encode(qrCodeContent, BarcodeFormat.QR_CODE, 200, 200);
 	}
+
+	public String taoMa() {
+		// Lấy phần tử cuối cùng + 1
+		String ma = "";
+		try {
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String query = "select top 1 maThuoc from Thuoc order by maThuoc desc";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				ma = rs.getString(1);
+				String so = ma.substring(2);
+				int soMoi = Integer.parseInt(so) + 1;
+				if (soMoi < 10) {
+					ma = "TH00" + soMoi;
+				} else if (soMoi < 100) {
+					ma = "TH0" + soMoi;
+				} else if (soMoi < 1000) {
+					ma = "TH" +soMoi;
+				}
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ma;
+		
+	}
 }

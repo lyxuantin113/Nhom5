@@ -67,5 +67,43 @@ public class DonVi_Dao {
 			e.printStackTrace();
 		}
 	}
+
+	public boolean checkMaDonVi(String maDonVi) {
+		try {
+			String sql = "select * from DonVi where maDonVi = '" + maDonVi + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public String taoMaDonVi() {
+		try {
+			String sql = "select max(maDonVi) from DonVi";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				String maDonVi = rs.getString(1);
+				String number = maDonVi.substring(2);
+				int num = Integer.parseInt(number);
+				num++;
+				if (num < 10) {
+					return "DV00" + num;
+				} else if (num < 100) {
+					return "DV0" + num;
+				} else {
+					return "DV" + num;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "DV001";
+	}
 	
 }

@@ -278,11 +278,15 @@ public class DonDat_Dao {
 	}
 
 	public boolean checkThuoc(String maThuoc) {
-		String query = "Select * from Thuoc where maThuoc = ?";
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maThuoc);
-			ResultSet rs = pstmt.executeQuery();
+			String query =  "SELECT * "
+					+ "FROM DonDat p "
+					+ "JOIN ChiTietDonDat c ON p.maDonDat = c.maDonDat "
+					+ "WHERE c.maThuoc = '" + maThuoc + "'";
+					
+
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
 			if (rs.next()) {
 				return true;
 			}
