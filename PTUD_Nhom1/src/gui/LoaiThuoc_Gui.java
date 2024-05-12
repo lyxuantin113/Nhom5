@@ -241,6 +241,7 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 			return false;
 		}
 		if (txtLoaiThuoc.getText().equals("")) {
+			JOptionPane.showMessageDialog(null, "Loại thuốc không được để trống");
 			return false;
 		}
 		
@@ -256,6 +257,10 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 		String maLoai = tblLoaiThuoc.getValueAt(row, 0).toString();
 		int hoi = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa không?");
 		if (hoi != JOptionPane.YES_OPTION) {
+			return;
+		}
+		if (loaiThuocDao.checkMaLoaiThuoc(maLoai) == true) {
+			JOptionPane.showMessageDialog(null, "Không thể xóa loại thuốc này vì có thuốc liên quan");
 			return;
 		}
 		loaiThuocDao.deleteLoaiThuoc(maLoai);

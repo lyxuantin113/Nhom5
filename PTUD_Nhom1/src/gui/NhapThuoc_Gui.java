@@ -342,6 +342,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		ConnectDB.connect();
 		// Đổ dữ liệu cho combobox
 		addCombobox();
+		txtMaNV.setText("NV001");
 	}
 
 	private LocalDate LocalDate() {
@@ -471,7 +472,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
 			// Xóa dữ liệu trong combobox
-			cbbMaThuoc.removeAllItems();
+//			cbbMaThuoc.removeAllItems();
 		} else {
 			JOptionPane.showMessageDialog(this, "Hủy thất bại.");
 

@@ -240,14 +240,14 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		for (int row = 0; row < rowCount; row++) {
 			String rowData = table.getValueAt(row, 0).toString();
 			if (rowData.equals(maNCC)) {
-				JOptionPane.showMessageDialog(null, "Đã tìm thấy");
+				JOptionPane.showMessageDialog(null, "Đã tìm thấy nhà cung cấp " + maNCC + " tại dòng " + (row + 1) + "");
 				table.setRowSelectionInterval(row, row);
 				return;
 			}
 
 		}
 		table.clearSelection();
-		JOptionPane.showMessageDialog(null, "Không tìm thấy");
+		JOptionPane.showMessageDialog(null, "Không tìm thấy nhà cung cấp " + maNCC + "");
 
 	}
 

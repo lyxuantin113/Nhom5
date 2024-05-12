@@ -290,6 +290,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	}
 
 	void hienTable() {
+		loaiThuocDao = new LoaiThuoc_Dao();
+		nccDao = new NhaCungCap_Dao();
+		donViDao = new DonVi_Dao();
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.setRowCount(0);
 		
@@ -298,8 +301,11 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		
 		for (Thuoc thuoc : dsThuoc) {
-			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-					thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(),
+			String ncc = nccDao.getNCC(thuoc.getMaNCC());
+			String loai = loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc());
+			String donVi = donViDao.getDonVi(thuoc.getDonVi());
+			Object[] rowData = { ncc, thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+					loai, donVi, thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(),
 					thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
 		}
@@ -309,25 +315,25 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		// Add combobox
 		// Loai thuoc
 		cbbLoai.removeAllItems();
-		loaiThuocDao = new LoaiThuoc_Dao();
+		
 		List<LoaiThuoc> dsLoaiThuoc = loaiThuocDao.readFromTable();
 		for (LoaiThuoc lt : dsLoaiThuoc) {
 			cbbLoai.addItem(lt.getLoaiThuoc());
 		}
 		// Don vi
 		cbbDonVi.removeAllItems();
-		donViDao = new DonVi_Dao();
+		
 		List<DonVi> dsDonVi = donViDao.readFromTable();
 		for (DonVi dv : dsDonVi) {
-			cbbDonVi.addItem(dv.getTenDonVi());
+			cbbDonVi.addItem(dv.getDonVi());
 		}
 		
 		// Nha cung cap
 		cbbNCC.removeAllItems();
-		nccDao = new NhaCungCap_Dao();
+		
 		List<NhaCungCap> dsNCC = nccDao.readFromTable();
 		for (NhaCungCap ncc : dsNCC) {
-			cbbNCC.addItem(ncc.getMaNCC());
+			cbbNCC.addItem(ncc.getTenNCC());
 		}
 		
 	}
@@ -373,17 +379,23 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String maThuoc = txtMa.getText();
 		String tenThuoc = txtTen.getText();
 		String loaiThuoc = cbbLoai.getSelectedItem().toString();
+		// Chuyển sang mã loại thuốc
+		String loai = loaiThuocDao.getMaLoaiThuoc(loaiThuoc);
+		// Chuyển sang mã đơn vị
 		String donVi = cbbDonVi.getSelectedItem().toString();
+		String dv = donViDao.getMaDonVi(donVi);
 		LocalDate hsd = new java.sql.Date(System.currentTimeMillis()).toLocalDate();
 
 		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 		double giaBan = Double.parseDouble(txtGiaBan.getText());
 		int soLuongTon = Integer.parseInt(txtSoLuong.getText());
 		String nuocSX = txtXuatXu.getText();
-		String maNCC = cbbNCC.getSelectedItem().toString();
+		String tenNCC = cbbNCC.getSelectedItem().toString();
+		// Chuyển sang mã ncc
+		String maNCC = nccDao.getMaNCC(tenNCC);
 
 		
-		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
+		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loai, dv, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn sửa không?", "Chú ý",
 				JOptionPane.YES_NO_OPTION);
 		if (hoi == JOptionPane.YES_OPTION) {
@@ -436,7 +448,10 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		hoaDonDao = new HoaDon_Dao();
 		donDatDao = new DonDat_Dao();
 		
-		
+		phieuNhapThuocDao = new PhieuNhapThuoc_Dao();
+		donDatDao = new DonDat_Dao();
+		hoaDonDao = new HoaDon_Dao();
+		thuocDao = new Thuoc_Dao();
 		if (phieuNhapThuocDao.checkThuoc(maThuoc)) {
 			JOptionPane.showMessageDialog(this, "Không thể xóa thuốc này vì có phiếu nhập thuốc chưa nhận tồn tại thuốc này");
 			return true;
@@ -466,7 +481,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String maThuoc = txtMa.getText();
 		String tenThuoc = txtTen.getText();
 		String loaiThuoc = cbbLoai.getSelectedItem().toString();
+		String loai = loaiThuocDao.getLoaiThuoc(loaiThuoc);
 		String donVi = cbbDonVi.getSelectedItem().toString();
+		String dv = donViDao.getDonVi(donVi);
 		LocalDate hsd = txtHSD.getText().isEmpty() ? null : LocalDate.parse(txtHSD.getText());
 		
 		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
@@ -475,7 +492,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String nuocSX = txtXuatXu.getText();
 		String maNCC = cbbNCC.getSelectedItem().toString();
 		
-		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
+		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loai, dv, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		thuocDao = new Thuoc_Dao();
 		if (thuocDao.checkThuoc(maThuoc)) {
 			JOptionPane.showMessageDialog(this, "Mã thuốc đã tồn tại");

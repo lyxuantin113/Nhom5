@@ -126,8 +126,8 @@ public class Thuoc_Dao {
 				return;
 			}
 
-			String query = "update Thuoc set tenThuoc = '" + thuoc.getTenThuoc() + "', loaiThuoc = '"
-					+ thuoc.getLoaiThuoc() + "', donVi = '" + thuoc.getDonVi() + "', HSD = '" + thuoc.getHSD()
+			String query = "update Thuoc set tenThuoc = '" + thuoc.getTenThuoc() + "', maLoaiThuoc = '"
+					+ thuoc.getLoaiThuoc() + "', maDonVi = '" + thuoc.getDonVi() + "', HSD = '" + thuoc.getHSD()
 					+ "', giaNhap = " + thuoc.getGiaNhap() + ", giaBan = " + thuoc.getGiaBan() + ", soLuongTon = "
 					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat() + "' where maThuoc = '"
 					+ thuoc.getMaThuoc() + "'";
@@ -271,7 +271,7 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
 			}
-			String query = "select * from Thuoc where loaiThuoc = '" + loai + "'";
+			String query = "select * from Thuoc where maLoaiThuoc = '" + loai + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
 			if (rs.next()) {

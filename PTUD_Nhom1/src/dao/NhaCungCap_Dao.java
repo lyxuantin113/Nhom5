@@ -150,4 +150,37 @@ public class NhaCungCap_Dao {
 		
 	
 	}
+
+	public String getNCC(String maNCC) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from NhaCungCap where MaNCC = '" + maNCC + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String tenNCC = rs.getString(2);
+				return tenNCC;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return maNCC;
+	}
+
+	public String getMaNCC(String tenNCC) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from NhaCungCap where tenNCC = '" + tenNCC + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String maNCC = rs.getString(1);
+				return maNCC;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tenNCC;
+		
+	}
 }

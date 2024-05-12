@@ -104,4 +104,53 @@ public class LoaiThuoc_Dao {
 		return null;
     
 	}
+
+	public String getLoaiThuoc(String maLoaiThuoc) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from LoaiThuoc where maLoaiThuoc = '" + maLoaiThuoc + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String loaiThuoc = rs.getString(2);
+				return loaiThuoc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return maLoaiThuoc;
+	}
+
+	public String getMaLoaiThuoc(String loaiThuoc) {
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			String query = "select * from LoaiThuoc where loaiThuoc = '" + loaiThuoc + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String maLoaiThuoc = rs.getString(1);
+				return maLoaiThuoc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return loaiThuoc;
+	}
+
+	public boolean checkTonTaiThuoc(String maLoai) {
+		try {
+			String sql = "select * from Thuoc where maLoaiThuoc = '" + maLoai + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+		
+		
+	}
 }

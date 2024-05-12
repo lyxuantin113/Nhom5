@@ -129,7 +129,7 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 		DefaultTableModel dtm = (DefaultTableModel) tblDonVi.getModel();
 		dtm.setRowCount(0);
 		for (DonVi dv : dsDonVi) {
-			Object[] rowData = { dv.getMaDonVi(), dv.getTenDonVi(), dv.getQuyDoi() };
+			Object[] rowData = { dv.getMaDonVi(), dv.getDonVi(), dv.getQuyDoi() };
 			dtm.addRow(rowData);
 		}
 		txtTenDonVi.requestFocus();
@@ -213,7 +213,10 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 		if (hoi != JOptionPane.YES_OPTION) {
 			return;
 		}
-		
+		if (donViDao.checkTonTaiThuoc(maDonVi)) {
+			JOptionPane.showMessageDialog(null, "Không thể xóa đơn vị này vì có thuốc liên quan");
+			return;
+		}
 		donViDao.deleteDonVi(maDonVi);
 		JOptionPane.showMessageDialog(null, "Xóa đơn vị thành công");
 		xoaTrang();

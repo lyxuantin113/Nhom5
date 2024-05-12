@@ -9,6 +9,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import dao.DonVi_Dao;
+import dao.LoaiThuoc_Dao;
+import dao.NhaCungCap_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.Thuoc;
@@ -19,6 +22,10 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 	private JTable table;
 	private JComboBox<String> cbbCachTim;
 	private JButton btnReset;
+	private Thuoc_Dao thuocDao ;
+	private NhaCungCap_Dao nccDao ;
+	private LoaiThuoc_Dao loaiThuocDao;
+	private DonVi_Dao donViDao;
 
 	public TimThuoc_Gui() {
 		setSize(1070, 600);
@@ -116,12 +123,18 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.setRowCount(0);
 		// Lấy danh sách thuốc từ database
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		thuocDao = new Thuoc_Dao();
+		nccDao = new NhaCungCap_Dao();
+		loaiThuocDao = new LoaiThuoc_Dao();
+		donViDao = new DonVi_Dao();
 
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
-			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
-					thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(), thuoc.getSoLuongTon(),
+			String ncc = nccDao.getNCC(thuoc.getMaNCC());
+			String loai = loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc());
+			String donVi = donViDao.getDonVi(thuoc.getDonVi());
+			Object[] rowData = { ncc, thuoc.getMaThuoc(), thuoc.getTenThuoc(), loai,
+					donVi, thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(), thuoc.getSoLuongTon(),
 					thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
 		}
@@ -141,12 +154,15 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 	}
 
 	private void timThuoc() {
+		thuocDao = new Thuoc_Dao();
+		nccDao = new NhaCungCap_Dao();
+		loaiThuocDao = new LoaiThuoc_Dao();
+		donViDao = new DonVi_Dao();
 		// Lấy thông tin tìm kiếm
 		String thongTin = txtThongTin.getText();
 		
 		// Lấy cách tìm kiếm
 		String cachTim = (String) cbbCachTim.getSelectedItem();
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		if (thongTin.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin tìm kiếm.");
@@ -159,8 +175,8 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					JOptionPane.showMessageDialog(this, "Tìm thấy mã thuốc.");
 					for (Thuoc thuoc : dsThuoc) {						
 						if (thuoc.getMaThuoc().contains(thongTin)) {
-							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -178,8 +194,8 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					JOptionPane.showMessageDialog(this, "Tìm thấy tên thuốc.");
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getTenThuoc().contains(thongTin)) {
-							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -190,14 +206,15 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 				}
 			}
 			if (cachTim.equals("Loại thuốc")) {
-				if (thuocDao.timTheoLoai(thongTin)) {
+				String loai = loaiThuocDao.getMaLoaiThuoc(thongTin);
+				if (thuocDao.timTheoLoai(loai)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
 					JOptionPane.showMessageDialog(this, "Tìm thấy loại thuốc.");
 					for (Thuoc thuoc : dsThuoc) {
-						if (thuoc.getLoaiThuoc().contains(thongTin)) {
-							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+						if (thuoc.getLoaiThuoc().contains(loai)) {
+							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -208,14 +225,15 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 				}
 			}
 			if (cachTim.equals("Nhà cung cấp")) {
-				if (thuocDao.timTheoNCC(thongTin)) {
+				String ncc = nccDao.getMaNCC(thongTin);
+				if (thuocDao.timTheoNCC(ncc)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
-					JOptionPane.showMessageDialog(this, "Tìm thấy nhà cung c.");
+					JOptionPane.showMessageDialog(this, "Tìm thấy nhà cung cấp.");
 					for (Thuoc thuoc : dsThuoc) {
-						if (thuoc.getMaNCC().contains(thongTin)) {
-							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+						if (thuoc.getMaNCC().contains(ncc)) {
+							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}

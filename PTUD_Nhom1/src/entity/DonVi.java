@@ -2,13 +2,13 @@ package entity;
 
 public class DonVi {
 	private String maDonVi;
-	private String tenDonVi;
+	private String donVi;
 	private String quyDoi;
 	
-	public DonVi(String maDonVi, String tenDonVi, String quyDoi) {
+	public DonVi(String maDonVi, String donVi, String quyDoi) {
 		super();
 		this.maDonVi = maDonVi;
-		this.tenDonVi = tenDonVi;
+		this.donVi = donVi;
 		this.quyDoi = quyDoi;
 	}
 	
@@ -24,12 +24,12 @@ public class DonVi {
 		this.maDonVi = maDonVi;
 	}
 
-	public String getTenDonVi() {
-		return tenDonVi;
+	public String getDonVi() {
+		return donVi;
 	}
 
-	public void setTenDonVi(String tenDonVi) {
-		this.tenDonVi = tenDonVi;
+	public void setDonVi(String donVi) {
+		this.donVi = donVi;
 	}
 
 	public String getQuyDoi() {
@@ -42,7 +42,7 @@ public class DonVi {
 
 	@Override
 	public String toString() {
-		return "DonVi [maDonVi=" + maDonVi + ", tenDonVi=" + tenDonVi + ", quyDoi=" + quyDoi + "]";
+		return "DonVi [maDonVi=" + maDonVi + ", donVi=" + donVi + ", quyDoi=" + quyDoi + "]";
 	}
 	
 	

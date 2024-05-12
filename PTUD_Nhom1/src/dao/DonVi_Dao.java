@@ -38,7 +38,7 @@ public class DonVi_Dao {
 
 	public void addDonVi(DonVi dv) {
 		try {
-            String sql = "insert into DonVi values('"+dv.getMaDonVi()+"','"+dv.getTenDonVi()+"','"+dv.getQuyDoi()+"')";
+            String sql = "insert into DonVi values('"+dv.getMaDonVi()+"','"+dv.getDonVi()+"','"+dv.getQuyDoi()+"')";
             Statement statement = con.createStatement();
             statement.executeUpdate(sql);
         } catch (Exception e) {
@@ -59,7 +59,7 @@ public class DonVi_Dao {
 	
 	public void updateDonVi(DonVi dv) {
 		try {
-			String sql = "update DonVi set tenDonVi = '" + dv.getTenDonVi() + "', quyDoi = '" + dv.getQuyDoi()
+			String sql = "update DonVi set tenDonVi = '" + dv.getDonVi() + "', quyDoi = '" + dv.getQuyDoi()
 					+ "' where maDonVi = '" + dv.getMaDonVi() + "'";
 			Statement statement = con.createStatement();
 			statement.executeUpdate(sql);
@@ -104,6 +104,50 @@ public class DonVi_Dao {
 			e.printStackTrace();
 		}
 		return "DV001";
+	}
+
+	public String getDonVi(String maDonVi) {
+		try {
+			String sql = "select * from DonVi where maDonVi = '" + maDonVi + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				String tenDonVi = rs.getString(2);
+				return tenDonVi;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return maDonVi;
+	}
+
+	public String getMaDonVi(String donVi) {
+		try {
+			String sql = "select * from DonVi where donVi = '" + donVi + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				String maDonVi = rs.getString(1);
+				return maDonVi;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return donVi;
+	}
+
+	public boolean checkTonTaiThuoc(String maDonVi) {
+		try {
+			String sql = "select * from Thuoc where maDonVi = '" + maDonVi + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 }
