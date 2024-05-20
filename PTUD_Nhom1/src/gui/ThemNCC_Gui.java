@@ -25,6 +25,7 @@ import dao.NhaCungCap_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.NhaCungCap;
+import entity.NhanVien;
 
 public class ThemNCC_Gui extends JPanel implements ActionListener {
 	private JTextField txtMa;
@@ -40,7 +41,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	
 	private NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
 	private Thuoc_Dao thuocDao = new Thuoc_Dao();
-	public ThemNCC_Gui() {
+	public ThemNCC_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 

@@ -14,11 +14,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import dao.NhanVien_Dao;
 import dao.TaiKhoan_Dao;
+import entity.NhanVien;
 import entity.TaiKhoan;
 
 public class DoiMatKhau_Gui extends JPanel implements ActionListener {
@@ -30,7 +32,7 @@ public class DoiMatKhau_Gui extends JPanel implements ActionListener {
 	private JTextField txtMatKhau;
 	private JTextField txtNewMatKhau;
 
-	public DoiMatKhau_Gui() {
+	public DoiMatKhau_Gui(NhanVien nhanVienDN) {
 //		super("Đổi mật khẩu");
 		setSize(500, 400);
 		setVisible(true);
@@ -60,10 +62,12 @@ public class DoiMatKhau_Gui extends JPanel implements ActionListener {
 		Box boxNewMK = Box.createHorizontalBox();
 		Box boxBtn = Box.createHorizontalBox();
 
-		JLabel lblMaNV = new JLabel("Nhập mã NV:");
+		JLabel lblMaNV = new JLabel("Mã Nhân Viên:");
 		lblMaNV.setPreferredSize(new Dimension(120, 35));
 		lblMaNV.setFont(fo16);
 		txtMaNV = new JTextField(20);
+		txtMaNV.setText(nhanVienDN.getMaNV());
+		txtMaNV.setEditable(false);
 
 		JLabel lblTaiKhoan = new JLabel("Tên tài khoản:");
 		lblTaiKhoan.setPreferredSize(new Dimension(120, 35));
@@ -73,12 +77,12 @@ public class DoiMatKhau_Gui extends JPanel implements ActionListener {
 		JLabel lblMatKhau = new JLabel("Mật khẩu cũ:");
 		lblMatKhau.setPreferredSize(new Dimension(120, 35));
 		lblMatKhau.setFont(fo16);
-		txtMatKhau = new JTextField(20);
+		txtMatKhau = new JPasswordField(20);
 
 		JLabel lblNewMatKhau = new JLabel("Mật khẩu mới:");
 		lblNewMatKhau.setPreferredSize(new Dimension(120, 35));
 		lblNewMatKhau.setFont(fo16);
-		txtNewMatKhau = new JTextField(20);
+		txtNewMatKhau = new JPasswordField(20);
 
 		btnXacNhan = new JButton("Xác nhận");
 		btnXacNhan.setBackground(new Color(0, 160, 255));
@@ -131,13 +135,21 @@ public class DoiMatKhau_Gui extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o == btnXacNhan) {
-			if (kiemTra())
-				if (doiMatKhau())
+			int check = JOptionPane.showConfirmDialog(this, "Xác nhận đổi mật khẩu?", "Đổi mật khẩu", JOptionPane.YES_NO_OPTION);
+			if (check == JOptionPane.YES_OPTION && kiemTra())
+				if (doiMatKhau()) {
+					xoaTrang();
 					JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công");
-
+				}
 		}
 		if (o == btnThoat)
 			System.exit(0);
+	}
+
+	public void xoaTrang() {
+		txtMatKhau.setText("");
+		txtNewMatKhau.setText("");
+		txtTaiKhoan.setText("");
 	}
 
 	public boolean kiemTra() {
@@ -198,6 +210,6 @@ public class DoiMatKhau_Gui extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Mật khẩu mới trùng với mật khẩu cũ");
 			return false;
 		}
-		return true;
+		return tkDao.doiMatKhau(tk, matKhauMoi);
 	}
 }

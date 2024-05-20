@@ -12,6 +12,7 @@ import java.util.List;
 
 import dao.DonVi_Dao;
 import entity.DonVi;
+import entity.NhanVien;
 
 public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 
@@ -29,7 +30,7 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 
 	private JButton btnXoaTrang;
 
-	public DonVi_Gui() {
+	public DonVi_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 		

@@ -250,11 +250,10 @@ public class HoaDon_Dao {
 		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND MONTH(ngayLap) = ? AND maNV = ? AND maKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, ngayLap.getMonthValue());
-			pstmt.setInt(2, ngayLap.getYear());
+			pstmt.setInt(1, ngayLap.getYear());
+			pstmt.setInt(2, ngayLap.getMonthValue());
 			pstmt.setString(3, maNV);
 			pstmt.setString(4, maKH);
-
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {

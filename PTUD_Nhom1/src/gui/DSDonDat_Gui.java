@@ -3,12 +3,18 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -16,6 +22,19 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPRow;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import dao.ChiTietDonDat_Dao;
 import dao.DonDat_Dao;
@@ -27,6 +46,7 @@ import entity.ChiTietDonDat;
 import entity.ChiTietHoaDon;
 import entity.DonDat;
 import entity.HoaDon;
+import entity.NhanVien;
 
 public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListener {
 
@@ -52,7 +72,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 
 //	Nút Chuyển Qua DS Hóa Đơn ????????????????
 
-	public DSDonDat_Gui() {
+	public DSDonDat_Gui(NhanVien nhanVienDN) {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
@@ -123,7 +143,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		jsplit.setPreferredSize(new Dimension(950, 470)); // SET CHIỀU CAO TABLE
 		jsplit.setResizeWeight(0.0);
 		jsplit.setDividerSize(0);
-		
+
 		pnCenterBot.add(jsplit);
 		pnCenterBot.add(Box.createVerticalStrut(10));
 
@@ -205,19 +225,23 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 	}
 
 	private void hienTableChiTietDonDat(int rowSelected) {
-		String maHoaDon = modelDonDat.getValueAt(rowSelected, 0).toString();
+		if (rowSelected != -1) {
+			String maHoaDon = modelDonDat.getValueAt(rowSelected, 0).toString();
 
-		DefaultTableModel model = (DefaultTableModel) tblThuoc.getModel();
-		model.setRowCount(0);
+			DefaultTableModel model = (DefaultTableModel) tblThuoc.getModel();
+			model.setRowCount(0);
 
-		List<ChiTietDonDat> listChiTietDonDat = ctddDao.findByID(maHoaDon);
-		if (listChiTietDonDat != null) {
-			for (ChiTietDonDat chiTietDonDat : listChiTietDonDat) {
-				Object[] rowData = { chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getMaThuoc().getTenThuoc(),
-						chiTietDonDat.getMaThuoc().getLoaiThuoc(), chiTietDonDat.getMaThuoc().getGiaBan(),
-						chiTietDonDat.getMaThuoc().getDonVi(), chiTietDonDat.getSoLuong(),
-						chiTietDonDat.getSoLuong() * chiTietDonDat.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng mới
-				model.addRow(rowData); // Thêm hàng vào model
+			List<ChiTietDonDat> listChiTietDonDat = ctddDao.findByID(maHoaDon);
+			if (listChiTietDonDat != null) {
+				for (ChiTietDonDat chiTietDonDat : listChiTietDonDat) {
+					Object[] rowData = { chiTietDonDat.getMaThuoc().getMaThuoc(),
+							chiTietDonDat.getMaThuoc().getTenThuoc(), chiTietDonDat.getMaThuoc().getLoaiThuoc(),
+							chiTietDonDat.getMaThuoc().getGiaBan(), chiTietDonDat.getMaThuoc().getDonVi(),
+							chiTietDonDat.getSoLuong(),
+							chiTietDonDat.getSoLuong() * chiTietDonDat.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng
+																									// mới
+					model.addRow(rowData); // Thêm hàng vào model
+				}
 			}
 		}
 	}
@@ -245,13 +269,29 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		int rowSelected = tableDonDat.getSelectedRow();
 
 		if (rowSelected != -1) {
+
 			int choice = JOptionPane.showConfirmDialog(this, "Xác nhận Hoàn thành đơn?", "Xác nhận đơn",
 					JOptionPane.YES_NO_OPTION);
+
 			if (choice == JOptionPane.YES_OPTION) {
+
 				DonDat donDat = donDatDao.findByID(modelDonDat.getValueAt(rowSelected, 0).toString());
+
+//				CHECK NGÀY NHẬN
+				if (donDat.getNgayNhan().isAfter(LocalDate.now())) {
+					int checkNhanTruoc = JOptionPane.showConfirmDialog(this,
+							"Đơn hàng chưa đến ngày được nhận, xác nhận nhận trước ?", "Xác nhận nhận trước",
+							JOptionPane.YES_NO_OPTION);
+					if (checkNhanTruoc != JOptionPane.YES_OPTION)
+						return;
+				}
+
+//				Đổi ngày nhận thành ngày đơn được xác nhận
+				donDat.setNgayNhan(LocalDate.now());
+
 				List<ChiTietDonDat> listCTDD = ctddDao.findByID(donDat.getMaDonDat());
 				boolean flag = true;
-				
+
 				for (ChiTietDonDat chiTietDonDat : listCTDD) {
 					if (chiTietDonDat.getSoLuong() > chiTietDonDat.getMaThuoc().getSoLuongTon()) {
 						flag = false;
@@ -278,10 +318,15 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 
 					ctddDao.deleteByID(donDat.getMaDonDat());
 					donDatDao.deleteByID(donDat.getMaDonDat());
-					
-					JOptionPane.showMessageDialog(this, "Đơn hàng đã được xác nhận");
+
+					DefaultTableModel model = (DefaultTableModel) tblThuoc.getModel();
+					model.setRowCount(0);
+
+					JOptionPane.showMessageDialog(this, "Đơn hàng đã được xác nhận, đang in đơn xác nhận ...");
+					inHoaDon(hoaDon);
 				} else {
-					JOptionPane.showMessageDialog(this, "Đơn hàng không thể Hoàn thành. Vui lòng kiểm tra số lượng từng loại thuốc trong đơn!");
+					JOptionPane.showMessageDialog(this,
+							"Đơn hàng không thể Hoàn thành. Vui lòng kiểm tra số lượng từng loại thuốc trong đơn!");
 				}
 			}
 		}
@@ -355,6 +400,179 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 					return;
 				}
 			}
+		}
+	}
+
+//	IN ĐƠN NHẬN
+	public void inHoaDon(HoaDon hoaDon) {
+
+		try {
+			// Tạo tài liệu in
+			String urlFont = System.getProperty("user.dir") + "\\lib\\Arial Unicode MS.ttf";
+			BaseFont unicodeFont = BaseFont.createFont(urlFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+			com.itextpdf.text.Font unicodeFontObject = new com.itextpdf.text.Font(unicodeFont, 12);
+			Document document = new Document();
+			document.setMargins(50, 50, 10, 0);
+			// Nơi lưu file
+			String url = "";
+			url = System.getProperty("user.dir") + "\\fileOutput\\";
+			url += hoaDon.getMaHoaDon() + ".pdf";
+			String filename = url;
+			PdfWriter.getInstance(document, new FileOutputStream(filename));
+			document.open();
+			// Tiêu đề
+			String tenQuan = "NHÀ THUỐC TTV";
+			Paragraph ten = new Paragraph(tenQuan,
+					new com.itextpdf.text.Font(unicodeFont, 20, com.itextpdf.text.Font.BOLD));
+			ten.setAlignment(Element.ALIGN_CENTER);
+			document.add(ten);
+
+			String diaChi = "Đường số 28, phường 6, Gò Vấp, Thành phố Hồ Chí Minh\n";
+			Paragraph dc = new Paragraph(diaChi, unicodeFontObject);
+			dc.setAlignment(Element.ALIGN_CENTER);
+			document.add(dc);
+
+			Paragraph hoaDonThanhToan = new Paragraph("ĐƠN XÁC NHẬN NHẬN THUỐC",
+					new com.itextpdf.text.Font(unicodeFont, 20, com.itextpdf.text.Font.BOLD));
+			Paragraph dong = new Paragraph("********************", unicodeFontObject);
+			hoaDonThanhToan.setAlignment(Element.ALIGN_CENTER);
+			document.add(hoaDonThanhToan);
+			dong.setAlignment(Element.ALIGN_CENTER);
+			document.add(dong);
+
+			// THÔNG TIN QUÁN VÀ THÔNG TIN KHÁCH HÀNH NHÂN VIÊN
+//			Mã Hóa Đơn
+			String maDon = hoaDon.getMaHoaDon();
+			Paragraph maDonPara = new Paragraph(maDon,
+					new com.itextpdf.text.Font(unicodeFont, 16, com.itextpdf.text.Font.NORMAL));
+			maDonPara.setAlignment(Element.ALIGN_CENTER);
+			document.add(maDonPara);
+//			Table ngày
+			String ngayTao = "Ngày lập: " + LocalDate.now();
+			Paragraph ngayLap = new Paragraph(ngayTao, unicodeFontObject);
+			ngayLap.setAlignment(Element.ALIGN_LEFT);
+
+			String ngayXuat = "Ngày nhận: " + LocalDate.now();
+			Paragraph ngayNhan = new Paragraph(ngayXuat, unicodeFontObject);
+			ngayNhan.setAlignment(Element.ALIGN_RIGHT);
+
+			PdfPTable tableNgay = new PdfPTable(2);
+			tableNgay.setWidthPercentage(70);
+
+			PdfPCell cellLap = new PdfPCell(ngayLap);
+			PdfPCell cellNhan = new PdfPCell(ngayNhan);
+			cellLap.setBorder(Rectangle.NO_BORDER);
+			cellNhan.setBorder(Rectangle.NO_BORDER);
+			cellLap.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cellNhan.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+			tableNgay.addCell(cellLap);
+			tableNgay.addCell(cellNhan);
+
+			tableNgay.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			document.add(tableNgay);
+
+//          Table tên NV, KH
+
+			String nv = "Tên nhân viên: " + hoaDon.getMaNV().getTenNV();
+			Paragraph nvPara = new Paragraph(nv, unicodeFontObject);
+			nvPara.setAlignment(Element.ALIGN_LEFT);
+
+			String kh = "Tên khách hàng: " + hoaDon.getMaKH().getHoTen();
+			Paragraph khPara = new Paragraph(kh, unicodeFontObject);
+			khPara.setAlignment(Element.ALIGN_RIGHT);
+
+			PdfPTable tableTen = new PdfPTable(2);
+			tableTen.setWidthPercentage(70);
+
+			PdfPCell cellTenNV = new PdfPCell(nvPara);
+			PdfPCell cellTenKH = new PdfPCell(khPara);
+			cellTenNV.setBorder(Rectangle.NO_BORDER);
+			cellTenKH.setBorder(Rectangle.NO_BORDER);
+			cellTenNV.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cellTenKH.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+			tableTen.addCell(cellTenNV);
+			tableTen.addCell(cellTenKH);
+
+			tableTen.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			document.add(tableTen);
+
+//          Table Chi Tiết
+			document.add(Chunk.NEWLINE);
+
+			// tạo bảng
+			PdfPTable table = new PdfPTable(5);
+			table.setTotalWidth(new float[] { 100f, 70f, 60f, 50f, 70f });
+			table.setWidthPercentage(100);
+			// Thêm tiêu đề cho bảng
+			table.addCell(new PdfPCell(new Phrase("Tên thuốc", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Đơn giá", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Đơn vị", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Số lượng", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Thành tiền", unicodeFontObject)));
+			// Thêm dữ
+			for (ChiTietHoaDon cthd : hoaDon.getListChiTietHoaDon()) {
+				String tenThuoc = cthd.getMaThuoc().getTenThuoc();
+				String donGia = cthd.getMaThuoc().getGiaBan() + "";
+				String donVi = cthd.getMaThuoc().getDonVi();
+				String soluong = cthd.getSoLuong() + "";
+				double thanhTien = cthd.getMaThuoc().getGiaBan() * cthd.getSoLuong();
+				table.addCell(new PdfPCell(new Paragraph(tenThuoc, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(donGia, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(donVi, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(soluong, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(thanhTien + "", unicodeFontObject)));
+			}
+			for (PdfPRow row : table.getRows()) {
+				for (PdfPCell cell : row.getCells()) {
+					cell.setBorder(Rectangle.NO_BORDER);
+				}
+			}
+			for (PdfPRow row : table.getRows()) {
+				for (PdfPCell cell : row.getCells()) {
+					cell.setBorder(Rectangle.BOTTOM);
+				}
+			}
+
+			document.add(table);
+			document.add(Chunk.NEWLINE);
+			HoaDon_Dao hDao = new HoaDon_Dao();
+			String tongTien = "Tổng Tiền: " + hDao.tinhTongTien(hoaDon) + " VNĐ";
+
+			Paragraph tongTienPara = new Paragraph(tongTien, unicodeFontObject);
+			tongTienPara.setAlignment(Element.ALIGN_RIGHT);
+			document.add(tongTienPara);
+
+			document.add(Chunk.NEWLINE);
+			Paragraph dong3 = new Paragraph("\n---Mọi Thắc Mắc Vui Lòng Liên Hệ---\nĐT: 0912644361\nXin Cảm Ơn!",
+					new com.itextpdf.text.Font(unicodeFont, 10, com.itextpdf.text.Font.BOLD));
+			dong3.setAlignment(Element.ALIGN_CENTER);
+			document.add(dong3);
+
+			document.close();
+			JOptionPane.showMessageDialog(this, "In thành công!");
+			openPdf(filename);
+		} catch (DocumentException | FileNotFoundException | MalformedURLException e1) {
+			// TODO: handle exception
+			e1.printStackTrace();
+			System.out.println("1");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.out.println("2");
+		}
+	}
+
+	private static void openPdf(String filePath) {
+		try {
+			File pdfFile = new File(filePath);
+			if (pdfFile.exists())
+				if (Desktop.isDesktopSupported())
+					Desktop.getDesktop().open(pdfFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

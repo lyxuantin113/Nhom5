@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import dao.KhachHang_Dao;
 import db.ConnectDB;
 import entity.KhachHang;
+import entity.NhanVien;
 
 public class TimKhachHang_Gui extends JPanel implements ActionListener{
 	private JTextField txtSDT;
@@ -18,7 +19,7 @@ public class TimKhachHang_Gui extends JPanel implements ActionListener{
 	private JTable tbl;
 	private JButton btnLamMoi;
 
-	public TimKhachHang_Gui() {
+	public TimKhachHang_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 		

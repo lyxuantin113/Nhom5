@@ -18,11 +18,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import entity.NhanVien;
+
 public class TrangChu_Gui extends JPanel {
     private JLabel lblClock;
 	private JLabel lblDate;
+	private JLabel lblWelcomeNV;
 
-	public TrangChu_Gui() {
+	public TrangChu_Gui(NhanVien nhanVienDN) {
         setLayout(new BorderLayout());
 
         // Thêm hình ảnh nhà thuốc
@@ -40,20 +43,27 @@ public class TrangChu_Gui extends JPanel {
         
         // Tạo JLabel để hiển thị đồng hồ
         JPanel pnTime = new JPanel();
+        Box boxContainer = Box.createVerticalBox();
+        Box boxWelComeNV = Box.createHorizontalBox();
+        lblWelcomeNV = new JLabel("Xin Kính Chào " + nhanVienDN.getTenNV().toUpperCase());
+        lblWelcomeNV.setFont(new Font("Times New Roman", Font.BOLD, 24));
+        boxWelComeNV.add(lblWelcomeNV);
+        
         Box boxTime = Box.createHorizontalBox();
         boxTime.setBorder(BorderFactory.createEmptyBorder(0, 50, 30, 50)); 
-        lblDate = new JLabel(LocalDate.now().toString() + ": ");
+        lblDate = new JLabel("Hôm Nay: " + LocalDate.now() + " - Giờ: ");
         lblDate.setOpaque(true);
-        lblDate.setFont(new Font("Arial", Font.BOLD, 24)); 
-        lblDate.setForeground(Color.BLACK);
+        lblDate.setFont(new Font("Times New Roman", Font.BOLD, 22)); 
         
         lblClock = new JLabel("",  SwingConstants.CENTER);
         lblClock.setOpaque(true);
-        lblClock.setFont(new Font("Arial", Font.BOLD, 24)); 
-        lblClock.setForeground(Color.BLACK);
+        lblClock.setFont(new Font("Times New Roman", Font.BOLD, 22)); 
         boxTime.add(lblDate);
         boxTime.add(lblClock);
-        pnTime.add(boxTime);
+        boxContainer.add(boxWelComeNV);
+        boxContainer.add(Box.createVerticalStrut(15));
+        boxContainer.add(boxTime);
+        pnTime.add(boxContainer);
         // Thêm hình ảnh và chữ chào mừng vào panel chính
         JPanel pnTop = new JPanel(new BorderLayout());
         pnTop.add(lblWelcome);

@@ -82,7 +82,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private JTextField txtTongLoi;
 	private JButton btnIn;
 
-	public XemThongKe_Gui() {
+	public XemThongKe_Gui(NhanVien nhanVienDN) {
 
 //		JPANEL
 		pnlMain = new JPanel();
@@ -717,7 +717,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		KhachHang kh = khDao.findBySDT(sdtKhach);
 		NhanVien_Dao nvDao = new NhanVien_Dao();
 		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
-		List<HoaDon> listHD = hdDao.findXYinMonth(date, nv.getMaNV(), kh.getSoDienThoai());
+		List<HoaDon> listHD = hdDao.findXYinMonth(date, nv.getMaNV(), kh.getMaKH());
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();

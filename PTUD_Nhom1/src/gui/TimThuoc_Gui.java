@@ -14,6 +14,7 @@ import dao.LoaiThuoc_Dao;
 import dao.NhaCungCap_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
+import entity.NhanVien;
 import entity.Thuoc;
 
 public class TimThuoc_Gui extends JPanel implements ActionListener {
@@ -27,7 +28,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 	private LoaiThuoc_Dao loaiThuocDao;
 	private DonVi_Dao donViDao;
 
-	public TimThuoc_Gui() {
+	public TimThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 

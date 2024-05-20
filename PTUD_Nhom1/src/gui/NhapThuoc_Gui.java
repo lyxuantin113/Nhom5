@@ -18,6 +18,7 @@ import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.ChiTietPhieuNhapThuoc;
 import entity.NhaCungCap;
+import entity.NhanVien;
 import entity.PhieuNhapThuoc;
 import entity.Thuoc;
 
@@ -47,7 +48,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 	private JButton btnXacNhan;
 	private JButton btnLamMoi;
 
-	public NhapThuoc_Gui() {
+	public NhapThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 

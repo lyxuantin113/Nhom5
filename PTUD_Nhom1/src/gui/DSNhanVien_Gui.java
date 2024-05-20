@@ -39,7 +39,7 @@ public class DSNhanVien_Gui extends JPanel implements ActionListener, MouseListe
 	private JTable tableNhanVien;
 
 	private TaiKhoan_Dao dsTK = new TaiKhoan_Dao();
-	public DSNhanVien_Gui() {
+	public DSNhanVien_Gui(NhanVien nhanVienDN) {
 //				JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());

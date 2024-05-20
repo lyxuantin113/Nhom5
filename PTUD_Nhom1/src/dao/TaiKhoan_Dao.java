@@ -109,4 +109,22 @@ public class TaiKhoan_Dao {
 		}
 		return tk;
 	}
+	
+	public boolean doiMatKhau(TaiKhoan tk, String mkMoi) {
+		Connection con = ConnectDB.getInstance().getConnection();
+		PreparedStatement stmt = null;
+		String query = "Update TaiKhoan Set matKhau = ? Where maNV = ? AND tenTaiKhoan = ?";
+		int n = 0;
+		try {
+			stmt = con.prepareStatement(query);
+			stmt.setString(1, mkMoi);
+			stmt.setString(2, tk.getMaNV().getMaNV());
+			stmt.setString(3, tk.getTenTaiKhoan());
+			n = stmt.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return n > 0;
+	}
 }

@@ -7,9 +7,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
+//import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
+//import java.util.Date;
 import java.util.List;
 
 import javax.swing.*;
@@ -18,19 +18,24 @@ import javax.swing.table.DefaultTableModel;
 import dao.DonDat_Dao;
 import dao.DonVi_Dao;
 import dao.HoaDon_Dao;
-import dao.KhachHang_Dao;
+//import dao.KhachHang_Dao;
 import dao.LoaiThuoc_Dao;
 import dao.NhaCungCap_Dao;
 import dao.PhieuNhapThuoc_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
-import entity.KhachHang;
+//import entity.KhachHang;
 import entity.LoaiThuoc;
 import entity.NhaCungCap;
+import entity.NhanVien;
 import entity.Thuoc;
 import entity.DonVi;
 
 public class DSThuoc_Gui extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7125403530335456108L;
 	private JButton btnAdd;
 	private JButton btnXoaTrang;
 	private JButton btnTim;
@@ -58,8 +63,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 	private DonVi_Dao donViDao;
 	private HoaDon_Dao hoaDonDao;
 	private DonDat_Dao donDatDao;
+	private NhanVien nvdn;
 
-	public DSThuoc_Gui() {
+	public DSThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 
@@ -286,7 +292,7 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		hienTable();
 		ConnectDB.connect();
 
-		
+		nvdn = nhanVienDN;
 	}
 
 	void hienTable() {
@@ -362,10 +368,10 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 			xoaTrang();
 		}
 		if (o.equals(btnAddDonVi)) {
-			new DonVi_Gui();
+			new DonVi_Gui(nvdn);
 		}
 		if (o.equals(btnAddLoai)) {
-			new LoaiThuoc_Gui();
+			new LoaiThuoc_Gui(nvdn);
 		}
 
 	}

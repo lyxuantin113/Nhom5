@@ -3,12 +3,14 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,7 +72,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 	private DefaultTableModel modelHoaDon;
 	private JTextField tfTim;
 
-	public DSHoaDon_Gui() {
+	public DSHoaDon_Gui(NhanVien nhanVienDN) {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
@@ -417,6 +419,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 
 				document.close();
 				JOptionPane.showMessageDialog(this, "In thành công!");
+				openPdf(filename);
 			} catch (DocumentException | FileNotFoundException | MalformedURLException e1) {
 				// TODO: handle exception
 				e1.printStackTrace();
@@ -425,6 +428,17 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 				e1.printStackTrace();
 				System.out.println("2");
 			}
+		}
+	}
+
+	private static void openPdf(String filePath) {
+		try {
+			File pdfFile = new File(filePath);
+			if (pdfFile.exists())
+				if (Desktop.isDesktopSupported())
+					Desktop.getDesktop().open(pdfFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -33,7 +33,7 @@ public class TimNhanVien_Gui extends JPanel implements ActionListener {
 	private JTable tableNhanVien;
 	private DefaultTableModel modelNhanVien;
 	private NhanVien_Dao dsNV = new NhanVien_Dao();
-	public TimNhanVien_Gui() {
+	public TimNhanVien_Gui(NhanVien nhanVienDN) {
 //				JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());

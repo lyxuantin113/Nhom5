@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import dao.KhachHang_Dao;
 import db.ConnectDB;
 import entity.KhachHang;
+import entity.NhanVien;
 
 public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	private JButton btnThem;
@@ -28,7 +29,7 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	private JButton btnTim;
 	private JButton btnLamMoi;
 	
-	public DSKhachHang_Gui() {
+	public DSKhachHang_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 

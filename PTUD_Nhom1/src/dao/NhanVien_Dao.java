@@ -15,13 +15,13 @@ import entity.NhanVien;
 import entity.TaiKhoan;
 
 public class NhanVien_Dao {
-	List<entity.NhanVien> dsnv;
+	List<NhanVien> dsnv;
 
 	public NhanVien_Dao() {
-		dsnv = new ArrayList<entity.NhanVien>();
+		dsnv = new ArrayList<NhanVien>();
 	}
 
-	public List<entity.NhanVien> docTuBang() {
+	public List<NhanVien> docTuBang() {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
 			String sql = "Select* from NhanVien";
@@ -45,12 +45,12 @@ public class NhanVien_Dao {
 		return dsnv;
 	}
 
-	public List<entity.NhanVien> getNhanVien(String manv) {
+	public List<NhanVien> getNhanVien(String manv) {
 		Connection con = ConnectDB.getInstance().getConnection();
 		PreparedStatement stmt = null;
 		List<NhanVien> listNV = new ArrayList<>();
 		try {
-			String sql = "Select* from NhanVien where maNV = ?";
+			String sql = "Select * from NhanVien where maNV = ?";
 
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, manv);

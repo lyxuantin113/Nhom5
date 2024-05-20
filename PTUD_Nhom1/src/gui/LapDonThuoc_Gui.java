@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -11,13 +12,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -37,6 +42,18 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPRow;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import dao.ChiTietHoaDon_Dao;
 import dao.DonDat_Dao;
@@ -76,6 +93,9 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JButton btnLapDD;
 	private JButton btnXoa;
 
+//	NHÂN VIÊN ĐANG ĐĂNG NHẬP
+	private NhanVien nvdn;
+
 //	TEMPORARY tạm lưu danh sách ChiTietHoaDon
 	List<ChiTietHoaDon> tempListHD = new ArrayList<ChiTietHoaDon>();
 	List<ChiTietDonDat> tempListDD = new ArrayList<ChiTietDonDat>();
@@ -97,17 +117,18 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private JTextField txtHSD;
 
 //	JASPER REPORT
-	private HoaDon hoaDonReport; //temp
-	
-//	Camera
-private JButton btnQR;
-private JFrame camFram;
-private JLabel videoLabel;
-private VideoCapture capture;
-private String maThuocQR;
-private JButton captureButton;
+	private HoaDon hoaDonReport; // temp
 
-	public LapDonThuoc_Gui() {
+//	Camera
+	private JButton btnQR;
+	private JFrame camFram;
+	private JLabel videoLabel;
+	private VideoCapture capture;
+	private String maThuocQR;
+	private JButton captureButton;
+	private DonDat donDatReport;
+
+	public LapDonThuoc_Gui(NhanVien nhanVienDN) {
 //		JPANEL
 		JPanel pnMain = new JPanel();
 		pnMain.setLayout(new BorderLayout());
@@ -143,7 +164,7 @@ private JButton captureButton;
 		btnQR = new JButton("QR");
 		btnQR.setBackground(new Color(0, 160, 255));
 		btnQR.setPreferredSize(new Dimension(30, 0));
-		
+
 		lblTenThuoc = new JLabel("Tên thuốc: ");
 		lblTenThuoc.setPreferredSize(new Dimension(90, 0));
 		txtTenThuoc = new JTextField(15);
@@ -286,6 +307,8 @@ private JButton captureButton;
 		JLabel lbMaNV = new JLabel("Mã Nhân Viên: ");
 		lbMaNV.setPreferredSize(new Dimension(100, 30));
 		txtMaNV = new JTextField(20);
+		txtMaNV.setText(nhanVienDN.getMaNV());
+		txtMaNV.setEditable(false);
 		boxMa.add(Box.createHorizontalStrut(10));
 		boxMa.add(lbMaNV);
 		boxMa.add(txtMaNV);
@@ -387,6 +410,8 @@ private JButton captureButton;
 
 		ConnectDB.connect();
 		hienTableHoaDon();
+
+		nvdn = nhanVienDN;
 	}
 
 	private void hienTableHoaDon() {
@@ -422,14 +447,20 @@ private JButton captureButton;
 
 		}
 		if (o == btnLapHD) {
-			if (checkValidLap() && recheckLapHD()) {
+			int submit = JOptionPane.showConfirmDialog(this, "Xác nhận lập đơn?", "Lập hóa đơn",
+					JOptionPane.YES_NO_OPTION);
+			if (submit == JOptionPane.YES_OPTION && checkValidLap() && recheckLapHD()) {
 				lapHoaDon();
+				inHoaDon();
 				xoaTrangTatCa();
 			}
 		}
 		if (o == btnLapDD) {
-			if (checkDate() && checkValidLap() && hasKhach()) {
+			int submit = JOptionPane.showConfirmDialog(this, "Xác nhận lập đơn?", "Lập đơn đặt",
+					JOptionPane.YES_NO_OPTION);
+			if (submit == JOptionPane.YES_OPTION && checkDate() && checkValidLap() && hasKhach()) {
 				lapDonDat();
+				inDonDat();
 				xoaTrangTatCa();
 			}
 		}
@@ -442,9 +473,9 @@ private JButton captureButton;
 		if (o.equals(btnQR)) {
 			openCamera();
 		}
-		if(o.equals(captureButton)) {
+		if (o.equals(captureButton)) {
 			maThuocQR = captureAndSaveImage();
-			if(maThuocQR!=null) {
+			if (maThuocQR != null) {
 				txtMaThuoc.setText(maThuocQR);
 			}
 			camFram.setVisible(false);
@@ -593,8 +624,15 @@ private JButton captureButton;
 	}
 
 	public boolean hasThuoc() {
+		Thuoc_Dao tDao = new Thuoc_Dao();
+
 		if (txtMaThuoc.getText().equals("")) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Hãy nhập thông tin thuốc!");
+			return false;
+		}
+
+		if (tDao.timTheoMa(txtMaThuoc.getText()) == null) {
+			JOptionPane.showMessageDialog(this, "Lưu ý: Thuốc không tồn tại!");
 			return false;
 		}
 		return true;
@@ -781,8 +819,6 @@ private JButton captureButton;
 		}
 
 		hoaDonReport = hoaDon;
-		resetTempListHD();
-		resetTempListDD();
 	}
 
 //	LẬP ĐƠN ĐẶT
@@ -826,8 +862,7 @@ private JButton captureButton;
 			modelFrame.removeRow(i);
 		}
 
-		resetTempListDD();
-		resetTempListHD();
+		donDatReport = donDat;
 	}
 
 //	RESET TEMP LIST
@@ -1002,10 +1037,346 @@ private JButton captureButton;
 
 	}
 
+//	IN HÓA ĐƠN
+	public void inHoaDon() {
+
+		try {
+			// Tạo tài liệu in
+			String urlFont = System.getProperty("user.dir") + "\\lib\\Arial Unicode MS.ttf";
+			BaseFont unicodeFont = BaseFont.createFont(urlFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+			com.itextpdf.text.Font unicodeFontObject = new com.itextpdf.text.Font(unicodeFont, 12);
+			Document document = new Document();
+			document.setMargins(50, 50, 10, 0);
+			// Nơi lưu file
+			String url = "";
+			url = System.getProperty("user.dir") + "\\fileOutput\\";
+			url += hoaDonReport.getMaHoaDon() + ".pdf";
+			String filename = url;
+			PdfWriter.getInstance(document, new FileOutputStream(filename));
+			document.open();
+			// Tiêu đề
+			String tenQuan = "NHÀ THUỐC TTV";
+			Paragraph ten = new Paragraph(tenQuan,
+					new com.itextpdf.text.Font(unicodeFont, 20, com.itextpdf.text.Font.BOLD));
+			ten.setAlignment(Element.ALIGN_CENTER);
+			document.add(ten);
+
+			String diaChi = "Đường số 28, phường 6, Gò Vấp, Thành phố Hồ Chí Minh\n";
+			Paragraph dc = new Paragraph(diaChi, unicodeFontObject);
+			dc.setAlignment(Element.ALIGN_CENTER);
+			document.add(dc);
+
+			Paragraph hoaDonThanhToan = new Paragraph("HÓA ĐƠN BÁN HÀNG",
+					new com.itextpdf.text.Font(unicodeFont, 20, com.itextpdf.text.Font.BOLD));
+			Paragraph dong = new Paragraph("********************", unicodeFontObject);
+			hoaDonThanhToan.setAlignment(Element.ALIGN_CENTER);
+			document.add(hoaDonThanhToan);
+			dong.setAlignment(Element.ALIGN_CENTER);
+			document.add(dong);
+
+			// THÔNG TIN QUÁN VÀ THÔNG TIN KHÁCH HÀNH NHÂN VIÊN
+//			Mã Hóa Đơn
+			String maDon = hoaDonReport.getMaHoaDon();
+			Paragraph maDonPara = new Paragraph(maDon,
+					new com.itextpdf.text.Font(unicodeFont, 16, com.itextpdf.text.Font.NORMAL));
+			maDonPara.setAlignment(Element.ALIGN_CENTER);
+			document.add(maDonPara);
+//			Table ngày
+			String ngayTao = "Ngày lập: " + LocalDate.now();
+			Paragraph ngayLap = new Paragraph(ngayTao, unicodeFontObject);
+			ngayLap.setAlignment(Element.ALIGN_LEFT);
+
+			String ngayXuat = "Ngày nhận: " + LocalDate.now();
+			Paragraph ngayNhan = new Paragraph(ngayXuat, unicodeFontObject);
+			ngayNhan.setAlignment(Element.ALIGN_RIGHT);
+
+			PdfPTable tableNgay = new PdfPTable(2);
+			tableNgay.setWidthPercentage(70);
+
+			PdfPCell cellLap = new PdfPCell(ngayLap);
+			PdfPCell cellNhan = new PdfPCell(ngayNhan);
+			cellLap.setBorder(Rectangle.NO_BORDER);
+			cellNhan.setBorder(Rectangle.NO_BORDER);
+			cellLap.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cellNhan.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+			tableNgay.addCell(cellLap);
+			tableNgay.addCell(cellNhan);
+
+			tableNgay.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			document.add(tableNgay);
+
+//          Table tên NV, KH
+
+			String nv = "Tên nhân viên: " + hoaDonReport.getMaNV().getTenNV();
+			Paragraph nvPara = new Paragraph(nv, unicodeFontObject);
+			nvPara.setAlignment(Element.ALIGN_LEFT);
+
+			String kh = "Tên khách hàng: " + hoaDonReport.getMaKH().getHoTen();
+			Paragraph khPara = new Paragraph(kh, unicodeFontObject);
+			khPara.setAlignment(Element.ALIGN_RIGHT);
+
+			PdfPTable tableTen = new PdfPTable(2);
+			tableTen.setWidthPercentage(70);
+
+			PdfPCell cellTenNV = new PdfPCell(nvPara);
+			PdfPCell cellTenKH = new PdfPCell(khPara);
+			cellTenNV.setBorder(Rectangle.NO_BORDER);
+			cellTenKH.setBorder(Rectangle.NO_BORDER);
+			cellTenNV.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cellTenKH.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+			tableTen.addCell(cellTenNV);
+			tableTen.addCell(cellTenKH);
+
+			tableTen.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			document.add(tableTen);
+
+//          Table Chi Tiết
+			document.add(Chunk.NEWLINE);
+
+			// tạo bảng
+			PdfPTable table = new PdfPTable(5);
+			table.setTotalWidth(new float[] { 100f, 70f, 60f, 50f, 70f });
+			table.setWidthPercentage(100);
+			// Thêm tiêu đề cho bảng
+			table.addCell(new PdfPCell(new Phrase("Tên thuốc", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Đơn giá", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Đơn vị", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Số lượng", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Thành tiền", unicodeFontObject)));
+			// Thêm dữ
+			for (ChiTietHoaDon cthd : tempListHD) {
+				String tenThuoc = cthd.getMaThuoc().getTenThuoc();
+				String donGia = cthd.getMaThuoc().getGiaBan() + "";
+				String donVi = cthd.getMaThuoc().getDonVi();
+				String soluong = cthd.getSoLuong() + "";
+				double thanhTien = cthd.getMaThuoc().getGiaBan() * cthd.getSoLuong();
+				table.addCell(new PdfPCell(new Paragraph(tenThuoc, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(donGia, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(donVi, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(soluong, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(thanhTien + "", unicodeFontObject)));
+			}
+			for (PdfPRow row : table.getRows()) {
+				for (PdfPCell cell : row.getCells()) {
+					cell.setBorder(Rectangle.NO_BORDER);
+				}
+			}
+			for (PdfPRow row : table.getRows()) {
+				for (PdfPCell cell : row.getCells()) {
+					cell.setBorder(Rectangle.BOTTOM);
+				}
+			}
+
+			document.add(table);
+			document.add(Chunk.NEWLINE);
+			String tongTien = "Tổng Tiền: " + txtTong.getText() + " VNĐ";
+
+			Paragraph tongTienPara = new Paragraph(tongTien, unicodeFontObject);
+			tongTienPara.setAlignment(Element.ALIGN_RIGHT);
+			document.add(tongTienPara);
+
+			document.add(Chunk.NEWLINE);
+			Paragraph dong3 = new Paragraph("\n---Mọi Thắc Mắc Vui Lòng Liên Hệ---\nĐT: 0912644361\nXin Cảm Ơn!",
+					new com.itextpdf.text.Font(unicodeFont, 10, com.itextpdf.text.Font.BOLD));
+			dong3.setAlignment(Element.ALIGN_CENTER);
+			document.add(dong3);
+
+			document.close();
+			resetTempListHD();
+			resetTempListDD();
+			JOptionPane.showMessageDialog(this, "In thành công!");
+			openPdf(filename);
+		} catch (DocumentException | FileNotFoundException | MalformedURLException e1) {
+			// TODO: handle exception
+			e1.printStackTrace();
+			System.out.println("1");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.out.println("2");
+		}
+	}
+
+	public void inDonDat() {
+
+		try {
+			// Tạo tài liệu in
+			String urlFont = System.getProperty("user.dir") + "\\lib\\Arial Unicode MS.ttf";
+			BaseFont unicodeFont = BaseFont.createFont(urlFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+			com.itextpdf.text.Font unicodeFontObject = new com.itextpdf.text.Font(unicodeFont, 12);
+			Document document = new Document();
+			document.setMargins(50, 50, 10, 0);
+			// Nơi lưu file
+			String url = "";
+			url = System.getProperty("user.dir") + "\\fileOutput\\";
+			url += donDatReport.getMaDonDat() + ".pdf";
+			String filename = url;
+			PdfWriter.getInstance(document, new FileOutputStream(filename));
+			document.open();
+			// Tiêu đề
+			String tenQuan = "NHÀ THUỐC TTV";
+			Paragraph ten = new Paragraph(tenQuan,
+					new com.itextpdf.text.Font(unicodeFont, 20, com.itextpdf.text.Font.BOLD));
+			ten.setAlignment(Element.ALIGN_CENTER);
+			document.add(ten);
+
+			String diaChi = "Đường số 28, phường 6, Gò Vấp, Thành phố Hồ Chí Minh\n";
+			Paragraph dc = new Paragraph(diaChi, unicodeFontObject);
+			dc.setAlignment(Element.ALIGN_CENTER);
+			document.add(dc);
+
+			Paragraph hoaDonThanhToan = new Paragraph("HÓA ĐƠN BÁN HÀNG",
+					new com.itextpdf.text.Font(unicodeFont, 20, com.itextpdf.text.Font.BOLD));
+			Paragraph dong = new Paragraph("********************", unicodeFontObject);
+			hoaDonThanhToan.setAlignment(Element.ALIGN_CENTER);
+			document.add(hoaDonThanhToan);
+			dong.setAlignment(Element.ALIGN_CENTER);
+			document.add(dong);
+
+			// THÔNG TIN QUÁN VÀ THÔNG TIN KHÁCH HÀNH NHÂN VIÊN
+//			Mã Hóa Đơn
+			String maDon = donDatReport.getMaDonDat();
+			Paragraph maDonPara = new Paragraph(maDon,
+					new com.itextpdf.text.Font(unicodeFont, 16, com.itextpdf.text.Font.NORMAL));
+			maDonPara.setAlignment(Element.ALIGN_CENTER);
+			document.add(maDonPara);
+//			Table ngày
+			String ngayTao = "Ngày lập: " + LocalDate.now();
+			Paragraph ngayLap = new Paragraph(ngayTao, unicodeFontObject);
+			ngayLap.setAlignment(Element.ALIGN_LEFT);
+
+			String ngayXuat = "Ngày nhận: " + donDatReport.getNgayNhan();
+			Paragraph ngayNhan = new Paragraph(ngayXuat, unicodeFontObject);
+			ngayNhan.setAlignment(Element.ALIGN_RIGHT);
+
+			PdfPTable tableNgay = new PdfPTable(2);
+			tableNgay.setWidthPercentage(70);
+
+			PdfPCell cellLap = new PdfPCell(ngayLap);
+			PdfPCell cellNhan = new PdfPCell(ngayNhan);
+			cellLap.setBorder(Rectangle.NO_BORDER);
+			cellNhan.setBorder(Rectangle.NO_BORDER);
+			cellLap.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cellNhan.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+			tableNgay.addCell(cellLap);
+			tableNgay.addCell(cellNhan);
+
+			tableNgay.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			document.add(tableNgay);
+
+//          Table tên NV, KH
+
+			String nv = "Tên nhân viên: " + donDatReport.getMaNV().getTenNV();
+			Paragraph nvPara = new Paragraph(nv, unicodeFontObject);
+			nvPara.setAlignment(Element.ALIGN_LEFT);
+
+			String kh = "Tên khách hàng: " + donDatReport.getMaKH().getHoTen();
+			Paragraph khPara = new Paragraph(kh, unicodeFontObject);
+			khPara.setAlignment(Element.ALIGN_RIGHT);
+
+			PdfPTable tableTen = new PdfPTable(2);
+			tableTen.setWidthPercentage(70);
+
+			PdfPCell cellTenNV = new PdfPCell(nvPara);
+			PdfPCell cellTenKH = new PdfPCell(khPara);
+			cellTenNV.setBorder(Rectangle.NO_BORDER);
+			cellTenKH.setBorder(Rectangle.NO_BORDER);
+			cellTenNV.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cellTenKH.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+			tableTen.addCell(cellTenNV);
+			tableTen.addCell(cellTenKH);
+
+			tableTen.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			document.add(tableTen);
+
+//          Table Chi Tiết
+			document.add(Chunk.NEWLINE);
+
+			// tạo bảng
+			PdfPTable table = new PdfPTable(5);
+			table.setTotalWidth(new float[] { 100f, 70f, 60f, 50f, 70f });
+			table.setWidthPercentage(100);
+			// Thêm tiêu đề cho bảng
+			table.addCell(new PdfPCell(new Phrase("Tên thuốc", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Đơn giá", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Đơn vị", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Số lượng", unicodeFontObject)));
+			table.addCell(new PdfPCell(new Phrase("Thành tiền", unicodeFontObject)));
+			// Thêm dữ
+			for (ChiTietDonDat cthd : tempListDD) {
+				String tenThuoc = cthd.getMaThuoc().getTenThuoc();
+				String donGia = cthd.getMaThuoc().getGiaBan() + "";
+				String donVi = cthd.getMaThuoc().getDonVi();
+				String soluong = cthd.getSoLuong() + "";
+				double thanhTien = cthd.getMaThuoc().getGiaBan() * cthd.getSoLuong();
+				table.addCell(new PdfPCell(new Paragraph(tenThuoc, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(donGia, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(donVi, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(soluong, unicodeFontObject)));
+				table.addCell(new PdfPCell(new Paragraph(thanhTien + "", unicodeFontObject)));
+			}
+			for (PdfPRow row : table.getRows()) {
+				for (PdfPCell cell : row.getCells()) {
+					cell.setBorder(Rectangle.NO_BORDER);
+				}
+			}
+			for (PdfPRow row : table.getRows()) {
+				for (PdfPCell cell : row.getCells()) {
+					cell.setBorder(Rectangle.BOTTOM);
+				}
+			}
+
+			document.add(table);
+			document.add(Chunk.NEWLINE);
+			String tongTien = "Tổng Tiền: " + txtTong.getText() + " VNĐ";
+
+			Paragraph tongTienPara = new Paragraph(tongTien, unicodeFontObject);
+			tongTienPara.setAlignment(Element.ALIGN_RIGHT);
+			document.add(tongTienPara);
+
+			document.add(Chunk.NEWLINE);
+			Paragraph dong3 = new Paragraph("\n---Mọi Thắc Mắc Vui Lòng Liên Hệ---\nĐT: 0912644361\nXin Cảm Ơn!",
+					new com.itextpdf.text.Font(unicodeFont, 10, com.itextpdf.text.Font.BOLD));
+			dong3.setAlignment(Element.ALIGN_CENTER);
+			document.add(dong3);
+
+			document.close();
+			resetTempListHD();
+			resetTempListDD();
+			JOptionPane.showMessageDialog(this, "In thành công!");
+			openPdf(filename);
+		} catch (DocumentException | FileNotFoundException | MalformedURLException e1) {
+			// TODO: handle exception
+			e1.printStackTrace();
+			System.out.println("1");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.out.println("2");
+		}
+	}
+
+	private static void openPdf(String filePath) {
+		try {
+			File pdfFile = new File(filePath);
+			if (pdfFile.exists())
+				if (Desktop.isDesktopSupported())
+					Desktop.getDesktop().open(pdfFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 //	CAMERA
 	public void openCamera() {
 		camFram = new JFrame("Camera QR");
-		camFram.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		camFram.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		camFram.setSize(800, 600);
 		videoLabel = new JLabel();
 		camFram.add(videoLabel, BorderLayout.CENTER);
@@ -1043,17 +1414,16 @@ private JButton captureButton;
 		camFram.add(captureButton, BorderLayout.SOUTH);
 		camFram.setVisible(true);
 	}
-	
+
 	private String captureAndSaveImage() {
 		Mat frame = new Mat();
 		capture.read(frame); // Đọc frame từ camera
 
 		// Lưu frame thành file ảnh
-		LocalDateTime dateNow = LocalDateTime.now();
-		String filename = dateNow.getHour() + dateNow.getMinute() + dateNow.getSecond() + dateNow.getNano() + ".jpg";
+		String filename = "cap_Image_" + UUID.randomUUID().toString() + ".png";
 		Imgcodecs.imwrite(filename, frame);
 
-		String maThuoc = this.inThongTin(filename + ".png");
+		String maThuoc = this.inThongTin(filename);
 		if (maThuoc == null) {
 			JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc!");
 			return null;
@@ -1076,11 +1446,7 @@ private JButton captureButton;
 
 		return image;
 	}
-	
-	public String getMaThuocFromQR() {
-		return maThuocQR;
-	}
-	
+
 	public String inThongTin(String QRFilePath) {
 		try {
 			// Đọc file ảnh

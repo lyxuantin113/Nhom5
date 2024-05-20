@@ -5,6 +5,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import dao.NhanVien_Dao;
+import entity.NhanVien;
+
 public class ManHinh_GUI extends JFrame {
 
 	final JMenuBar menuBar;
@@ -12,10 +15,12 @@ public class ManHinh_GUI extends JFrame {
 	private JPanel cardPanel;
 
 	public static void main(String[] args) {
-		new ManHinh_GUI();
+		NhanVien_Dao nDao = new NhanVien_Dao();
+		NhanVien n = nDao.getNhanVien("NV001").get(0);
+		new ManHinh_GUI(n);
 	}
 
-	public ManHinh_GUI() {
+	public ManHinh_GUI(NhanVien nhanVienDN) {
 		super("Hệ Thống Quản Lý Hiệu Thuốc");
 		setSize(1800, 1080);
 		setVisible(true);
@@ -30,41 +35,40 @@ public class ManHinh_GUI extends JFrame {
 		cardPanel = new JPanel(cardLayout);
 //		CÁC TAB		
 //		Trang Chủ 
-		cardPanel.add(new TrangChu_Gui(), "Trang Chủ");
-		
+		cardPanel.add(new TrangChu_Gui(nhanVienDN), "Trang Chủ");
+
 //		Khách hàng
-		cardPanel.add(new DSKhachHang_Gui(), "Quản Lý Khách Hàng");
-		cardPanel.add(new TimKhachHang_Gui(), "Tìm Kiếm Khách Hàng");
-		
+		cardPanel.add(new DSKhachHang_Gui(nhanVienDN), "Quản Lý Khách Hàng");
+		cardPanel.add(new TimKhachHang_Gui(nhanVienDN), "Tìm Kiếm Khách Hàng");
+
 //		Nhân viên
-		cardPanel.add(new DSNhanVien_Gui(), "Quản Lý Nhân Viên");
-		cardPanel.add(new TimNhanVien_Gui(), "Tìm Kiếm Nhân Viên");
-		
+		cardPanel.add(new DSNhanVien_Gui(nhanVienDN), "Quản Lý Nhân Viên");
+		cardPanel.add(new TimNhanVien_Gui(nhanVienDN), "Tìm Kiếm Nhân Viên");
+
 //		Hóa Đơn
-		cardPanel.add(new LapDonThuoc_Gui(), "Lập Đơn Thuốc");
-		cardPanel.add(new DSDonDat_Gui(), "Danh Sách Đơn Đặt");
-		cardPanel.add(new DSHoaDon_Gui(), "Danh Sách Hóa Đơn");
-		
+		cardPanel.add(new LapDonThuoc_Gui(nhanVienDN), "Lập Đơn Thuốc");
+		cardPanel.add(new DSDonDat_Gui(nhanVienDN), "Danh Sách Đơn Đặt");
+		cardPanel.add(new DSHoaDon_Gui(nhanVienDN), "Danh Sách Hóa Đơn");
+
 //		Thuốc
-		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
-		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
-		cardPanel.add(new NhapThuoc_Gui(), "Nhập Thuốc");
-		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(), "Danh sách phiếu nhập thuốc");
-		cardPanel.add(new ThemNCC_Gui(), "Thêm Nhà Cung Cấp");
-		
+		cardPanel.add(new DSThuoc_Gui(nhanVienDN), "Quản Lý Thuốc");
+		cardPanel.add(new TimThuoc_Gui(nhanVienDN), "Tìm Kiếm Thuốc");
+		cardPanel.add(new NhapThuoc_Gui(nhanVienDN), "Nhập Thuốc");
+		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(nhanVienDN), "Danh sách phiếu nhập thuốc");
+		cardPanel.add(new ThemNCC_Gui(nhanVienDN), "Thêm Nhà Cung Cấp");
 
 //		Thống kê
-		cardPanel.add(new XemThongKe_Gui(), "Xem Thống Kê");
+		cardPanel.add(new XemThongKe_Gui(nhanVienDN), "Xem Thống Kê");
 
 //		Hệ thống
-		cardPanel.add(new DoiMatKhau_Gui(), "Đổi Mật Khẩu");
-		
+		cardPanel.add(new DoiMatKhau_Gui(nhanVienDN), "Đổi Mật Khẩu");
+
 //		GUI
 		showMenu();
 		showGUI();
-		
+
 		setContentPane(cardPanel);
-		
+
 	}
 
 	public void showMenu() {
@@ -76,7 +80,7 @@ public class ManHinh_GUI extends JFrame {
 		Image imageTrangChu = iconTrangChu.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconTrangChu = new ImageIcon(imageTrangChu);
 		trangChuMenu.setIcon(iconTrangChu);
-		
+
 		JMenu heThong = new JMenu("<html><body>Hệ Thống <b>&#x25BC;</b></body></html>");
 		heThong.setPreferredSize(new Dimension(163, 50));
 		ImageIcon iconHeThong = new ImageIcon("src//Icon//heThong.png");
@@ -126,7 +130,7 @@ public class ManHinh_GUI extends JFrame {
 		Image imageChange = iconChange.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconChange = new ImageIcon(imageChange);
 		doiMatKhau.setIcon(iconChange);
-		
+
 //		Menu Item Đăng Xuất
 		JMenuItem dangXuat = new JMenuItem("Đăng Xuất");
 //		ICON ĐĂNG XUẤT
@@ -142,14 +146,14 @@ public class ManHinh_GUI extends JFrame {
 		Image imageThoat = iconThoat.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconThoat = new ImageIcon(imageThoat);
 		thoat.setIcon(iconThoat);
-		
+
 //		Menu Item Danh Sách Khách Hàng
 		JMenuItem dsKhach = new JMenuItem("Quản Lý Khách Hàng");
 		ImageIcon iconDSKH = new ImageIcon("src//Icon//dsHD.png");
 		Image imageDSKH = iconDSKH.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDSKH = new ImageIcon(imageDSKH);
 		dsKhach.setIcon(iconDSKH);
-		
+
 //		Menu Item Tìm Kiếm Khách Hàng
 		JMenuItem timKhach = new JMenuItem("Tìm Kiếm Khách Hàng");
 		ImageIcon iconTim = new ImageIcon("src//Icon//iconTim.png");
@@ -163,53 +167,50 @@ public class ManHinh_GUI extends JFrame {
 		Image imageQL = iconQL.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconQL = new ImageIcon(imageQL);
 		dsNhanVien.setIcon(iconQL);
-		
+
 //		Menu Item Tìm Kiếm Nhân Viên
 		JMenuItem timNhanVien = new JMenuItem("Tìm Kiếm Nhân Viên");
 		timNhanVien.setIcon(iconTim);
-		
+
 //		Menu Item Danh Sách Thuốc
 		JMenuItem dsThuoc = new JMenuItem("Quản Lý Thuốc");
 		ImageIcon iconDSThuoc = new ImageIcon("src//Icon//dsThuoc.png");
 		Image imageDSThuoc = iconDSThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDSThuoc = new ImageIcon(imageDSThuoc);
 		dsThuoc.setIcon(iconDSThuoc);
-		
+
 //		Menu Item Tìm Kiếm Thuốc
 		JMenuItem timThuoc = new JMenuItem("Tìm Kiếm Thuốc");
 		timThuoc.setIcon(iconTim);
-		
+
 //		Menu Iten Nhập thuốc
 		JMenuItem nhapThuoc = new JMenuItem("Nhập Thuốc");
 		ImageIcon iconNhapThuoc = new ImageIcon("src//Icon//nhapThuoc.png");
 		Image imageNhapThuoc = iconNhapThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconNhapThuoc = new ImageIcon(imageNhapThuoc);
 		nhapThuoc.setIcon(iconNhapThuoc);
-		
+
 //		Menu Item Danh sách phiếu nhập thuốc
 		JMenuItem dsPhieuNhapThuoc = new JMenuItem("Danh sách phiếu nhập thuốc");
 		ImageIcon iconPhieuNhapThuoc = new ImageIcon("src//Icon//phieuNhap.png");
 		Image imagePhieuNhapThuoc = iconPhieuNhapThuoc.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconPhieuNhapThuoc = new ImageIcon(imagePhieuNhapThuoc);
 		dsPhieuNhapThuoc.setIcon(iconPhieuNhapThuoc);
-		
-		
+
 //		Menu Item Thêm Nhà Cung Cấp
 		JMenuItem themNCC = new JMenuItem("Thêm Nhà Cung Cấp");
 		ImageIcon iconThemNCC = new ImageIcon("src//Icon//themNCC.jpg");
 		Image imageThemNCC = iconThemNCC.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconThemNCC = new ImageIcon(imageThemNCC);
 		themNCC.setIcon(iconThemNCC);
-		
-		
-		
+
 //		Menu Item Hóa Đơn
 //		JMenuItem lapHoaDon = new JMenuItem("Lập Hóa Đơn");
 		ImageIcon iconDonDat = new ImageIcon("src//Icon//gioHang.png");
 		Image imageDonDat = iconDonDat.getImage().getScaledInstance(30, 25, Image.SCALE_SMOOTH);
 		iconDonDat = new ImageIcon(imageDonDat);
 //		lapHoaDon.setIcon(iconLap);
-		
+
 		JMenuItem timHoaDon = new JMenuItem("Danh Sách Hóa Đơn");
 		timHoaDon.setIcon(iconQL);
 
@@ -229,12 +230,11 @@ public class ManHinh_GUI extends JFrame {
 		iconXemTK = new ImageIcon(imageXemTK);
 		xemThongKe.setIcon(iconXemTK);
 
-		
 //		ADD MENU ITEM VÀO MENU
 //		add Menu Item Hệ Thống
 		heThong.add(doiMatKhau);
 		doiMatKhau.setPreferredSize(new Dimension(160, 50));
-		
+
 		heThong.add(dangXuat);
 		dangXuat.setPreferredSize(new Dimension(160, 50));
 
@@ -244,45 +244,43 @@ public class ManHinh_GUI extends JFrame {
 //		add Menu Item Khách Hàng
 		qlKhachHang.add(dsKhach);
 		dsKhach.setPreferredSize(new Dimension(180, 50));
-		
+
 		qlKhachHang.add(timKhach);
 		timKhach.setPreferredSize(new Dimension(180, 50));
-		
-		
+
 //		add Menu Item Nhân Viên
 		qlNhanVien.add(dsNhanVien);
 		dsNhanVien.setPreferredSize(new Dimension(180, 50));
-		
+
 		qlNhanVien.add(timNhanVien);
 		timNhanVien.setPreferredSize(new Dimension(180, 50));
-		
+
 //		add Menu Item Thuốc
 		qlThuoc.add(dsThuoc);
 		dsThuoc.setPreferredSize(new Dimension(165, 50));
-		
+
 		qlThuoc.add(timThuoc);
 		timThuoc.setPreferredSize(new Dimension(165, 50));
-		
+
 		qlThuoc.add(nhapThuoc);
 		nhapThuoc.setPreferredSize(new Dimension(165, 50));
-		
+
 		qlThuoc.add(dsPhieuNhapThuoc);
 		dsPhieuNhapThuoc.setPreferredSize(new Dimension(165, 50));
-		
+
 		qlThuoc.add(themNCC);
 		themNCC.setPreferredSize(new Dimension(165, 50));
-		
-		
+
 //		add Menu Item Hóa Đơn
 		qlHoaDon.add(lapDonDat);
 		lapDonDat.setPreferredSize(new Dimension(180, 50));
-		
+
 		qlHoaDon.add(timHoaDon);
 		timHoaDon.setPreferredSize(new Dimension(180, 50));
 
 		qlHoaDon.add(dsDonDat);
 		dsDonDat.setPreferredSize(new Dimension(180, 50));
-		
+
 //		qlHoaDon.add(lapHoaDon);
 //		lapHoaDon.setPreferredSize(new Dimension(180, 50));
 
@@ -323,24 +321,27 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Trang Chủ");
 			}
 		});
-		
+
 //		HỆ THỐNG
 		doiMatKhau.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(cardPanel, "Đổi Mật Khẩu");
-				
+
 			}
 		});
-		
+
 		dangXuat.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int res = JOptionPane.showConfirmDialog(null, "Đăng Xuất", "Xác nhận đăng xuất ?", JOptionPane.YES_NO_OPTION);
-				if(res==JOptionPane.YES_OPTION)
+				int res = JOptionPane.showConfirmDialog(null, "Đăng Xuất", "Xác nhận đăng xuất ?",
+						JOptionPane.YES_NO_OPTION);
+				if (res == JOptionPane.YES_OPTION) {
+					setDefaultCloseOperation(EXIT_ON_CLOSE);
 					new DangNhap_Gui();
+				}
 			}
 		});
 
@@ -360,7 +361,7 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Quản Lý Nhân Viên");
 			}
 		});
-		
+
 		timNhanVien.addActionListener(new ActionListener() {
 
 			@Override
@@ -377,7 +378,7 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Quản Lý Khách Hàng");
 			}
 		});
-		
+
 		timKhach.addActionListener(new ActionListener() {
 
 			@Override
@@ -394,7 +395,7 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Quản Lý Thuốc");
 			}
 		});
-		
+
 		timThuoc.addActionListener(new ActionListener() {
 
 			@Override
@@ -402,7 +403,7 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Tìm Kiếm Thuốc");
 			}
 		});
-		
+
 		nhapThuoc.addActionListener(new ActionListener() {
 
 			@Override
@@ -410,7 +411,7 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Nhập Thuốc");
 			}
 		});
-		
+
 		dsPhieuNhapThuoc.addActionListener(new ActionListener() {
 
 			@Override
@@ -418,13 +419,13 @@ public class ManHinh_GUI extends JFrame {
 				cardLayout.show(cardPanel, "Danh sách phiếu nhập thuốc");
 			}
 		});
-		
+
 		themNCC.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "Thêm Nhà Cung Cấp");
-            }
-        });
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(cardPanel, "Thêm Nhà Cung Cấp");
+			}
+		});
 
 //		HÓA ĐƠN		
 		timHoaDon.addActionListener(new ActionListener() {
@@ -457,19 +458,18 @@ public class ManHinh_GUI extends JFrame {
 		});
 
 //		GUI
-		
-		
+
 //		END
 		setJMenuBar(menuBar);
 		setVisible(true);
 	}
-	
+
 	private void showGUI() {
 		JPanel pn = new JPanel();
 		JLabel lb = new JLabel("CHÀO MỪNG ĐẾN VỚI NHÀ THUỐC");
 		pn.add(lb);
 		add(pn);
-		
+
 		setVisible(true);
 	}
 }

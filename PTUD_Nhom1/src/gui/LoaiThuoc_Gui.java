@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.LoaiThuoc_Dao;
 import entity.LoaiThuoc;
+import entity.NhanVien;
 
 public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListener{
 	private JTextField txtMaLoaiThuoc;
@@ -36,7 +37,7 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 	private LoaiThuoc_Dao loaiThuocDao = new LoaiThuoc_Dao();
 	private JButton btnXoaTrang;
 
-	public LoaiThuoc_Gui() {
+	public LoaiThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 		

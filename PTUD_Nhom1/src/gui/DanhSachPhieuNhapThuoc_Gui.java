@@ -28,6 +28,7 @@ import dao.PhieuNhapThuoc_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.ChiTietPhieuNhapThuoc;
+import entity.NhanVien;
 import entity.PhieuNhapThuoc;
 import entity.Thuoc;
 import net.sf.jasperreports.engine.JRException;
@@ -54,8 +55,10 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	private JButton btnIn;
 	private JButton btnInChiTiet;
 	private AbstractButton btnLamMoi;
+	
+	private NhanVien nvdn;
 
-	public DanhSachPhieuNhapThuoc_Gui() {
+	public DanhSachPhieuNhapThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 
@@ -135,6 +138,8 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		hienTable();
 		ConnectDB.connect();
 		table.addMouseListener(this);
+		
+		nvdn = nhanVienDN;
 
 	}
 
@@ -190,7 +195,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 				for (Thuoc thuoc : dsThuoc) {
 					thuocDao.updateTTThuoc(thuoc);
 				}
-				DSThuoc_Gui thuocGui = new DSThuoc_Gui();
+				DSThuoc_Gui thuocGui = new DSThuoc_Gui(nvdn);
 				thuocGui.hienTable();
 
 				hienTable();

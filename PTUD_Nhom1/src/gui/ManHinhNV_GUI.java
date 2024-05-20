@@ -5,17 +5,19 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import entity.NhanVien;
+
 public class ManHinhNV_GUI extends JFrame {
 
 	final JMenuBar menuBar;
 	private CardLayout cardLayout;
 	private JPanel cardPanel;
 
-	public static void main(String[] args) {
-		new ManHinhNV_GUI();
-	}
+//	public static void main(String[] args) {
+//		new ManHinhNV_GUI();
+//	}
 
-	public ManHinhNV_GUI() {
+	public ManHinhNV_GUI(NhanVien nhanVienDN) {
 		super("Hệ Thống Quản Lý Hiệu Thuốc");
 		setSize(1800, 1080);
 		setVisible(true);
@@ -31,26 +33,26 @@ public class ManHinhNV_GUI extends JFrame {
 
 //		CÁC TAB		
 //		Trang Chủ 
-		cardPanel.add(new TrangChu_Gui(), "Trang Chủ");
+		cardPanel.add(new TrangChu_Gui(nhanVienDN), "Trang Chủ");
 		
 //		Khách hàng
-		cardPanel.add(new DSKhachHang_Gui(), "Quản Lý Khách Hàng");
-		cardPanel.add(new TimKhachHang_Gui(), "Tìm Kiếm Khách Hàng");
+		cardPanel.add(new DSKhachHang_Gui(nhanVienDN), "Quản Lý Khách Hàng");
+		cardPanel.add(new TimKhachHang_Gui(nhanVienDN), "Tìm Kiếm Khách Hàng");
 		
 //		Hóa Đơn
-		cardPanel.add(new LapDonThuoc_Gui(), "Lập Đơn Thuốc");
-		cardPanel.add(new DSDonDat_Gui(), "Danh Sách Đơn Đặt");
-		cardPanel.add(new DSHoaDon_Gui(), "Danh Sách Hóa Đơn");
+		cardPanel.add(new LapDonThuoc_Gui(nhanVienDN), "Lập Đơn Thuốc");
+		cardPanel.add(new DSDonDat_Gui(nhanVienDN), "Danh Sách Đơn Đặt");
+		cardPanel.add(new DSHoaDon_Gui(nhanVienDN), "Danh Sách Hóa Đơn");
 		
 //		Thuốc
-		cardPanel.add(new DSThuoc_Gui(), "Quản Lý Thuốc");
-		cardPanel.add(new TimThuoc_Gui(), "Tìm Kiếm Thuốc");
-		cardPanel.add(new NhapThuoc_Gui(), "Nhập Thuốc");
-		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(), "Danh sách phiếu nhập thuốc");
-		cardPanel.add(new ThemNCC_Gui(), "Thêm Nhà Cung Cấp");
+		cardPanel.add(new DSThuoc_Gui(nhanVienDN), "Quản Lý Thuốc");
+		cardPanel.add(new TimThuoc_Gui(nhanVienDN), "Tìm Kiếm Thuốc");
+		cardPanel.add(new NhapThuoc_Gui(nhanVienDN), "Nhập Thuốc");
+		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(nhanVienDN), "Danh sách phiếu nhập thuốc");
+		cardPanel.add(new ThemNCC_Gui(nhanVienDN), "Thêm Nhà Cung Cấp");
 		
 //		Hệ thống
-		cardPanel.add(new DoiMatKhau_Gui(), "Đổi Mật Khẩu");
+		cardPanel.add(new DoiMatKhau_Gui(nhanVienDN), "Đổi Mật Khẩu");
 		
 //		GUI
 		showMenu();

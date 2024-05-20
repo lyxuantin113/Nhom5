@@ -23,9 +23,9 @@ public class DangNhap_Gui extends JFrame implements ActionListener {
 
 	private JButton btnDangNhap;
 	private JButton btnThoat;
-	private JPasswordField tfMatKhau;
-	private JTextField tfTaiKhoan;
-	private JLabel lbThongBao;
+	private JPasswordField txtMatKhau;
+	private JTextField txtTaiKhoan;
+	private JLabel lblThongBao;
 
 	private TaiKhoan_Dao dstk = new TaiKhoan_Dao();
 
@@ -41,74 +41,76 @@ public class DangNhap_Gui extends JFrame implements ActionListener {
 		JPanel pn = new JPanel();
 
 		JPanel pnHead = new JPanel();
-		JLabel header = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG THUỐC TTV");
+		JLabel lblHheader = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG THUỐC TTV");
 		Font fo = new Font("Times New Roman", Font.BOLD, 30);
-		header.setFont(fo);
-		header.setHorizontalAlignment(JLabel.CENTER);
+		lblHheader.setFont(fo);
+		lblHheader.setHorizontalAlignment(JLabel.CENTER);
 		pnHead.setBackground(new Color(0, 160, 255));
 		pnHead.setPreferredSize(new Dimension(getWidth(), 80));
-		pnHead.add(header);
+		pnHead.add(lblHheader);
 
 //		CENTER
 //		TEXT ĐĂNG NHẬP
 		Box containerBox = Box.createVerticalBox();
-		JPanel dnBox = new JPanel();
-		JLabel lbDN = new JLabel("<html><div text-align='center'>Đăng Nhập</div></html>");
+		JPanel pnBox = new JPanel();
+		JLabel lblDN = new JLabel("<html><div text-align='center'>Đăng Nhập</div></html>");
 		Font foDN = new Font("Times New Roman", Font.BOLD, 24);
-		lbDN.setFont(foDN);
+		lblDN.setFont(foDN);
 //		dnBox.add(lbDN);
 
 //		FORM ĐĂNG NHẬP
 		Box loginBox = Box.createVerticalBox();
 
-		JLabel lbTaiKhoan = new JLabel("Tài khoản:");
+		JLabel lblTaiKhoan = new JLabel("Tài khoản:");
 		ImageIcon iconUser = new ImageIcon("src//Icon//user.png");
 		Image imageUser = iconUser.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
 		iconUser = new ImageIcon(imageUser);
-		lbTaiKhoan.setIcon(iconUser);
+		lblTaiKhoan.setIcon(iconUser);
 
-		tfTaiKhoan = new JTextField();
-		tfTaiKhoan.setPreferredSize(new Dimension(0, 30));
+		txtTaiKhoan = new JTextField();
+		txtTaiKhoan.setPreferredSize(new Dimension(0, 30));
 
-		JLabel lbMatKhau = new JLabel("Mật khẩu:");
+		JLabel lblMatKhau = new JLabel("Mật khẩu:");
 		ImageIcon iconPass = new ImageIcon("src//Icon//key.png");
 		Image imagePass = iconPass.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
 		iconPass = new ImageIcon(imagePass);
-		lbMatKhau.setIcon(iconPass);
+		lblMatKhau.setIcon(iconPass);
 
-		tfMatKhau = new JPasswordField();
-		tfMatKhau.setPreferredSize(new Dimension(0, 30));
+		txtMatKhau = new JPasswordField();
+		txtMatKhau.setPreferredSize(new Dimension(0, 30));
 
-		lbThongBao = new JLabel();
-		lbThongBao.setPreferredSize(new Dimension(0, 30));
-		lbThongBao.setForeground(Color.RED);
+		lblThongBao = new JLabel();
+		lblThongBao.setPreferredSize(new Dimension(0, 30));
+		lblThongBao.setForeground(Color.RED);
 
-		loginBox.add(lbDN);
+		loginBox.add(lblDN);
 		loginBox.add(Box.createVerticalStrut(15));
-		loginBox.add(lbTaiKhoan);
+		loginBox.add(lblTaiKhoan);
 		loginBox.add(Box.createVerticalStrut(10));
-		loginBox.add(tfTaiKhoan);
+		loginBox.add(txtTaiKhoan);
 		loginBox.add(Box.createVerticalStrut(15));
-		loginBox.add(lbMatKhau);
+		loginBox.add(lblMatKhau);
 		loginBox.add(Box.createVerticalStrut(10));
-		loginBox.add(tfMatKhau);
+		loginBox.add(txtMatKhau);
 		loginBox.add(Box.createVerticalStrut(15));
-		loginBox.add(lbThongBao);
+		loginBox.add(lblThongBao);
 		loginBox.add(Box.createVerticalStrut(10));
 
 //		BUTTON ĐĂNG NHẬP
 		JPanel dnBtnPn = new JPanel();
 		Box btnBox = Box.createHorizontalBox();
 		btnDangNhap = new JButton("Đăng Nhập");
+		btnDangNhap.setBackground(new Color(0, 160, 255));
 		btnThoat = new JButton("Thoát");
-
+		btnThoat.setBackground(new Color(0, 160, 255));
+		
 		btnBox.add(btnDangNhap);
 		btnBox.add(Box.createHorizontalStrut(50));
 		btnBox.add(btnThoat);
 		dnBtnPn.add(btnBox);
 //		END FORM
 		add(pnHead, BorderLayout.NORTH);
-		pn.add(dnBox, BorderLayout.CENTER);
+		pn.add(pnBox, BorderLayout.CENTER);
 		containerBox.add(Box.createVerticalStrut(15));
 		containerBox.add(loginBox);
 		containerBox.add(dnBtnPn);
@@ -125,8 +127,8 @@ public class DangNhap_Gui extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnDangNhap) {
-			String taiKhoan = tfTaiKhoan.getText();
-			String matKhau = new String(tfMatKhau.getPassword());
+			String taiKhoan = txtTaiKhoan.getText();
+			String matKhau = new String(txtMatKhau.getPassword());
 
 			// Kiểm tra đăng nhập
 			if (dstk.kiemTraDangNhap(taiKhoan, matKhau)) {
@@ -134,13 +136,13 @@ public class DangNhap_Gui extends JFrame implements ActionListener {
 				// Mở cửa sổ mới sau khi đăng nhập thành công
 				NhanVien nv = dstk.getNVByAccount(taiKhoan, matKhau);
 				if (nv.getChucVu().equals("Nhan vien ban hang"))
-					new ManHinhNV_GUI();
+					new ManHinhNV_GUI(nv);
 				else
-					new ManHinh_GUI();
+					new ManHinh_GUI(nv);
 				// Đóng cửa sổ đăng nhập
 				dispose();
 			} else {
-				lbThongBao.setText("Tài khoản hoặc mật khẩu không đúng.");
+				lblThongBao.setText("Tài khoản hoặc mật khẩu không đúng.");
 			}
 		} else if (e.getSource() == btnThoat) {
 			System.exit(0);
