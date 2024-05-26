@@ -120,7 +120,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private HoaDon hoaDonReport; // temp
 
 //	Camera
-	private JButton btnQR;
+//	private JButton btnQR;
 	private JFrame camFram;
 	private JLabel videoLabel;
 	private VideoCapture capture;
@@ -161,9 +161,9 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		btnShowThuoc = new JButton("+");
 		btnShowThuoc.setBackground(new Color(0, 160, 255));
 		btnShowThuoc.setPreferredSize(new Dimension(30, 0));
-		btnQR = new JButton("QR");
-		btnQR.setBackground(new Color(0, 160, 255));
-		btnQR.setPreferredSize(new Dimension(30, 0));
+//		btnQR = new JButton("QR");
+//		btnQR.setBackground(new Color(0, 160, 255));
+//		btnQR.setPreferredSize(new Dimension(30, 0));
 
 		lblTenThuoc = new JLabel("Tên thuốc: ");
 		lblTenThuoc.setPreferredSize(new Dimension(90, 0));
@@ -180,7 +180,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		boxThuoc.add(Box.createHorizontalStrut(5));
 		boxThuoc.add(txtMaThuoc);
 		boxThuoc.add(btnShowThuoc);
-		boxThuoc.add(btnQR);
+//		boxThuoc.add(btnQR);
 		boxThuoc.add(Box.createHorizontalStrut(20));
 		boxThuoc.add(lblTenThuoc);
 		boxThuoc.add(Box.createHorizontalStrut(5));
@@ -398,7 +398,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 //		ADD ACTIONLISTENER
 		btnShowThuoc.addActionListener(this);
-		btnQR.addActionListener(this);
+//		btnQR.addActionListener(this);
 //		btnTim.addActionListener(this);
 //		btnReset.addActionListener(this);
 		btnThem.addActionListener(this);
@@ -470,17 +470,17 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		if (o.equals(btnChonFrame)) {
 			chonThuoc();
 		}
-		if (o.equals(btnQR)) {
-			openCamera();
-		}
-		if (o.equals(captureButton)) {
-			maThuocQR = captureAndSaveImage();
-			if (maThuocQR != null) {
-				txtMaThuoc.setText(maThuocQR);
-			}
-			camFram.setVisible(false);
-			capture.release();
-		}
+//		if (o.equals(btnQR)) {
+//			openCamera();
+//		}
+//		if (o.equals(captureButton)) {
+//			maThuocQR = captureAndSaveImage();
+//			if (maThuocQR != null) {
+//				txtMaThuoc.setText(maThuocQR);
+//			}
+//			camFram.setVisible(false);
+//			capture.release();
+//		}
 	}
 
 	public void chonThuoc() {
