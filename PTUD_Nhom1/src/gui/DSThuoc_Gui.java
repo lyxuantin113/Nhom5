@@ -308,8 +308,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		
 		for (Thuoc thuoc : dsThuoc) {
 			String ncc = nccDao.getNCC(thuoc.getMaNCC());
-			String loai = loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc());
-			String donVi = donViDao.getDonVi(thuoc.getDonVi());
+			LoaiThuoc loaiThuoc = thuoc.getMaLoai();
+			String loai = loaiThuocDao.getLoaiThuoc(loaiThuoc.getMaLoai());
+			String donVi = donViDao.getDonVi(thuoc.getMaDonVi().getMaDonVi());
 			Object[] rowData = { ncc, thuoc.getMaThuoc(), thuoc.getTenThuoc(),
 					loai, donVi, thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(),
 					thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
@@ -390,7 +391,8 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		// Chuyển sang mã đơn vị
 		String donVi = cbbDonVi.getSelectedItem().toString();
 		String dv = donViDao.getMaDonVi(donVi);
-		LocalDate hsd = new java.sql.Date(System.currentTimeMillis()).toLocalDate();
+		String hsd1 = txtHSD.getText();
+		LocalDate hsd = LocalDate.parse(hsd1);
 
 		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 		double giaBan = Double.parseDouble(txtGiaBan.getText());
@@ -399,9 +401,14 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String tenNCC = cbbNCC.getSelectedItem().toString();
 		// Chuyển sang mã ncc
 		String maNCC = nccDao.getMaNCC(tenNCC);
-
 		
-		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loai, dv, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
+		LoaiThuoc_Dao loaiThuocDao = new LoaiThuoc_Dao();
+		LoaiThuoc loaiThuocC = loaiThuocDao.getLoaiThuocClass(loai);
+		DonVi_Dao donViDao = new DonVi_Dao();
+		DonVi donViC = donViDao.getDonViClass(dv);
+		
+
+		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuocC, donViC, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn sửa không?", "Chú ý",
 				JOptionPane.YES_NO_OPTION);
 		if (hoi == JOptionPane.YES_OPTION) {
@@ -487,10 +494,9 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String maThuoc = txtMa.getText();
 		String tenThuoc = txtTen.getText();
 		String loaiThuoc = cbbLoai.getSelectedItem().toString();
-		String loai = loaiThuocDao.getLoaiThuoc(loaiThuoc);
 		String donVi = cbbDonVi.getSelectedItem().toString();
-		String dv = donViDao.getDonVi(donVi);
-		LocalDate hsd = txtHSD.getText().isEmpty() ? null : LocalDate.parse(txtHSD.getText());
+		String hsd = txtHSD.getText();
+		LocalDate hsd2 = LocalDate.parse(hsd);
 		
 		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 		double giaBan = Double.parseDouble(txtGiaBan.getText());
@@ -498,7 +504,12 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 		String nuocSX = txtXuatXu.getText();
 		String maNCC = cbbNCC.getSelectedItem().toString();
 		
-		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loai, dv, hsd, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
+		LoaiThuoc_Dao loaiThuocDao = new LoaiThuoc_Dao();
+		LoaiThuoc loaiThuocC = loaiThuocDao.getLoaiThuocClass(loaiThuocDao.getMaLoaiThuoc(loaiThuoc));
+		DonVi_Dao donViDao = new DonVi_Dao();
+		DonVi donViC = donViDao.getDonViClass(donViDao.getMaDonVi(donVi));
+		
+		Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuocC, donViC, hsd2, giaNhap, giaBan, soLuongTon, nuocSX, maNCC);
 		thuocDao = new Thuoc_Dao();
 		if (thuocDao.checkThuoc(maThuoc)) {
 			JOptionPane.showMessageDialog(this, "Mã thuốc đã tồn tại");
@@ -553,12 +564,48 @@ public class DSThuoc_Gui extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Hạn sử dụng phải có dạng yyyy-MM-dd");
 			return false;
 		}
+		
+		//Kiểm tra ngày và tháng
+		String[] arr = hsd.split("-");
+		int nam = Integer.parseInt(arr[0]);
+		int thang = Integer.parseInt(arr[1]);
+		int ngay = Integer.parseInt(arr[2]);
+		if (nam < LocalDate.now().getYear()) {
+			JOptionPane.showMessageDialog(this, "Năm không hợp lệ");
+			return false;
+		}
+		if (thang > 12 || thang < 1) {
+			JOptionPane.showMessageDialog(this, "Tháng không hợp lệ");
+			return false;
+		}
+		if (thang == 2) {
+			if (nam % 4 == 0 && nam % 100 != 0 || nam % 400 == 0) {
+				if (ngay > 29 || ngay < 1) {
+					JOptionPane.showMessageDialog(this, "Ngày không hợp lệ");
+					return false;
+				}
+			} else {
+				if (ngay > 28 || ngay < 1) {
+					JOptionPane.showMessageDialog(this, "Ngày không hợp lệ");
+					return false;
+				}
+			}
+		} else if (thang == 4 || thang == 6 || thang == 9 || thang == 11) {
+			if (ngay > 30 || ngay < 1) {
+				JOptionPane.showMessageDialog(this, "Ngày không hợp lệ");
+				return false;
+			}
+		} else {
+			if (ngay > 31 || ngay < 1) {
+				JOptionPane.showMessageDialog(this, "Ngày không hợp lệ");
+				return false;
+			}
+		}
 		LocalDate hsdCheck = LocalDate.parse(hsd);
 		if (hsdCheck.isBefore(LocalDate.now())) {
 			JOptionPane.showMessageDialog(this, "Hạn sử dụng phải lớn hơn ngày hiện tại");
 			return false;
 		}
-		
 		return true;
 		
 	}

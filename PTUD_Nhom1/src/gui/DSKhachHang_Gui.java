@@ -177,7 +177,6 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		Object o = e.getSource();
 		if (o.equals(btnXoaTrang)) {
 			xoaTrang();
-			
 		}
 		if (o.equals(btnTim)) {
 			timKiem();
@@ -213,17 +212,18 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	}
 
 	private void suaKhachHang() {
-		
-		String ma = txtMaKH.getText();
-		String sdt = txtSDT.getText();
-		String ten = txtTen.getText();
-		
-		if (ma.equals("") || sdt.equals("") || ten.equals("")) {
-			JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin");
-		} else {
-			// Sửa trong database
+		if (checkThongTin()) {
+			String ma = txtMaKH.getText();
+			String sdt = txtSDT.getText();
+			String ten = txtTen.getText();
+			
 			KhachHang kh = new KhachHang(ma, sdt, ten);
 			KhachHang_Dao khachHangDao = new KhachHang_Dao();
+			
+			if (khachHangDao.findKhachHangBySDT(sdt) != null) {
+				JOptionPane.showMessageDialog(this, "Số điện thoại khách hàng đã tồn tại");
+				return ;
+			}
 			boolean suaThanhCong = khachHangDao.updateKhachHang(kh);
 			if (suaThanhCong) {
 				// Sửa trong table
@@ -238,26 +238,23 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 			}
 		}
 		
+		
 	}
 
 	private void xoaTrang() {
 		table.clearSelection();
-		txtMaKH.setEditable(true);
-		txtMaKH.setText("");
 		txtSDT.setText("");
 		txtTen.setText("");
 		txtMaKH.requestFocus();
+		hienTable();
 		
 	}
 
 	private void themKhachHang() {
-		String ma = txtMaKH.getText();
-		String sdt = txtSDT.getText();
-		String ten = txtTen.getText();
-		if (ma.equals("") || sdt.equals("") || ten.equals("")) {
-			JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin");
-		} else {
-			// Thêm vào database
+		if (checkThongTin()) {
+			String ma = txtMaKH.getText();
+			String sdt = txtSDT.getText();
+			String ten = txtTen.getText();
 			KhachHang kh = new KhachHang(ma, sdt, ten);
 			KhachHang_Dao khachHangDao = new KhachHang_Dao();
 			khachHangDao.addKhachHang(kh);
@@ -266,17 +263,44 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.addRow(new Object[] { ma, sdt, ten });
 			JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công");
-			
-
+			xoaTrang();
 		}
-
-	}
-	private void xoaKhachHang() {
 		
-	    int row = table.getSelectedRow();
-	    
-	    if (row == -1) {
-	        JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng cần xóa");
+	}
+	private boolean checkThongTin() {
+		String ma = txtMaKH.getText();
+		String sdt = txtSDT.getText();
+		String ten = txtTen.getText();
+		
+		if (ma.equals("") || sdt.equals("") || ten.equals("")) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin");
+			return false;
+		}
+		
+		if (sdt.matches("0[0-9]{9}") == false) {
+			JOptionPane.showMessageDialog(this, "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số");
+			return false;
+		}
+		if (ten.matches("^[a-zA-Z\\s]+") == false) {
+			JOptionPane.showMessageDialog(this, "Tên khách hàng không hợp lệ");
+			return false;
+		}
+		KhachHang_Dao khachHangDao = new KhachHang_Dao();
+		if (khachHangDao.findKhachHangBySDT(sdt) != null) {
+			JOptionPane.showMessageDialog(this, "Số điện thoại khách hàng đã tồn tại");
+			return false;
+		}
+		
+		return true;
+		
+	}
+
+	private void xoaKhachHang() {
+
+		int row = table.getSelectedRow();
+
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng cần xóa");
 	    } else {
 	    	String maKH = (String) table.getValueAt(row, 0);
 	        String sdt = (String) table.getValueAt(row, 1);

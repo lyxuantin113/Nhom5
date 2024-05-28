@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import db.ConnectDB;
+import entity.NhaCungCap;
+import entity.NhanVien;
 import entity.PhieuNhapThuoc;
 
 public class PhieuNhapThuoc_Dao {
@@ -33,7 +35,12 @@ public class PhieuNhapThuoc_Dao {
                 Double tongTien = rs.getDouble(5);
                 Boolean trangThai = rs.getBoolean(6);
                 
-                PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPhieuNhap, maNCC, maNV, ngayNhap, tongTien, trangThai);
+                NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+                NhaCungCap ncc = nccDao.getNhaCungCap(maNCC);
+                NhanVien_Dao nvDao = new NhanVien_Dao();
+                NhanVien nv = nvDao.getNhanVienClass(maNV);
+                
+                PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPhieuNhap, ncc, nv, ngayNhap, tongTien, trangThai);
                 dsPNT.add(pnt);
             }
 		} catch (Exception e) {
@@ -54,15 +61,18 @@ public class PhieuNhapThuoc_Dao {
                 PhieuNhapThuoc phieuNhapThuoc = new PhieuNhapThuoc();
                 
                 phieuNhapThuoc.setMaPhieuNhap(rs.getString(1));
-                phieuNhapThuoc.setMaNCC(rs.getString(2));
-                phieuNhapThuoc.setMaNV(rs.getString(3));
+                
+                NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+                NhaCungCap ncc = nccDao.getNhaCungCap(rs.getString(2));
+                phieuNhapThuoc.setNhaCungCap(ncc);
+                NhanVien_Dao nvDao = new NhanVien_Dao();
+                NhanVien nv = nvDao.getNhanVienClass(rs.getString(3));
+                phieuNhapThuoc.setNhanVien(nv);
                 LocalDate d = rs.getDate(4).toLocalDate();
                 phieuNhapThuoc.setNgayNhap(d);
                 phieuNhapThuoc.setTongTien(rs.getDouble(5));
                 phieuNhapThuoc.setTrangThai(false);
                
-                
-                
                 return phieuNhapThuoc;
 				
 			}
@@ -89,7 +99,12 @@ public class PhieuNhapThuoc_Dao {
                 Double tongTien = rs.getDouble(5);
                 Boolean trangThai = rs.getBoolean(6);
                 
-                PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPhieuNhap, maNCC, maNV, ngayNhap, tongTien, trangThai);
+                NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+                NhaCungCap ncc = nccDao.getNhaCungCap(maNCC);
+                NhanVien_Dao nvDao = new NhanVien_Dao();
+                NhanVien nv = nvDao.getNhanVienClass(maNV);
+                
+                PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPhieuNhap, ncc, nv, ngayNhap, tongTien, trangThai);
                 dsPNT.add(pnt);
             }
 		} catch (Exception e) {
@@ -105,8 +120,8 @@ public class PhieuNhapThuoc_Dao {
 	public boolean create(PhieuNhapThuoc pnt) {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
-			String query = "insert into PhieuNhapThuoc values('" + pnt.getMaPhieuNhap() + "','" + pnt.getMaNCC() + "','"
-					+ pnt.getMaNV() + "','" + pnt.getNgayNhap() + "','" + pnt.getTongTien() + "','" + pnt.getTrangThai()
+			String query = "insert into PhieuNhapThuoc values('" + pnt.getMaPhieuNhap() + "','" + pnt.getNhaCungCap().getMaNCC() + "','"
+					+ pnt.getNhanVien().getMaNV() + "','" + pnt.getNgayNhap() + "','" + pnt.getTongTien() + "','" + pnt.getTrangThai()
 					+ "')";
 			Statement stm = con.createStatement();
 			int result = stm.executeUpdate(query);
@@ -144,25 +159,6 @@ public class PhieuNhapThuoc_Dao {
         }
 	}
 
-//	public boolean delete(String maPNT) {
-//		try {
-//			Connection con = ConnectDB.getInstance().getConnection();
-//			String query = "delete from PhieuNhapThuoc where maPhieuNhap = '" + maPNT + "'";
-//			Statement stm = con.createStatement();
-//			int result = stm.executeUpdate(query);
-//			if (result > 0) {
-//				for (PhieuNhapThuoc pnt : dsPNT) {
-//					if (pnt.getMaPhieuNhap().equals(maPNT)) {
-//						dsPNT.remove(pnt);
-//						return true;
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
 	public boolean delete(String maPNT) {
 	    try {
 	        Connection con = ConnectDB.getInstance().getConnection();

@@ -37,7 +37,7 @@ public class DonVi_Dao {
 
 	public void addDonVi(DonVi dv) {
 		try {
-            String sql = "insert into DonVi values('"+dv.getMaDonVi()+"')";
+            String sql = "insert  into DonVi values('" + dv.getMaDonVi() + "', N'" + dv.getDonVi() + "')";
             Statement statement = con.createStatement();
             statement.executeUpdate(sql);
         } catch (Exception e) {
@@ -58,7 +58,7 @@ public class DonVi_Dao {
 	
 	public void updateDonVi(DonVi dv) {
 		try {
-			String sql = "update DonVi set tenDonVi = '" + dv.getDonVi() + "' where maDonVi = '" + dv.getMaDonVi() + "'";
+			String sql = "update DonVi set donVi = '" + dv.getDonVi() + "' where maDonVi = '" + dv.getMaDonVi() + "'";
 			Statement statement = con.createStatement();
 			statement.executeUpdate(sql);
 		} catch (Exception e) {
@@ -146,6 +146,23 @@ public class DonVi_Dao {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public DonVi getDonViClass(String donVi) {
+		try {
+			String sql = "select * from DonVi where maDonVi = '" + donVi + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				String donViT = rs.getString(2);
+				DonVi dv = new DonVi(donVi, donViT);
+				return dv;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 	
 }

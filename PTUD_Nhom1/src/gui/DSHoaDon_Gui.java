@@ -238,8 +238,8 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		if (listChiTietHoaDon != null) {
 			for (ChiTietHoaDon chiTietHoaDon : listChiTietHoaDon) {
 				Object[] rowData = { chiTietHoaDon.getMaThuoc().getMaThuoc(), chiTietHoaDon.getMaThuoc().getTenThuoc(),
-						chiTietHoaDon.getMaThuoc().getLoaiThuoc(), chiTietHoaDon.getMaThuoc().getGiaBan(),
-						chiTietHoaDon.getMaThuoc().getDonVi(), chiTietHoaDon.getSoLuong(),
+						chiTietHoaDon.getMaThuoc().getMaLoai().getMaLoai(), chiTietHoaDon.getMaThuoc().getGiaBan(),
+						chiTietHoaDon.getMaThuoc().getMaDonVi().getMaDonVi(), chiTietHoaDon.getSoLuong(),
 						chiTietHoaDon.getSoLuong() * chiTietHoaDon.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng mới
 				model.addRow(rowData); // Thêm hàng vào model
 			}
@@ -381,7 +381,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 				for (ChiTietHoaDon cthd : ds.getListChiTietHoaDon()) {
 					String tenThuoc = cthd.getMaThuoc().getTenThuoc();
 					String donGia = cthd.getMaThuoc().getGiaBan()+"";
-					String donVi = cthd.getMaThuoc().getDonVi();
+					String donVi = cthd.getMaThuoc().getMaDonVi().getMaDonVi();
 					String soluong = cthd.getSoLuong()+"";
 					double thanhTien = cthd.getMaThuoc().getGiaBan() * cthd.getSoLuong();
 					table.addCell(new PdfPCell(new Paragraph(tenThuoc, unicodeFontObject)));

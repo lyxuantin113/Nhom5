@@ -17,6 +17,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import db.ConnectDB;
+import entity.DonVi;
+import entity.LoaiThuoc;
 import entity.Thuoc;
 
 public class Thuoc_Dao {
@@ -44,12 +46,16 @@ public class Thuoc_Dao {
 				double giaBan = rs.getDouble(7);
 				int slTon = rs.getInt(8);
 				String nuocSX = rs.getString(9);
-
 				String tenNCC = rs.getString(10);
-
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
-						tenNCC);
-				;
+				//
+				DonVi_Dao dvDao = new DonVi_Dao();
+				DonVi donViC = dvDao.getDonViClass(donVi);
+				LoaiThuoc_Dao ltDao = new LoaiThuoc_Dao();
+				LoaiThuoc loaiThuocC = ltDao.getLoaiThuocClass(loaiThuoc);
+				
+				
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuocC, donViC, hsd, giaGoc, giaBan, slTon, nuocSX, tenNCC);
+				
 				dsThuoc.add(thuoc);
 			}
 		} catch (Exception e) {
@@ -80,7 +86,7 @@ public class Thuoc_Dao {
 			String qrCodeFilename = thuoc.getMaThuoc() + "_" + UUID.randomUUID().toString() + ".png";
 			MatrixToImageWriter.writeToPath(bitMatrix, "PNG", new File(qrCodeFilename).toPath());
 			// Chuyển loại thuốc thành mã
-			String query1 = "select maLoaiThuoc from LoaiThuoc where loaiThuoc = '" + thuoc.getLoaiThuoc() + "'";
+			String query1 = "select maLoaiThuoc from LoaiThuoc where loaiThuoc = '" + thuoc.getMaLoai().getLoaiThuoc() + "'";
 			Statement stm1 = con.createStatement();
 			ResultSet rs1 = stm1.executeQuery(query1);
 			String maLoai = "";
@@ -88,7 +94,7 @@ public class Thuoc_Dao {
 				maLoai = rs1.getString(1);
 			}
 			// Chuyển đơn vị thành mã đơn vị
-			String query2 = "select maDonVi from DonVi where donVi = '" + thuoc.getDonVi() + "'";
+			String query2 = "select maDonVi from DonVi where donVi = '" + thuoc.getMaDonVi().getDonVi() + "'";
 			Statement stm2 = con.createStatement();
 			ResultSet rs2 = stm2.executeQuery(query2);
 			String maDonVi = "";
@@ -162,7 +168,7 @@ public class Thuoc_Dao {
 			}
 
 			String query = "update Thuoc set tenThuoc = '" + thuoc.getTenThuoc() + "', maLoaiThuoc = '"
-					+ thuoc.getLoaiThuoc() + "', maDonVi = '" + thuoc.getDonVi() + "', HSD = '" + thuoc.getHSD()
+					+ thuoc.getMaLoai().getMaLoai() + "', maDonVi = '" + thuoc.getMaDonVi().getMaDonVi() + "', HSD = '" + thuoc.getHSD()
 					+ "', giaNhap = " + thuoc.getGiaNhap() + ", giaBan = " + thuoc.getGiaBan() + ", soLuongTon = "
 					+ thuoc.getSoLuongTon() + ", nuocSanXuat = '" + thuoc.getNuocSanXuat() + "' where maThuoc = '"
 					+ thuoc.getMaThuoc() + "'";
@@ -171,8 +177,8 @@ public class Thuoc_Dao {
 			for (Thuoc t : dsThuoc) {
 				if (t.getMaThuoc().equals(thuoc.getMaThuoc())) {
 					t.setTenThuoc(thuoc.getTenThuoc());
-					t.setLoaiThuoc(thuoc.getLoaiThuoc());
-					t.setDonVi(thuoc.getDonVi());
+					t.setMaLoai(thuoc.getMaLoai());
+					t.setMaDonVi(thuoc.getMaDonVi());
 					t.setHSD(thuoc.getHSD());
 					t.setGiaNhap(thuoc.getGiaNhap());
 					t.setGiaBan(thuoc.getGiaBan());
@@ -227,7 +233,13 @@ public class Thuoc_Dao {
 				int tonKho = rs.getInt(8);
 				String nuocSx = rs.getString(9);
 				String tenNCC = rs.getString(10);
-				t = new Thuoc(ma, ten, loai, donVi, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
+				
+				DonVi_Dao dvDao = new DonVi_Dao();
+				DonVi donViC = dvDao.getDonViClass(donVi);
+				LoaiThuoc_Dao ltDao = new LoaiThuoc_Dao();
+				LoaiThuoc loaiThuocC = ltDao.getLoaiThuocClass(loai);
+				
+				t = new Thuoc(ma, ten, loaiThuocC, donViC, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
 			}
 			return t;
 		} catch (Exception e) {
@@ -281,7 +293,13 @@ public class Thuoc_Dao {
 				int tonKho = rs.getInt(8);
 				String nuocSx = rs.getString(9);
 				String tenNCC = rs.getString(10);
-				t = new Thuoc(ma, ten, loai, donVi, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
+				
+				DonVi_Dao dvDao = new DonVi_Dao();
+				DonVi donViC = dvDao.getDonViClass(donVi);
+				LoaiThuoc_Dao ltDao = new LoaiThuoc_Dao();
+				LoaiThuoc loaiThuocC = ltDao.getLoaiThuocClass(loai);
+				
+				t = new Thuoc(ma, ten, loaiThuocC, donViC, hsd, giaNhap, giaBan, tonKho, nuocSx, tenNCC);
 			}
 			return t;
 		} catch (Exception e) {
@@ -358,8 +376,12 @@ public class Thuoc_Dao {
 				int slTon = rs.getInt(8);
 				String nuocSX = rs.getString(9);
 				String tenNCC = rs.getString(10);
-
-				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX,
+				
+				DonVi_Dao dvDao = new DonVi_Dao();
+				DonVi donViC = dvDao.getDonViClass(donVi);
+				LoaiThuoc_Dao ltDao = new LoaiThuoc_Dao();
+				LoaiThuoc loaiThuocC = ltDao.getLoaiThuocClass(loaiThuoc);
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuocC, donViC, hsd, giaGoc, giaBan, slTon, nuocSX,
 						tenNCC);
 				ds.add(thuoc);
 			}
@@ -429,10 +451,14 @@ public class Thuoc_Dao {
 				double giaBan = rs.getDouble(7);
 				int slTon = rs.getInt(8);
 				String nuocSX = rs.getString(9);
-
 				String tenNCC = rs.getString(10);
-
-				thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuoc, donVi, hsd, giaGoc, giaBan, slTon, nuocSX, tenNCC);
+				
+				DonVi_Dao dvDao = new DonVi_Dao();
+				DonVi donViC = dvDao.getDonViClass(donVi);
+				LoaiThuoc_Dao ltDao = new LoaiThuoc_Dao();
+				LoaiThuoc loaiThuocC = ltDao.getLoaiThuocClass(loaiThuoc);
+				
+				thuoc = new Thuoc(maThuoc, tenThuoc, loaiThuocC, donViC, hsd, giaGoc, giaBan, slTon, nuocSX, tenNCC);
 
 			}
 		} catch (Exception e) {

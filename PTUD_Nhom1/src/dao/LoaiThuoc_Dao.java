@@ -153,4 +153,21 @@ public class LoaiThuoc_Dao {
 		
 		
 	}
+
+	public LoaiThuoc getLoaiThuocClass(String loaiThuoc) {
+		try {
+			String sql = "select * from LoaiThuoc where maLoaiThuoc = '" + loaiThuoc + "'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			if (rs.next()) {
+				String loaiThuocT = rs.getString(2);
+				String moTa = rs.getString(3);
+				LoaiThuoc lt = new LoaiThuoc(loaiThuoc, loaiThuocT, moTa);
+				return lt;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

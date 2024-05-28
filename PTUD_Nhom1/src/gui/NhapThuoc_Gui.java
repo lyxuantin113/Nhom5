@@ -130,6 +130,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		JLabel lblTongTien = new JLabel("Tổng tiền: ");
 		lblTongTien.setPreferredSize(new Dimension(90, 25));
 		txtTongTien = new JTextField(20);
+		txtTongTien.setText("0");
 		txtTongTien.setEnabled(false);
 		b21.add(Box.createHorizontalStrut(10));
 		b21.add(lblTongTien);
@@ -352,7 +353,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		// Lấy dữ liệu từ database
 		ChiTietPhieuNhapThuoc_Dao pntDao = new ChiTietPhieuNhapThuoc_Dao();
 		for (ChiTietPhieuNhapThuoc ct : pntDao.readFromTable(maPhieuNhap)) {
-			model.addRow(new Object[] { ct.getMaThuoc(), ct.getMaPhieuNhap(), ct.getGiaNhap(),
+			model.addRow(new Object[] { ct.getThuoc().getMaThuoc(), ct.getMaPhieuNhap().getMaPhieuNhap(), ct.getGiaNhap(),
 					ct.getHsd(), ct.getSoLuong(), ct.getDonVi(), ct.getThanhTien() });
 		}
 		
@@ -401,26 +402,22 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		} else {
 			JOptionPane.showMessageDialog(this, "Xác nhận thành công.");
 			XoaTrangToanBo();
+			taoMaPhieuNhap();
 		}
 
 	}
 
 	private void XoaTrangToanBo() {
-		txtMaPNT.setEnabled(true);
-		txtMaNV.setEnabled(true);
-		txtNgayNhap.setEnabled(true);
 		cbbNCC.setEnabled(true);
-		txtTongTien.setEnabled(true);
 		cbbMaThuoc.setEnabled(false);
 		txtGiaNhap.setEnabled(false);
 		txtHSD.setEnabled(false);
 		txtSoLuong.setEnabled(false);
 		cbbDonVi.setEnabled(false);
 		txtMaCTPNT.setText("");
-		txtMaPNT.setText("");
-		txtMaNV.setText("");
-		txtTongTien.setText("");
-//		txtGiaNhap.setText("");
+		txtGiaNhap.setText("");
+		cbbDonVi.setSelectedIndex(0);
+		cbbMaThuoc.setSelectedIndex(0);
 		txtHSD.setText("");
 		txtSoLuong.setText("");
 		txtThanhTien.setText("");
@@ -443,11 +440,11 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			txtSoLuong.setEnabled(false);
 			cbbDonVi.setEnabled(false);
 			txtMaCTPNT.setText("");
-			txtTongTien.setText("");
+			txtTongTien.setText("0");
 			txtGiaNhap.setText("");
 			txtHSD.setText("");
 			txtSoLuong.setText("");
-			txtThanhTien.setText("");
+			txtThanhTien.setText("0");
 			// Khóa các nút
 			btnAdd.setEnabled(false);
 			btnXoaTrang.setEnabled(false);
@@ -467,6 +464,13 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 	}
 
 	private void sua() {
+		if (!checkData()) {
+			return;
+		}
+		if (table.getSelectedRow() == -1) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn thông tin thuốc cần sửa.");
+			return;
+		}
 		String giaNhap = txtGiaNhap.getText();
 		String soLuong = txtSoLuong.getText();
 		String hsd = txtHSD.getText();
@@ -477,13 +481,21 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		Integer sl = Integer.parseInt(soLuong);
 		String donVi = cbbDonVi.getSelectedItem().toString();
 		Double thanhTien = gia * sl;
-		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, maThuoc, sl, gia, LocalDate.parse(hsd), donVi,
-				thanhTien);
+		
+		PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+		PhieuNhapThuoc pnt = pntDao.timTheoMa(maCTPNT);
+		
+		Thuoc_Dao thuocDao = new Thuoc_Dao();
+		Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
+		
+		ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(pnt, thuoc, sl, gia, LocalDate.parse(hsd), donVi,thanhTien);
 		ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
 		if (ctDao.update(ct)) {
 			JOptionPane.showMessageDialog(this, "Sửa thành công.");
+			
 			// Hiển thị lại table
 			hienTable(txtMaCTPNT.getText());
+			upDateTongTien();
 		} else {
 			JOptionPane.showMessageDialog(this, "Sửa thất bại.");
 		}
@@ -499,7 +511,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			return;
 		} else {
 			int row = table.getSelectedRow();
-			String maCTPNT = model.getValueAt(row, 6).toString();
+			String maCTPNT = model.getValueAt(row, 1).toString();
 			int hoi = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?");
 			if (hoi == JOptionPane.YES_OPTION) {
 				// Xóa dữ liệu trong database
@@ -507,6 +519,8 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 				if (ctDao.delete(maCTPNT)) {
 					JOptionPane.showMessageDialog(this, "Xóa thành công.");
 					model.removeRow(row);
+					xoaTrang();
+					upDateTongTien();
 				} else {
 					JOptionPane.showMessageDialog(this, "Xóa thất bại.");
 				}
@@ -522,7 +536,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			String tenNV = txtMaNV.getText();
 			// Lấy mã NV
 			NhanVien_Dao nvDao = new NhanVien_Dao();
-			String maNV = nvDao.getNhanVienByName(tenNV).getMaNV();
+			NhanVien nv = nvDao.getNhanVienByName(tenNV);
 			
 			LocalDate ngayNhap = LocalDate.parse(txtNgayNhap.getText());
 			NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
@@ -532,12 +546,16 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			Boolean trangThai = false;
 
 			
-			if (!nvDao.maNhanVienDaTonTai(maNV)) {
+			if (!nvDao.maNhanVienDaTonTai(nv.getMaNV())) {
 				JOptionPane.showMessageDialog(this, "Mã nhân viên không tồn tại.");
 				return;
 			}
-
-			PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPNT, maNCC, maNV, ngayNhap, tongTien, trangThai);
+			
+			NhaCungCap ncc = nccDao.getNhaCungCap(maNCC);
+			
+			
+			
+			PhieuNhapThuoc pnt = new PhieuNhapThuoc(maPNT, ncc, nv, ngayNhap, tongTien, trangThai);
 			PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
 
 			if (pntDao.findMaPhieuNhap(maPNT)) {
@@ -562,7 +580,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 				String hsd = thuoc.getHSD().toString();
 				txtHSD.setText(hsd);
 				txtSoLuong.setEnabled(true);
-				String donVi = thuoc.getDonVi();
+				String donVi = thuoc.getMaDonVi().getMaDonVi();
 				cbbDonVi.setSelectedItem(donVi);
 				txtMaCTPNT.setText(maPNT);
 
@@ -626,7 +644,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 				Double giaNhap = thuoc.getGiaNhap();
 				txtGiaNhap.setText(giaNhap.toString());
 				txtHSD.setText(thuoc.getHSD().toString());
-				cbbDonVi.setSelectedItem(thuoc.getDonVi());
+				cbbDonVi.setSelectedItem(thuoc.getMaDonVi().getDonVi());
 				txtSoLuong.setText("");
 				txtThanhTien.setText("");
 			}
@@ -638,14 +656,13 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 	private void xoaTrang() {
 		cbbMaThuoc.setSelectedIndex(0);
 		txtSoLuong.setText("");
-		cbbDonVi.setSelectedIndex(0);
-		cbbNCC.setSelectedIndex(0);
 
 	}
 
 	private void addThuocDat() {
-		capNhatThanhTien();
+		
 		if (checkData()) {
+			capNhatThanhTien();
 			btnXoa.setEnabled(true);
 			btnSua.setEnabled(true);
 			btnXacNhan.setEnabled(true);
@@ -656,8 +673,14 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			String donVi = cbbDonVi.getSelectedItem().toString();
 			String maCTPNT = txtMaCTPNT.getText();
 			Double thanhTien = giaNhap * soLuong;
+			
+			PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+			PhieuNhapThuoc pnt = pntDao.timTheoMa(maCTPNT);
+			Thuoc_Dao thuocDao = new Thuoc_Dao();
+			Thuoc thuoc = thuocDao.timTheoMa(ma);
+			
 			// Thêm vào database
-			ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(maCTPNT, ma, soLuong, giaNhap, hsd, donVi, thanhTien);
+			ChiTietPhieuNhapThuoc ct = new ChiTietPhieuNhapThuoc(pnt, thuoc, soLuong, giaNhap, hsd, donVi, thanhTien);
 			ChiTietPhieuNhapThuoc_Dao ctDao = new ChiTietPhieuNhapThuoc_Dao();
 			if (ctDao.findMaPhieuNhap(maCTPNT, ma)) {
 				JOptionPane.showMessageDialog(this, "Mã thuốc nhập đã tồn tại.");
@@ -665,20 +688,29 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			}
 			if (ctDao.create(ct)) {
 				JOptionPane.showMessageDialog(this, "Thêm thành công.");
-				// Cập nhật tổng tiền
-				PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
-				PhieuNhapThuoc pnt = pntDao.timTheoMa(maCTPNT);
-				pnt.setTongTien(pnt.getTongTien() + thanhTien);
-				pntDao.updateTongTien(pnt);
-				txtTongTien.setText(pnt.getTongTien().toString());
+				
 				// Cập nhật lại table
+				xoaTrang();
 				hienTable(maCTPNT);
+				upDateTongTien();
 			} else {
 				JOptionPane.showMessageDialog(this, "Thêm thất bại.");
 			}
 		}
 
 	}
+
+	private void upDateTongTien() {
+		Double tongTien = 0.0;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			Double thanhTien = Double.parseDouble(table.getValueAt(i, 6).toString());
+			tongTien += thanhTien;
+			
+		}
+		txtTongTien.setText(tongTien.toString());
+		
+	}
+
 
 	private void capNhatThanhTien() {
 		Double giaNhap = Double.parseDouble(txtGiaNhap.getText());
@@ -691,7 +723,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 
 
 	private boolean checkData() {
-		if (txtMaPNT.getText().isEmpty() || cbbMaThuoc.getSelectedIndex() == -1 || txtGiaNhap.getText().isEmpty() || txtHSD.getText().isEmpty()
+		if (txtMaPNT.getText()== "" || cbbMaThuoc.getSelectedIndex() == -1 || txtGiaNhap.getText().isEmpty() || txtHSD.getText().isEmpty()
 				|| txtSoLuong.getText().isEmpty() || cbbDonVi.getSelectedIndex()== -1 ) {
 			JOptionPane.showMessageDialog(this, "Không được để trống thông tin.");
 			return false;

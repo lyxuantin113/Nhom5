@@ -446,7 +446,7 @@ public class HoaDon_Dao {
 //	Thống kê đơn của KH X
 	public List<HoaDon> findKH(String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE sdtKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE maKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, sdtKH);
@@ -468,7 +468,7 @@ public class HoaDon_Dao {
 //		Thống kê đơn của KH X theo năm
 	public List<HoaDon> findKHinYear(LocalDate ngayLap, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND sdtKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND maKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getYear());

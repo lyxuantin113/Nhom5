@@ -9,6 +9,8 @@ import java.util.List;
 
 import db.ConnectDB;
 import entity.ChiTietPhieuNhapThuoc;
+import entity.PhieuNhapThuoc;
+import entity.Thuoc;
 
 public class ChiTietPhieuNhapThuoc_Dao {
 	private List<ChiTietPhieuNhapThuoc> dsCTPNT;
@@ -34,7 +36,13 @@ public class ChiTietPhieuNhapThuoc_Dao {
 				String donVi = rs.getString(6);
 				double thanhTien = rs.getDouble(7);
 				
-				ChiTietPhieuNhapThuoc ctPNT = new ChiTietPhieuNhapThuoc(maChiTiet,maThuoc, soLuong, giaNhap, hsd, donVi, thanhTien);
+				PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+				PhieuNhapThuoc pnt = pntDao.timTheoMa(maChiTiet);
+				
+				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
+				
+				ChiTietPhieuNhapThuoc ctPNT = new ChiTietPhieuNhapThuoc(pnt,thuoc, soLuong, giaNhap, hsd, donVi, thanhTien);
 				
 				dsCTPNT.add(ctPNT);
 			}
@@ -54,7 +62,7 @@ public class ChiTietPhieuNhapThuoc_Dao {
 	public boolean create(ChiTietPhieuNhapThuoc ctPNT) {
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
-			String query = "INSERT INTO ChiTietPhieuNhapThuoc VALUES ('" + ctPNT.getMaThuoc() + "','" + ctPNT.getMaPhieuNhap() + "','" + ctPNT.getSoLuong() + "','" + ctPNT.getGiaNhap() + "','" + ctPNT.getHsd() + "','" + ctPNT.getDonVi() + "','" + ctPNT.getThanhTien() + "')";
+			String query = "INSERT INTO ChiTietPhieuNhapThuoc VALUES ('" + ctPNT.getThuoc().getMaThuoc() + "','" + ctPNT.getMaPhieuNhap().getMaPhieuNhap() + "','" + ctPNT.getSoLuong() + "','" + ctPNT.getGiaNhap() + "','" + ctPNT.getHsd() + "','" + ctPNT.getDonVi() + "','" + ctPNT.getThanhTien() + "')";
 
 			Statement stm = con.createStatement();
 			int result = stm.executeUpdate(query);
@@ -73,8 +81,8 @@ public class ChiTietPhieuNhapThuoc_Dao {
 			Connection con = ConnectDB.getInstance().getConnection();
 			String query = "update ChiTietPhieuNhapThuoc set soLuong = '" + ctPNT.getSoLuong() + "', giaNhap = '"
 					+ ctPNT.getGiaNhap() + "', hsd = '" + ctPNT.getHsd() + "', donVi = '" + ctPNT.getDonVi()
-					+ "', thanhTien = '" + ctPNT.getThanhTien() + "' where maPhieuNhap = '" + ctPNT.getMaPhieuNhap()
-					+ "' and maThuoc = '" + ctPNT.getMaThuoc() + "'";
+					+ "', thanhTien = '" + ctPNT.getThanhTien() + "' where maPhieuNhap = '" + ctPNT.getMaPhieuNhap().getMaPhieuNhap()
+					+ "' and maThuoc = '" + ctPNT.getThuoc().getMaThuoc() + "'";
 			Statement stm = con.createStatement();
 			int result = stm.executeUpdate(query);
 			if (result > 0) {

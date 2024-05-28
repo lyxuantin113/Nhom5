@@ -21,7 +21,6 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 	private JButton btnHuy;
 	private JTextField txtMaDonVi;
 	private JTextField txtTenDonVi;
-	private JTextField txtQuyDoi;
 	private JButton btnThem;
 	private JButton btnXoa;
 	private JButton btnSua;
@@ -222,7 +221,6 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 		if (checkData()) {
 			String maDonVi = txtMaDonVi.getText();
 			String tenDonVi = txtTenDonVi.getText();
-			String quyDoi = txtQuyDoi.getText();
 			DonVi dv = new DonVi(maDonVi, tenDonVi);
 			if (donViDao.checkMaDonVi(maDonVi)) {
 				JOptionPane.showMessageDialog(null, "Mã đơn vị đã tồn tại");

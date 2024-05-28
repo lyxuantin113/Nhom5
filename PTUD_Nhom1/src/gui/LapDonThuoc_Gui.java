@@ -57,8 +57,10 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import dao.ChiTietHoaDon_Dao;
 import dao.DonDat_Dao;
+import dao.DonVi_Dao;
 import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
+import dao.LoaiThuoc_Dao;
 import dao.NhanVien_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
@@ -426,8 +428,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 				Thuoc thuoc = chiTietHoaDon.getMaThuoc();
 				Integer soLuong = chiTietHoaDon.getSoLuong();
 
-				Object[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(), thuoc.getGiaBan(),
-						thuoc.getDonVi(), thuoc.getHSD(), soLuong, thuoc.getGiaBan() * soLuong }; // Tạo dữ liệu hàng
+				Object[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getMaLoai().getLoaiThuoc(), thuoc.getGiaBan(),
+						thuoc.getMaDonVi().getDonVi(), thuoc.getHSD(), soLuong, thuoc.getGiaBan() * soLuong }; // Tạo dữ liệu hàng
 																									// mới
 
 				model.addRow(rowData); // Thêm hàng vào model
@@ -493,8 +495,10 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 		newFrame.setVisible(false);
 		txtMaThuoc.setText(ma);
 		txtTenThuoc.setText(ten);
-		txtLoaiThuoc.setText(loai);
-		txtDonVi.setText(donVi);
+		LoaiThuoc_Dao loaiThuocDao = new LoaiThuoc_Dao();
+		txtLoaiThuoc.setText(loaiThuocDao.getLoaiThuoc(loai));
+		DonVi_Dao donViDao = new DonVi_Dao();
+		txtDonVi.setText(donViDao.getDonVi(donVi));
 		txtHSD.setText(hsd.toString());
 	}
 
@@ -511,7 +515,6 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	public void xoaTrangTatCa() {
 		txtMaThuoc.setText("");
 		txtSoLuong.setText("");
-		txtMaNV.setText("");
 		txtTenKH.setText("");
 		txtSDT.setText("");
 		txtTenThuoc.setText("");
@@ -691,8 +694,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 					tempListHD.add(cthd);
 					tempListDD.add(ctdd);
 
-					String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
-							thuoc.getGiaBan() + "", thuoc.getDonVi(), thuoc.getHSD() + "", soLuong + "",
+					String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getMaLoai().getMaLoai(),
+							thuoc.getGiaBan() + "", thuoc.getMaDonVi().getMaDonVi(), thuoc.getHSD() + "", soLuong + "",
 							thuoc.getGiaBan() * soLuong + "" };
 					modelHoaDon.addRow(rowData);
 					xoaTrangThuoc();
@@ -701,8 +704,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 				tempListHD.add(cthd);
 				tempListDD.add(ctdd);
 
-				String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
-						thuoc.getGiaBan() + "", thuoc.getDonVi(), thuoc.getHSD() + "", soLuong + "",
+				String[] rowData = { thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getMaLoai().getMaLoai(),
+						thuoc.getGiaBan() + "", thuoc.getMaDonVi().getMaDonVi(), thuoc.getHSD() + "", soLuong + "",
 						thuoc.getGiaBan() * soLuong + "" };
 				modelHoaDon.addRow(rowData);
 				xoaTrangThuoc();
@@ -715,8 +718,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			}
 			for (ChiTietDonDat chiTietDonDat : tempListDD) {
 				String[] rowData = { chiTietDonDat.getMaThuoc().getMaThuoc(), chiTietDonDat.getMaThuoc().getTenThuoc(),
-						chiTietDonDat.getMaThuoc().getLoaiThuoc(), chiTietDonDat.getMaThuoc().getGiaBan() + "",
-						chiTietDonDat.getMaThuoc().getDonVi(), chiTietDonDat.getMaThuoc().getHSD() + "",
+						chiTietDonDat.getMaThuoc().getMaLoai().getMaLoai(), chiTietDonDat.getMaThuoc().getGiaBan() + "",
+						chiTietDonDat.getMaThuoc().getMaDonVi().getMaDonVi(), chiTietDonDat.getMaThuoc().getHSD() + "",
 						chiTietDonDat.getSoLuong() + "",
 						chiTietDonDat.getMaThuoc().getGiaBan() * chiTietDonDat.getSoLuong() + "" };
 				modelHoaDon.addRow(rowData);
@@ -963,8 +966,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
-			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getLoaiThuoc(),
-					thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(), thuoc.getSoLuongTon(),
+			Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(), thuoc.getMaLoai().getLoaiThuoc(),
+					thuoc.getMaDonVi().getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(), thuoc.getSoLuongTon(),
 					thuoc.getNuocSanXuat() };
 			model.addRow(rowData);
 		}
@@ -989,7 +992,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 					DefaultTableModel model = (DefaultTableModel) tblFrameThuoc.getModel();
 					model.setRowCount(0);
 					Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-							thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+							thuoc.getMaLoai().getLoaiThuoc(), thuoc.getMaDonVi().getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 							thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 					model.addRow(rowData);
 					
@@ -1006,7 +1009,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getTenThuoc().contains(thongTin)) {
 							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+									thuoc.getMaLoai().getLoaiThuoc(), thuoc.getMaDonVi().getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -1021,9 +1024,9 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 					DefaultTableModel model = (DefaultTableModel) tblFrameThuoc.getModel();
 					model.setRowCount(0);
 					for (Thuoc thuoc : dsThuoc) {
-						if (thuoc.getLoaiThuoc().contains(thongTin)) {
+						if (thuoc.getMaLoai().getMaLoai().contains(thongTin)) {
 							Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+									thuoc.getMaLoai().getLoaiThuoc(), thuoc.getMaDonVi().getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -1151,7 +1154,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			for (ChiTietHoaDon cthd : tempListHD) {
 				String tenThuoc = cthd.getMaThuoc().getTenThuoc();
 				String donGia = cthd.getMaThuoc().getGiaBan() + "";
-				String donVi = cthd.getMaThuoc().getDonVi();
+				String donVi = cthd.getMaThuoc().getMaDonVi().getMaDonVi();
 				String soluong = cthd.getSoLuong() + "";
 				double thanhTien = cthd.getMaThuoc().getGiaBan() * cthd.getSoLuong();
 				table.addCell(new PdfPCell(new Paragraph(tenThuoc, unicodeFontObject)));
@@ -1313,7 +1316,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			for (ChiTietDonDat cthd : tempListDD) {
 				String tenThuoc = cthd.getMaThuoc().getTenThuoc();
 				String donGia = cthd.getMaThuoc().getGiaBan() + "";
-				String donVi = cthd.getMaThuoc().getDonVi();
+				String donVi = cthd.getMaThuoc().getMaDonVi().getMaDonVi();
 				String soluong = cthd.getSoLuong() + "";
 				double thanhTien = cthd.getMaThuoc().getGiaBan() * cthd.getSoLuong();
 				table.addCell(new PdfPCell(new Paragraph(tenThuoc, unicodeFontObject)));
@@ -1550,8 +1553,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			if (!(tDao.timTheoMa(maThuoc)== null)) {
 				Thuoc thuoc = tDao.timTheoMa(maThuoc);
 				txtTenThuoc.setText(thuoc.getTenThuoc());
-				txtLoaiThuoc.setText(thuoc.getLoaiThuoc());
-				txtDonVi.setText(thuoc.getDonVi());
+				txtLoaiThuoc.setText(thuoc.getMaLoai().getMaLoai());
+				txtDonVi.setText(thuoc.getMaDonVi().getMaDonVi());
 				txtHSD.setText(thuoc.getHSD().toString());
 			} else {
 				txtTenThuoc.setText("");
@@ -1569,8 +1572,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			if (tDao.findByName(tenThuoc) != null) {
 				Thuoc thuoc = tDao.findByName(tenThuoc);
 				txtMaThuoc.setText(thuoc.getMaThuoc());
-				txtLoaiThuoc.setText(thuoc.getLoaiThuoc());
-				txtDonVi.setText(thuoc.getDonVi());
+				txtLoaiThuoc.setText(thuoc.getMaLoai().getMaLoai());
+				txtDonVi.setText(thuoc.getMaDonVi().getMaDonVi());
 				txtHSD.setText(thuoc.getHSD().toString());
 			} else {
 				txtMaThuoc.setText("");

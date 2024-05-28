@@ -237,4 +237,6 @@ public class KhachHang_Dao {
 		return maKH;
 	}
 
+	
+
 }

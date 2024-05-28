@@ -11,14 +11,15 @@ import entity.NhaCungCap;
 
 public class NhaCungCap_Dao {
 	private List<NhaCungCap> dsNCC;
+	Connection con = null;
 	
 	public NhaCungCap_Dao() {
+		con = ConnectDB.getInstance().getConnection();
 		dsNCC = new ArrayList<NhaCungCap>();
 	}
 	
 	public List<NhaCungCap> readFromTable() {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			String query = "select * from NhaCungCap";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -45,7 +46,6 @@ public class NhaCungCap_Dao {
 	// Thêm nhà cung cấp vào database
 	public void addNCC(NhaCungCap ncc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
@@ -62,7 +62,6 @@ public class NhaCungCap_Dao {
 	// Xóa nhà cung cấp khỏi database
 	public void deleteNCC(String maNCC) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
@@ -84,13 +83,12 @@ public class NhaCungCap_Dao {
 	// Cập nhật thông tin nhà cung cấp
 	public void updateNCC(NhaCungCap ncc) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
 			}
-			String query = "update NhaCungCap set TenNCC = N'" + ncc.getTenNCC() + "', DiaChi = N'" + ncc.getDiaChiNCC()
-					+ "', SDT = '" + ncc.getSdtNCC() + "' where MaNCC = '" + ncc.getMaNCC() + "'";
+			String query = "update NhaCungCap set tenNCC = N'" + ncc.getTenNCC() + "', diaChiNCC = N'" + ncc.getDiaChiNCC()
+					+ "', sdtNCC = '" + ncc.getSdtNCC() + "' where maNCC = '" + ncc.getMaNCC() + "'";
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
 			for (NhaCungCap n : dsNCC) {
@@ -108,7 +106,6 @@ public class NhaCungCap_Dao {
 	//Tìm kiếm nhà cung cấp
 	public boolean searchNCC(String maNCC) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			if (con == null) {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return false;
@@ -128,7 +125,8 @@ public class NhaCungCap_Dao {
 	public static String taoMaNCC() {
 		String maNCC = "NCC";
         try {
-            Connection con = ConnectDB.getInstance().getConnection();
+        	ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
             String query = "select top 1 MaNCC from NhaCungCap order by MaNCC desc";
             Statement stm = con.createStatement();
             ResultSet rs = stm.executeQuery(query);
@@ -153,7 +151,6 @@ public class NhaCungCap_Dao {
 
 	public String getNCC(String maNCC) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			String query = "select * from NhaCungCap where MaNCC = '" + maNCC + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -169,7 +166,6 @@ public class NhaCungCap_Dao {
 
 	public String getMaNCC(String tenNCC) {
 		try {
-			Connection con = ConnectDB.getInstance().getConnection();
 			String query = "select * from NhaCungCap where tenNCC = '" + tenNCC + "'";
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -182,5 +178,23 @@ public class NhaCungCap_Dao {
 		}
 		return tenNCC;
 		
+	}
+
+	public NhaCungCap getNhaCungCap(String maNCC) {
+		try {
+			String query = "select * from NhaCungCap where MaNCC = '" + maNCC + "'";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String tenNCC = rs.getString(2);
+				String diaChi = rs.getString(3);
+				String sdt = rs.getString(4);
+				NhaCungCap ncc = new NhaCungCap(maNCC, tenNCC, diaChi, sdt);
+				return ncc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

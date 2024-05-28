@@ -41,6 +41,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 	
 	private NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
 	private Thuoc_Dao thuocDao = new Thuoc_Dao();
+	private JButton btnSua;
 	public ThemNCC_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
@@ -135,14 +136,18 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		JLabel lblTimKiem = new JLabel("Tìm kiếm: ");
 		txtTimKiem = new JTextField(20);
 		btnTim = new JButton("Tìm");
+		btnSua = new JButton("Sửa");
 		btnXoa = new JButton("Xóa");
 		btnTim.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnTim.setBackground(new Color(0, 160, 255));
+		btnSua.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnSua.setBackground(new Color(0, 160, 255));
 		btnXoa.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXoa.setBackground(new Color(0, 160, 255));
 		pnFoot.add(lblTimKiem);
 		pnFoot.add(txtTimKiem);
 		pnFoot.add(btnTim);
+		pnFoot.add(btnSua);
 		pnFoot.add(btnXoa);
 		pnMain.add(pnFoot, BorderLayout.SOUTH);
 
@@ -150,6 +155,7 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		// Action
 		btnThem.addActionListener(this);
 		btnXoaTrang.addActionListener(this);
+		btnSua.addActionListener(this);
 		btnTim.addActionListener(this);
 		btnXoa.addActionListener(this);
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -196,10 +202,46 @@ public class ThemNCC_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnTim)) {
 			tim();
 		}
+		if (o.equals(btnSua)) {
+			sua();
+		}
 		if (o.equals(btnXoa)) {
 			xoa();
 		}
 
+	}
+
+	private void sua() {
+		if (table.getSelectedRow() == -1) {
+			JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà cung cấp cần sửa");
+			return;
+		}
+		if (!xuLyDuLieu())
+			return;
+		
+		String ma = txtMa.getText();
+		String ten = txtTen.getText();
+		String diaChi = txtDiaChi.getText();
+		String sdt = txtSDT.getText();
+		NhaCungCap ncc = new NhaCungCap(ma, ten, diaChi, sdt);
+		if (ma.equals("") || ten.equals("") || diaChi.equals("") || sdt.equals("")) {
+			JOptionPane.showMessageDialog(null, "Vui lòng nhập đủ thông tin");
+			return;
+		}
+		int hoiNhac = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn sửa", "Xác nhận",
+				JOptionPane.YES_NO_OPTION);
+		if (hoiNhac != JOptionPane.YES_OPTION) {
+			return;
+		}
+		if (nccDao.searchNCC(ma)) {
+			JOptionPane.showMessageDialog(null, "Sửa nhà cung cấp thành công");
+			nccDao.updateNCC(ncc);
+			hienThiDanhSachNCC();
+			xoaTrang();
+		} else {
+			JOptionPane.showMessageDialog(null, "Không tìm thấy nhà cung cấp cần sửa");
+		}
+		
 	}
 
 	private void xoa() {

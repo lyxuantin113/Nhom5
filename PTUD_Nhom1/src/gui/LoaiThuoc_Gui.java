@@ -260,7 +260,7 @@ public class LoaiThuoc_Gui extends JFrame implements ActionListener, MouseListen
 		if (hoi != JOptionPane.YES_OPTION) {
 			return;
 		}
-		if (loaiThuocDao.checkMaLoaiThuoc(maLoai) == true) {
+		if (loaiThuocDao.checkTonTaiThuoc(maLoai)) {
 			JOptionPane.showMessageDialog(null, "Không thể xóa loại thuốc này vì có thuốc liên quan");
 			return;
 		}

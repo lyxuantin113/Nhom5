@@ -52,7 +52,6 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	private JTable table;
 	private JTable table2;
 	private JButton btnDaNhan;
-	private JButton btnIn;
 	private JButton btnInExcel;
 	private AbstractButton btnLamMoi;
 	
@@ -95,20 +94,16 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		btnDaNhan = new JButton("Đã nhận");
 		btnDaNhan.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnDaNhan.setBackground(new Color(0, 160, 255));
-		btnIn = new JButton("In");
-		btnIn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnIn.setBackground(new Color(0, 160, 255));
 		btnLamMoi = new JButton("Làm mới");
 		btnLamMoi.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnLamMoi.setBackground(new Color(0, 160, 255));
 
 		pnButton.add(btnDaNhan);
-		pnButton.add(btnIn);
 		pnButton.add(btnLamMoi);
 
 		pnCenterTop.add(pnButton);
 		// Table danh sách thuốc trong phiếu nhập
-		String[] headers2 = { "Mã thuốc", "Số lượng", "Giá nhập", "Hạn sử dụng", "Đơn vị", "Thành tiền", "Mã CTPNT" };
+		String[] headers2 = { "Mã thuốc","Tên thuốc", "Số lượng", "Giá nhập", "Hạn sử dụng", "Đơn vị", "Thành tiền", "Mã CTPNT" };
 		DefaultTableModel model2 = new DefaultTableModel(headers2, 0);
 		table2 = new JTable(model2);
 		table2.setPreferredScrollableViewportSize(new java.awt.Dimension(1000, 300));
@@ -131,7 +126,6 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		add(pnMain);
 		// Action
 		btnDaNhan.addActionListener(this);
-		btnIn.addActionListener(this);
 		btnInExcel.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 
@@ -153,8 +147,8 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			Object[] rowData = new Object[6];
 			rowData[0] = pnt.getMaPhieuNhap();
 			rowData[1] = pnt.getNgayNhap();
-			rowData[2] = pnt.getMaNV();
-			rowData[3] = pnt.getMaNCC();
+			rowData[2] = pnt.getNhanVien().getTenNV();
+			rowData[3] = pnt.getNhaCungCap().getTenNCC();
 			rowData[4] = pnt.getTongTien();
 			Boolean trangThai = pnt.getTrangThai();
 			if (trangThai == true) {
@@ -193,7 +187,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 				List<Thuoc> dsThuoc = new Thuoc_Dao().readFromTable();
 				for (ChiTietPhieuNhapThuoc ctPNT : dsCTPNT) {
 					for (Thuoc thuoc : dsThuoc) {
-						if (ctPNT.getMaThuoc().equals(thuoc.getMaThuoc())) {
+						if (ctPNT.getThuoc().getMaThuoc().equals(thuoc.getMaThuoc())) {
 							int soLuongTon = thuoc.getSoLuongTon() + ctPNT.getSoLuong();
 							thuoc.setSoLuongTon(soLuongTon);
 						}
@@ -211,10 +205,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			}
 
 		}
-		if (o.equals(btnIn)) {
-			// In danh sách phiếu nhập
-			inPhieuNhap(table, "data/DanhSachPhieuNhap.xlsx");
-		}
+		
 		if (o.equals(btnInExcel)) {
 
 			// Lấy mã phiếu nhập
@@ -229,11 +220,6 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			maPhieuNhap += ".xlsx";
 			inPhieuNhap(table2, maPhieuNhap);
 			
-			try {
-				inPDF(maPhieuNhap);
-			} catch (JRException e1) {
-				JOptionPane.showMessageDialog(this, "In file pdf thất bại!");
-			}
 
 		}
 		if (o.equals(btnLamMoi)) {
@@ -242,30 +228,6 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 
 	}
 
-	private void inPDF(String maPhieuNhap) throws JRException {
-//		try {
-//			// Kết nối CSDL (nếu cần)
-//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databaseName=QuanLyThuoc",
-//					"sa", "sapassword");
-//
-//			// Đường dẫn đến tệp mẫu .jasper
-//			String jasperFile = "src/jasper/Blank_A4_Landscape.jasper";
-//
-//			// Biến dữ liệu, nếu cần
-//			HashMap<String, Object> params = new HashMap<>();
-//
-//			// Tạo báo cáo
-//			JasperReport jasperReport = JasperCompileManager.compileReport(jasperFile);
-//			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);
-//
-//			// Export báo cáo ra file PDF
-//			JasperExportManager.exportReportToPdfFile(jasperPrint, "data/report.pdf");
-//
-//			System.out.println("Báo cáo đã được tạo thành công!");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-	}
 
 	private void inPhieuNhap(JTable table, String filePath) {
 
@@ -318,8 +280,8 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 		model.setRowCount(0);
 		List<ChiTietPhieuNhapThuoc> dsCTPNT = new ChiTietPhieuNhapThuoc_Dao().readFromTable(maPhieuNhap);
 		for (ChiTietPhieuNhapThuoc ctPNT : dsCTPNT) {
-			Object[] rowData = { ctPNT.getMaThuoc(), ctPNT.getSoLuong(), ctPNT.getGiaNhap(), ctPNT.getHsd(),
-					ctPNT.getDonVi(), ctPNT.getThanhTien(), ctPNT.getMaPhieuNhap() };
+			Object[] rowData = { ctPNT.getThuoc().getMaThuoc(), ctPNT.getThuoc().getTenThuoc(),ctPNT.getSoLuong(), ctPNT.getGiaNhap(), ctPNT.getHsd(),
+					ctPNT.getDonVi(), ctPNT.getThanhTien(), ctPNT.getMaPhieuNhap().getMaPhieuNhap() };
 			model.addRow(rowData);
 		}
 

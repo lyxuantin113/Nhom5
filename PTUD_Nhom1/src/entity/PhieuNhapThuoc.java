@@ -5,36 +5,40 @@ import java.time.LocalDate;
 
 public class PhieuNhapThuoc {
 	private String maPhieuNhap;
-	private String maNCC;
-	private String maNV;
+	private NhaCungCap nhaCungCap;
+	private NhanVien nhanVien;
 	private LocalDate ngayNhap;
+	private Double tongTien;
+	private Boolean trangThai;
+	
 	public LocalDate getNgayNhap() {
 		return ngayNhap;
 	}
 	public void setNgayNhap(LocalDate ngayNhap) {
 		this.ngayNhap = ngayNhap;
 	}
-	private Double tongTien;
-	private Boolean trangThai;
+	
 	public String getMaPhieuNhap() {
 		return maPhieuNhap;
 	}
 	public void setMaPhieuNhap(String maPhieuNhap) {
 		this.maPhieuNhap = maPhieuNhap;
 	}
-	public String getMaNCC() {
-		return maNCC;
+	
+	public NhaCungCap getNhaCungCap() {
+		return nhaCungCap;
 	}
-	public void setMaNCC(String maNCC) {
-		this.maNCC = maNCC;
-	}
-	public String getMaNV() {
-		return maNV;
-	}
-	public void setMaNV(String maNV) {
-		this.maNV = maNV;
+	public void setNhaCungCap(NhaCungCap nhaCungCap) {
+		this.nhaCungCap = nhaCungCap;
 	}
 	
+	
+	public NhanVien getNhanVien() {
+		return nhanVien;
+	}
+	public void setNhanVien(NhanVien nhanVien) {
+		this.nhanVien = nhanVien;
+	}
 	public Double getTongTien() {
 		return tongTien;
 	}
@@ -47,17 +51,17 @@ public class PhieuNhapThuoc {
 	public void setTrangThai(Boolean trangThai) {
 		this.trangThai = trangThai;
 	}
-	public PhieuNhapThuoc(String maPhieuNhap, String maNCC, String maNV, LocalDate ngayNhap, Double tongTien,
-			Boolean trangThai) {
+	
+	public PhieuNhapThuoc(String maPhieuNhap, NhaCungCap nhaCungCap, NhanVien nhanVien, LocalDate ngayNhap,
+			Double tongTien, Boolean trangThai) {
 		super();
 		this.maPhieuNhap = maPhieuNhap;
-		this.maNCC = maNCC;
-		this.maNV = maNV;
+		this.nhaCungCap = nhaCungCap;
+		this.nhanVien = nhanVien;
 		this.ngayNhap = ngayNhap;
 		this.tongTien = tongTien;
 		this.trangThai = trangThai;
 	}
-	
 	public PhieuNhapThuoc() {
 		super();
 	}

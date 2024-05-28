@@ -132,8 +132,8 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		for (Thuoc thuoc : dsThuoc) {
 			String ncc = nccDao.getNCC(thuoc.getMaNCC());
-			String loai = loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc());
-			String donVi = donViDao.getDonVi(thuoc.getDonVi());
+			String loai = loaiThuocDao.getLoaiThuoc(thuoc.getMaLoai().getMaLoai());
+			String donVi = donViDao.getDonVi(thuoc.getMaDonVi().getMaDonVi());
 			Object[] rowData = { ncc, thuoc.getMaThuoc(), thuoc.getTenThuoc(), loai,
 					donVi, thuoc.getHSD(), thuoc.getGiaNhap(), thuoc.getGiaBan(), thuoc.getSoLuongTon(),
 					thuoc.getNuocSanXuat() };
@@ -177,7 +177,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					for (Thuoc thuoc : dsThuoc) {						
 						if (thuoc.getMaThuoc().contains(thongTin)) {
 							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getMaLoai().getMaLoai()), donViDao.getDonVi(thuoc.getMaDonVi().getMaDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -196,7 +196,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getTenThuoc().contains(thongTin)) {
 							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getMaLoai().getMaLoai()), donViDao.getDonVi(thuoc.getMaDonVi().getMaDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -213,9 +213,9 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					model.setRowCount(0);
 					JOptionPane.showMessageDialog(this, "Tìm thấy loại thuốc.");
 					for (Thuoc thuoc : dsThuoc) {
-						if (thuoc.getLoaiThuoc().contains(loai)) {
+						if (thuoc.getMaLoai().getMaLoai().contains(loai)) {
 							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getMaLoai().getMaLoai()), donViDao.getDonVi(thuoc.getMaDonVi().getMaDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
@@ -234,7 +234,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getMaNCC().contains(ncc)) {
 							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-									loaiThuocDao.getLoaiThuoc(thuoc.getLoaiThuoc()), donViDao.getDonVi(thuoc.getDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
+									loaiThuocDao.getLoaiThuoc(thuoc.getMaLoai().getMaLoai()), donViDao.getDonVi(thuoc.getMaDonVi().getMaDonVi()), thuoc.getHSD(), thuoc.getGiaNhap(),
 									thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
 							model.addRow(rowData);
 						}
