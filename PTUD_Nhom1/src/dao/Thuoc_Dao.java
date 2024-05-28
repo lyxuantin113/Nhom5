@@ -79,13 +79,48 @@ public class Thuoc_Dao {
 			// Lưu mã QR vào một tệp PNG
 			String qrCodeFilename = thuoc.getMaThuoc() + "_" + UUID.randomUUID().toString() + ".png";
 			MatrixToImageWriter.writeToPath(bitMatrix, "PNG", new File(qrCodeFilename).toPath());
-
-			String query = "insert into Thuoc values ('" + thuoc.getMaThuoc() + "', '" + thuoc.getTenThuoc() + "', '"
-					+ thuoc.getLoaiThuoc() + "', '" + thuoc.getDonVi() + "', '" + thuoc.getHSD() + "', "
-					+ thuoc.getGiaNhap() + ", " + thuoc.getGiaBan() + ", " + thuoc.getSoLuongTon() + ", '"
-					+ thuoc.getNuocSanXuat() + "', '" + thuoc.getMaNCC() + "')";
-			Statement stm = con.createStatement();
-			stm.executeUpdate(query);
+			// Chuyển loại thuốc thành mã
+			String query1 = "select maLoaiThuoc from LoaiThuoc where loaiThuoc = '" + thuoc.getLoaiThuoc() + "'";
+			Statement stm1 = con.createStatement();
+			ResultSet rs1 = stm1.executeQuery(query1);
+			String maLoai = "";
+			if (rs1.next()) {
+				maLoai = rs1.getString(1);
+			}
+			// Chuyển đơn vị thành mã đơn vị
+			String query2 = "select maDonVi from DonVi where donVi = '" + thuoc.getDonVi() + "'";
+			Statement stm2 = con.createStatement();
+			ResultSet rs2 = stm2.executeQuery(query2);
+			String maDonVi = "";
+			if (rs2.next()) {
+				maDonVi = rs2.getString(1);
+			}
+			// Chuyển nhà cung cấp thành mã nhà cung cấp
+			String query3 = "select maNCC from NhaCungCap where tenNCC = '" + thuoc.getMaNCC() + "'";
+			Statement stm3 = con.createStatement();
+			ResultSet rs3 = stm3.executeQuery(query3);
+			String maNCC = "";
+			if (rs3.next()) {
+				maNCC = rs3.getString(1);
+			}
+			
+			// Thêm thuốc vào database
+			String query = "insert into Thuoc values(?,?,?,?,?,?,?,?,?,?)";
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setString(1, thuoc.getMaThuoc());
+			pstmt.setString(2, thuoc.getTenThuoc());
+			pstmt.setString(3, maLoai);
+			pstmt.setString(4, maDonVi);
+			pstmt.setDate(5, java.sql.Date.valueOf(thuoc.getHSD()));
+			pstmt.setDouble(6, thuoc.getGiaNhap());
+			pstmt.setDouble(7, thuoc.getGiaBan());
+			pstmt.setInt(8, thuoc.getSoLuongTon());
+			pstmt.setString(9, thuoc.getNuocSanXuat());
+			pstmt.setString(10, maNCC);
+			
+			pstmt.executeUpdate();
+			pstmt.close();
+			
 			dsThuoc.add(thuoc);
 
 		} catch (Exception e) {
@@ -342,9 +377,9 @@ public class Thuoc_Dao {
 				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
 				return;
 			}
-			// Update số lượng tồn, giá nhận, hsd, đơn vị
-			String query = "update Thuoc set soLuongTon = '" + thuoc.getSoLuongTon() + "', giaNhap = '"
-					+ thuoc.getGiaNhap() + "', HSD = '" + thuoc.getHSD() + "', donVi = '" + thuoc.getDonVi()
+			// Update số lượng tồn, hsd
+			String query = "update Thuoc set soLuongTon = '" + thuoc.getSoLuongTon() 
+					+ "', HSD = '" + thuoc.getHSD()
 					+ "' where maThuoc = '" + thuoc.getMaThuoc() + "'";
 			Statement stm = con.createStatement();
 			stm.executeUpdate(query);
@@ -465,11 +500,17 @@ public class Thuoc_Dao {
 				String so = ma.substring(2);
 				int soMoi = Integer.parseInt(so) + 1;
 				if (soMoi < 10) {
-					ma = "TH00" + soMoi;
+					ma = "TH00000" + soMoi;
 				} else if (soMoi < 100) {
-					ma = "TH0" + soMoi;
+					ma = "TH0000" + soMoi;
 				} else if (soMoi < 1000) {
-					ma = "TH" +soMoi;
+					ma = "TH000" +soMoi;
+				} else if (soMoi < 10000) {
+					ma = "TH00" + soMoi;
+				} else if (soMoi < 100000) {
+					ma = "TH0" + soMoi;
+				} else {
+					ma = "TH" + soMoi;
 				}
 				
 			}

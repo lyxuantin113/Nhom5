@@ -15,7 +15,7 @@ import dao.KhachHang_Dao;
 import db.ConnectDB;
 import entity.KhachHang;
 import entity.NhanVien;
-
+import dao.KhachHang_Dao;
 public class DSKhachHang_Gui extends JPanel implements ActionListener {
 	private JButton btnThem;
 	private JButton btnXoaTrang;
@@ -166,6 +166,9 @@ public class DSKhachHang_Gui extends JPanel implements ActionListener {
 		 for (KhachHang kh : dsKH) {
 		 model.addRow(new Object[] { kh.getMaKH(), kh.getSoDienThoai(), kh.getHoTen() });
 		 }
+		 txtMaKH.setEditable(false);
+		 KhachHang_Dao khd = new KhachHang_Dao();
+		 txtMaKH.setText(khd.taoMa());
 	}
        
 	

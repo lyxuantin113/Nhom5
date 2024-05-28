@@ -204,5 +204,37 @@ public class KhachHang_Dao {
     
 	}
 	
+	public String taoMa() {
+		String maKH = "";
+		try {
+			Connection con = ConnectDB.getInstance().getConnection();
+			if (con == null) {
+				System.err.println("Không thể thiết lập kết nối cơ sở dữ liệu.");
+				return maKH;
+			}
+			String query = "SELECT top 1 maKH FROM KhachHang ORDER BY maKH DESC";
+			Statement stm = con.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			if (rs.next()) {
+				String ma = rs.getString(1);
+				String number = ma.substring(2);
+				int so = Integer.parseInt(number) + 1;
+				if (so < 10) {
+					maKH = "KH0000" + so;
+				} else if (so < 100) {
+					maKH = "KH000" + so;
+				} else if (so < 1000){
+					maKH = "KH00" + so;
+				} else if (so < 10000) {
+					maKH = "KH0" + so;
+				} else {
+					maKH = "KH" + so;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return maKH;
+	}
 
 }

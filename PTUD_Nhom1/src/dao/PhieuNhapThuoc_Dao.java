@@ -233,7 +233,7 @@ public class PhieuNhapThuoc_Dao {
 	}
 
 	public static String taoMaPhieuNhap() {
-		String maPhieuNhap = "PN";
+		String maPhieuNhap = "";
 		try {
 			Connection con = ConnectDB.getInstance().getConnection();
 			String query = "select top 1 maPhieuNhap from PhieuNhapThuoc order by maPhieuNhap desc";
@@ -244,11 +244,17 @@ public class PhieuNhapThuoc_Dao {
 				String so = maCu.substring(2);
 				int soMoi = Integer.parseInt(so) + 1;
 				if (soMoi < 10) {
-					maPhieuNhap += "00" + soMoi;
+					maPhieuNhap = "PN00000" + soMoi;
 				} else if (soMoi < 100) {
-					maPhieuNhap += "0" + soMoi;
+					maPhieuNhap = "PN0000" + soMoi;
 				} else if (soMoi < 1000) {
-					maPhieuNhap +=  + soMoi;
+					maPhieuNhap = "PN000" + soMoi;
+				} else if (soMoi < 10000) {
+					maPhieuNhap = "PN00" + soMoi;
+				} else if (soMoi < 100000) {
+					maPhieuNhap = "PN0" + soMoi;
+				} else {
+					maPhieuNhap = "PN" + soMoi;
 				}
 			}
 			

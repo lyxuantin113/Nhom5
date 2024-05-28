@@ -527,7 +527,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 	private boolean checkHSD() {
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		Thuoc thuoc = thuocDao.timTheoMa(txtMaThuoc.getText()).get(0);
+		Thuoc thuoc = thuocDao.timTheoMa(txtMaThuoc.getText());
 		if (thuoc.getHSD().isBefore(LocalDate.now().minusDays(3))) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Thuốc đã quá hạn hoặc sắp hết hạn!");
 			return false;
@@ -652,7 +652,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		String maThuoc = txtMaThuoc.getText();
-		Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
+		Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
 		int soLuong = Integer.parseInt(txtSoLuong.getText());
 		ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
 		ChiTietDonDat ctdd = new ChiTietDonDat(thuoc, soLuong);
@@ -744,7 +744,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			for (int i = 0; i < modelHoaDon.getRowCount(); i++) {
 				Thuoc_Dao thuocDao = new Thuoc_Dao();
 				String maThuoc = (String) tblHoaDon.getValueAt(i, 0);
-				Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
 				int soLuong = Integer.parseInt(tblHoaDon.getValueAt(i, 6).toString());
 
 				ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
@@ -983,16 +983,16 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			return;
 		} else {
 			if (cachTim.equals("Mã thuốc")) {
-				List<Thuoc> listThuoc = thuocDao.timTheoMa(thongTin);
-				if (listThuoc != null) {
-					for (Thuoc thuoc : listThuoc) {
-						DefaultTableModel model = (DefaultTableModel) tblFrameThuoc.getModel();
-						model.setRowCount(0);
-						Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
-								thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
-								thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
-						model.addRow(rowData);
-					}
+				Thuoc thuoc = thuocDao.timTheoMa(thongTin);
+				if (thuoc != null) {
+			
+					DefaultTableModel model = (DefaultTableModel) tblFrameThuoc.getModel();
+					model.setRowCount(0);
+					Object[] rowData = { thuoc.getMaNCC(), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
+							thuoc.getLoaiThuoc(), thuoc.getDonVi(), thuoc.getHSD(), thuoc.getGiaNhap(),
+							thuoc.getGiaBan(), thuoc.getSoLuongTon(), thuoc.getNuocSanXuat() };
+					model.addRow(rowData);
+					
 				} else {
 					JOptionPane.showMessageDialog(this, "Không tìm thấy mã thuốc.");
 					hienTableFrame();
@@ -1547,8 +1547,8 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 			String maThuoc = txtMaThuoc.getText();
 			Thuoc_Dao tDao = new Thuoc_Dao();
 
-			if (!tDao.timTheoMa(maThuoc).isEmpty()) {
-				Thuoc thuoc = tDao.timTheoMa(maThuoc).get(0);
+			if (!(tDao.timTheoMa(maThuoc)== null)) {
+				Thuoc thuoc = tDao.timTheoMa(maThuoc);
 				txtTenThuoc.setText(thuoc.getTenThuoc());
 				txtLoaiThuoc.setText(thuoc.getLoaiThuoc());
 				txtDonVi.setText(thuoc.getDonVi());

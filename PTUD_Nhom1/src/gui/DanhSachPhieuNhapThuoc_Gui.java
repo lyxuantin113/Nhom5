@@ -53,10 +53,11 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	private JTable table2;
 	private JButton btnDaNhan;
 	private JButton btnIn;
-	private JButton btnInChiTiet;
+	private JButton btnInExcel;
 	private AbstractButton btnLamMoi;
 	
 	private NhanVien nvdn;
+	
 
 	public DanhSachPhieuNhapThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
@@ -121,17 +122,17 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 
 		// Footer
 		JPanel pnFoot = new JPanel();
-		btnInChiTiet = new JButton("In chi tiết");
-		btnInChiTiet.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnInChiTiet.setBackground(new Color(0, 160, 255));
-		pnFoot.add(btnInChiTiet);
+		btnInExcel = new JButton("Xuất file Excel");
+		btnInExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnInExcel.setBackground(new Color(0, 160, 255));
+		pnFoot.add(btnInExcel);
 		pnMain.add(pnFoot, BorderLayout.SOUTH);
 
 		add(pnMain);
 		// Action
 		btnDaNhan.addActionListener(this);
 		btnIn.addActionListener(this);
-		btnInChiTiet.addActionListener(this);
+		btnInExcel.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 
 		// Hiển thị danh sách phiếu nhập
@@ -171,6 +172,14 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o.equals(btnDaNhan)) {
+			if (table.getSelectedRow() == -1) {
+				JOptionPane.showMessageDialog(this, "Chọn phiếu nhập cần nhận!");
+				return;
+			}
+			if (table.getValueAt(table.getSelectedRow(), 5).equals("Đã nhận")) {
+				JOptionPane.showMessageDialog(this, "Phiếu nhập đã được nhận!");
+				return;
+			}
 			int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn chắc chắn đã nhận thuốc?");
 			if (hoiNhac == JOptionPane.YES_OPTION) {
 				// Đánh dấu phiếu nhập đã nhận
@@ -206,7 +215,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 			// In danh sách phiếu nhập
 			inPhieuNhap(table, "data/DanhSachPhieuNhap.xlsx");
 		}
-		if (o.equals(btnInChiTiet)) {
+		if (o.equals(btnInExcel)) {
 
 			// Lấy mã phiếu nhập
 			int row = table.getSelectedRow();
@@ -234,28 +243,28 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	}
 
 	private void inPDF(String maPhieuNhap) throws JRException {
-		try {
-			// Kết nối CSDL (nếu cần)
-			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databaseName=QuanLyThuoc",
-					"sa", "sapassword");
-
-			// Đường dẫn đến tệp mẫu .jasper
-			String jasperFile = "src/jasper/Blank_A4_Landscape.jasper";
-
-			// Biến dữ liệu, nếu cần
-			HashMap<String, Object> params = new HashMap<>();
-
-			// Tạo báo cáo
-			JasperReport jasperReport = JasperCompileManager.compileReport(jasperFile);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);
-
-			// Export báo cáo ra file PDF
-			JasperExportManager.exportReportToPdfFile(jasperPrint, "data/report.pdf");
-
-			System.out.println("Báo cáo đã được tạo thành công!");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			// Kết nối CSDL (nếu cần)
+//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databaseName=QuanLyThuoc",
+//					"sa", "sapassword");
+//
+//			// Đường dẫn đến tệp mẫu .jasper
+//			String jasperFile = "src/jasper/Blank_A4_Landscape.jasper";
+//
+//			// Biến dữ liệu, nếu cần
+//			HashMap<String, Object> params = new HashMap<>();
+//
+//			// Tạo báo cáo
+//			JasperReport jasperReport = JasperCompileManager.compileReport(jasperFile);
+//			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);
+//
+//			// Export báo cáo ra file PDF
+//			JasperExportManager.exportReportToPdfFile(jasperPrint, "data/report.pdf");
+//
+//			System.out.println("Báo cáo đã được tạo thành công!");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private void inPhieuNhap(JTable table, String filePath) {
