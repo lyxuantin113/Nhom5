@@ -131,13 +131,13 @@ public class HoaDon_Dao {
 	}
 
 //	NHÂN VIÊN
-	public List<HoaDon> findByNhanVien(String maNV) {
+	public List<HoaDon> findByNhanVien(String tenNV) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "select * from HoaDon where maNV = ?";
+		String query = "select * from HoaDon where tenNV = ?";
 
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maNV);
+			pstmt.setString(1, tenNV);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -221,14 +221,14 @@ public class HoaDon_Dao {
 	}
 
 //	THỐNG KÊ FULL FIELD
-	public List<HoaDon> findTKFullField(LocalDate ngayLap, String maNV, String maKH) {
+	public List<HoaDon> findTKFullField(LocalDate ngayLap, String tenNV, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "select * from HoaDon where ngayLap = ? AND maNV = ? AND maKH = ?";
+		String query = "select * from HoaDon where ngayLap = ? AND tenNV = ? AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setDate(1, Date.valueOf(ngayLap));
-			pstmt.setString(2, maNV);
-			pstmt.setString(3, maKH);
+			pstmt.setString(2, tenNV);
+			pstmt.setString(3, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -245,15 +245,15 @@ public class HoaDon_Dao {
 	}
 
 //	Thống kê đơn của KH X được lập bởi NV Y theo tháng
-	public List<HoaDon> findXYinMonth(LocalDate ngayLap, String maNV, String maKH) {
+	public List<HoaDon> findXYinMonth(LocalDate ngayLap, String tenNV, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND MONTH(ngayLap) = ? AND maNV = ? AND maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND MONTH(ngayLap) = ? AND tenNV = ? AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getYear());
 			pstmt.setInt(2, ngayLap.getMonthValue());
-			pstmt.setString(3, maNV);
-			pstmt.setString(4, maKH);
+			pstmt.setString(3, tenNV);
+			pstmt.setString(4, sdtKH);
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -269,14 +269,14 @@ public class HoaDon_Dao {
 	}
 
 //	Thống kê đơn của KH X được lập bởi NV Y theo năm
-	public List<HoaDon> findXYinYear(LocalDate ngayLap, String maNV, String maKH) {
+	public List<HoaDon> findXYinYear(LocalDate ngayLap, String tenNV, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND maNV = ? AND maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND tenNV = ? AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getYear());
-			pstmt.setString(2, maNV);
-			pstmt.setString(3, maKH);
+			pstmt.setString(2, tenNV);
+			pstmt.setString(3, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -293,13 +293,13 @@ public class HoaDon_Dao {
 	}
 
 //	Thống kê đơn của KH X được lập bởi NV Y 
-	public List<HoaDon> findXByY(String maNV, String maKH) {
+	public List<HoaDon> findXByY(String tenNV, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE maNV = ? AND maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE tenNV = ? AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maNV);
-			pstmt.setString(2, maKH);
+			pstmt.setString(1, tenNV);
+			pstmt.setString(2, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -350,12 +350,12 @@ public class HoaDon_Dao {
 // NHÂN VIÊN
 
 //	Thống kê đơn của NV Y
-	public List<HoaDon> findNV(String maNV) {
+	public List<HoaDon> findNV(String tenNV) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE maNV = ?";
+		String query = "SELECT * FROM HoaDon WHERE tenNV = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maNV);
+			pstmt.setString(1, tenNV);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -372,13 +372,13 @@ public class HoaDon_Dao {
 	}
 
 //	Thống kê đơn của NV Y theo năm
-	public List<HoaDon> findNVinYear(LocalDate ngayLap, String maNV) {
+	public List<HoaDon> findNVinYear(LocalDate ngayLap, String tenNV) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND maNV = ?";
+		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND tenNV = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getYear());
-			pstmt.setString(2, maNV);
+			pstmt.setString(2, tenNV);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -395,14 +395,14 @@ public class HoaDon_Dao {
 	}
 
 //	Thống kê đơn của NV Y theo tháng
-	public List<HoaDon> findNVinMonth(LocalDate ngayLap, String maNV) {
+	public List<HoaDon> findNVinMonth(LocalDate ngayLap, String tenNV) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? AND maNV = ?";
+		String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? AND tenNV = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getMonthValue());
 			pstmt.setInt(2, ngayLap.getYear());
-			pstmt.setString(3, maNV);
+			pstmt.setString(3, tenNV);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -419,13 +419,13 @@ public class HoaDon_Dao {
 	}
 
 //	Thống kê đơn của NV Y theo ngày
-	public List<HoaDon> findNVinDay(LocalDate ngayLap, String maNV) {
+	public List<HoaDon> findNVinDay(LocalDate ngayLap, String tenNV) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "select * from HoaDon where ngayLap = ?  AND maNV = ?";
+		String query = "select * from HoaDon where ngayLap = ?  AND tenNV = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setDate(1, Date.valueOf(ngayLap));
-			pstmt.setString(2, maNV);
+			pstmt.setString(2, tenNV);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -444,12 +444,12 @@ public class HoaDon_Dao {
 // KHÁCH HÀNG
 
 //	Thống kê đơn của KH X
-	public List<HoaDon> findKH(String maKH) {
+	public List<HoaDon> findKH(String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, maKH);
+			pstmt.setString(1, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -466,13 +466,13 @@ public class HoaDon_Dao {
 	}
 
 //		Thống kê đơn của KH X theo năm
-	public List<HoaDon> findKHinYear(LocalDate ngayLap, String maKH) {
+	public List<HoaDon> findKHinYear(LocalDate ngayLap, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE YEAR(ngayLap) = ? AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getYear());
-			pstmt.setString(2, maKH);
+			pstmt.setString(2, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -489,14 +489,14 @@ public class HoaDon_Dao {
 	}
 
 //		Thống kê đơn của KH X theo tháng
-	public List<HoaDon> findKHinMonth(LocalDate ngayLap, String maKH) {
+	public List<HoaDon> findKHinMonth(LocalDate ngayLap, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? AND maKH = ?";
+		String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, ngayLap.getMonthValue());
 			pstmt.setInt(2, ngayLap.getYear());
-			pstmt.setString(3, maKH);
+			pstmt.setString(3, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -513,13 +513,13 @@ public class HoaDon_Dao {
 	}
 
 //		Thống kê đơn của KH X theo ngày
-	public List<HoaDon> findKHinDay(LocalDate ngayLap, String maKH) {
+	public List<HoaDon> findKHinDay(LocalDate ngayLap, String sdtKH) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "select * from HoaDon where ngayLap = ?  AND maKH = ?";
+		String query = "select * from HoaDon where ngayLap = ?  AND sdtKH = ?";
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setDate(1, Date.valueOf(ngayLap));
-			pstmt.setString(2, maKH);
+			pstmt.setString(2, sdtKH);
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -698,11 +698,8 @@ public class HoaDon_Dao {
 
 	public boolean checkThuoc(String maThuoc) {
 		try {
-			String query =  "SELECT * "
-					+ "FROM HoaDon p "
-					+ "JOIN ChiTietHoaDon c ON p.maHoaDon = c.maHoaDon "
+			String query = "SELECT * " + "FROM HoaDon p " + "JOIN ChiTietHoaDon c ON p.maHoaDon = c.maHoaDon "
 					+ "WHERE c.maThuoc = '" + maThuoc + "'";
-					
 
 			Statement stm = con.createStatement();
 			ResultSet rs = stm.executeQuery(query);
@@ -715,4 +712,25 @@ public class HoaDon_Dao {
 		return false;
 	}
 
+//	Lấy hóa đơn theo tháng
+	public List<HoaDon> findinMonth(int month) {
+		List<HoaDon> listHD = new ArrayList<HoaDon>();
+		String query = "SELECT * FROM HoaDon WHERE MONTH(ngayLap) = ?";
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, month);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				listHD.add(findByID(maHD));
+			}
+			return listHD;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

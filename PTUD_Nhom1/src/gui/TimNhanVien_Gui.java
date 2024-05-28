@@ -113,18 +113,18 @@ public class TimNhanVien_Gui extends JPanel implements ActionListener {
 		}
 	}
 	private void timAction() {
-		String searchName = JOptionPane.showInputDialog(this, "Nhập mã nhân viên cần tìm kiếm:");
+		String searchName = JOptionPane.showInputDialog(this, "Nhập tên nhân viên cần tìm kiếm:");
 
 		if (searchName == null || searchName.trim().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Vui lòng nhập mã nhân viên .");
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập tên nhân viên .");
 			return;
 		}
 		for (int i = 0; i < tableNhanVien.getRowCount(); i++) {
-			String maNV = (String) tableNhanVien.getValueAt(i, 0);
+			String maNV = (String) tableNhanVien.getValueAt(i, 1);
 
 			if (maNV.equalsIgnoreCase(searchName)) {
 				tableNhanVien.setRowSelectionInterval(i, i);
-				tableNhanVien.scrollRectToVisible(tableNhanVien.getCellRect(i, 0, true));
+				tableNhanVien.scrollRectToVisible(tableNhanVien.getCellRect(i, 1, true));
 				return;
 			}
 		}

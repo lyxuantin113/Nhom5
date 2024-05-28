@@ -21,6 +21,11 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import dao.HoaDon_Dao;
 import dao.KhachHang_Dao;
@@ -196,12 +201,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxBoLocBtn = Box.createHorizontalBox();
 		boxBtn = Box.createHorizontalBox();
 		btnXemThongKe = new JButton("Xem Thống Kê");
-		btnXemThongKe.setBackground(new Color(0,160,255));
+		btnXemThongKe.setBackground(new Color(0, 160, 255));
 		btnXemThongKe.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnXoaRong = new JButton("Xóa Rỗng");
-		btnXoaRong.setBackground(new Color(0,160,255));
+		btnXoaRong.setBackground(new Color(0, 160, 255));
 		btnXoaRong.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		boxBtn.add(btnXemThongKe);
 		boxBtn.add(Box.createHorizontalStrut(20));
 		boxBtn.add(btnXoaRong);
@@ -244,10 +249,10 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		txtTongLoi.setEditable(false);
 
 		btnIn = new JButton("In thống kê");
-		btnIn.setBackground(new Color(0,160,255));
+		btnIn.setBackground(new Color(0, 160, 255));
 		btnIn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnIn.setPreferredSize(new Dimension(100, 35));
-		
+
 		boxTong.add(lblTongTien);
 		boxTong.add(txtTongTien);
 		boxTong.add(Box.createHorizontalStrut(20));
@@ -256,6 +261,10 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxTong.add(Box.createHorizontalStrut(20));
 		boxTong.add(btnIn);
 		pnlBottom.add(boxTong);
+
+		// Biểu đồ
+		JPanel chartPanel = createChartPanel();
+		pnlCenter.add(chartPanel, BorderLayout.WEST);
 
 //		MAIN
 		pnlMain.add(pnlHead, BorderLayout.NORTH);
@@ -268,7 +277,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		btnXoaRong.addActionListener(this);
 		btnXemThongKe.addActionListener(this);
 		btnIn.addActionListener(this);
-		
+
 		ConnectDB.connect();
 		hienTable();
 		cbbThang.addActionListener(new ActionListener() {
@@ -292,7 +301,40 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		});
 	}
 
-//	 Trong phương thức hienTable()
+	private JPanel createChartPanel() {
+		// Dữ liệu minh họa: doanh thu hàng tháng trong năm
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		for(int i = 1; i<=12; i++) {
+			dataset.addValue(doanhThuTheoThang(i), "Doanh thu", String.valueOf(i));
+		}
+
+		// Tạo biểu đồ
+		JFreeChart chart = ChartFactory.createBarChart("Doanh thu theo tháng trong năm", // Tiêu đề biểu đồ
+				"Tháng", // Nhãn trục x
+				"Doanh thu (VNĐ)", // Nhãn trục y
+				dataset, // Dữ liệu
+				PlotOrientation.VERTICAL, false, // Include legend
+				true, false);
+
+		// Tạo Panel chứa biểu đồ
+		return new ChartPanel(chart);
+	}
+	
+	public double doanhThuTheoThang(int month) {
+		HoaDon_Dao hdDao = new HoaDon_Dao();
+
+		List<HoaDon> listHD = hdDao.findinMonth(month);
+
+		double tongTien = 0;
+		double tongLoi = 0;
+		for (HoaDon hoaDon : listHD) {
+			tongTien += hdDao.tinhTongTien(hoaDon);
+			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+		}
+
+		return tongTien;
+	}
+	// Trong phương thức hienTable()
 	public void hienTable() {
 		List<HoaDon> danhSachHoaDon = dsHD.readFromTable();
 
@@ -326,7 +368,7 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 			double loiNhuan = dsHD.tinhLoiNhuanChoHoaDon(hoaDon);
 
 			// Tạo một mảng chứa các giá trị của hàng
-			Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getMaKH(), hoaDon.getMaNV().getMaNV(),
+			Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getMaNV().getTenNV(),
 					hoaDon.getNgayLap().toString(), hoaDon.getNgayNhan().toString(), doanhThu, loiNhuan };
 
 			// Thêm hàng vào bảng
@@ -415,32 +457,34 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		}
 
 	}
+
 	private void inThongKeRaExcel() {
-	    Workbook workbook = new XSSFWorkbook();
-	    Sheet sheet = workbook.createSheet("ThongKe");
+		Workbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("ThongKe");
 
-	    // Tạo hàng header
-	    Row headerRow = sheet.createRow(0);
-	    for (int i = 0; i < model.getColumnCount(); i++) {
-	        Cell cell = headerRow.createCell(i);
-	        cell.setCellValue(model.getColumnName(i));
-	    }
+		// Tạo hàng header
+		Row headerRow = sheet.createRow(0);
+		for (int i = 0; i < model.getColumnCount(); i++) {
+			Cell cell = headerRow.createCell(i);
+			cell.setCellValue(model.getColumnName(i));
+		}
 
-	    // Thêm dữ liệu từ bảng vào file Excel
-	    for (int i = 0; i < model.getRowCount(); i++) {
-	        Row row = sheet.createRow(i + 1);
-	        for (int j = 0; j < model.getColumnCount(); j++) {
-	            row.createCell(j).setCellValue(model.getValueAt(i, j).toString());
-	        }
-	    }
+		// Thêm dữ liệu từ bảng vào file Excel
+		for (int i = 0; i < model.getRowCount(); i++) {
+			Row row = sheet.createRow(i + 1);
+			for (int j = 0; j < model.getColumnCount(); j++) {
+				row.createCell(j).setCellValue(model.getValueAt(i, j).toString());
+			}
+		}
 
-	    // Lưu workbook vào một file Excel
-	    try (FileOutputStream outputStream = new FileOutputStream("thongke.xlsx")) {
-	        workbook.write(outputStream);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		// Lưu workbook vào một file Excel
+		try (FileOutputStream outputStream = new FileOutputStream("thongke.xlsx")) {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+
 	public void checkThongKe() {
 		String checkNam = cbbNam.getSelectedItem() != null ? cbbNam.getSelectedItem().toString() : "";
 		String checkThang = cbbThang.getSelectedItem() != null ? cbbThang.getSelectedItem().toString() : "";
@@ -449,7 +493,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		String checkMaNV = cbbNhanVien.getSelectedItem() != null ? cbbNhanVien.getSelectedItem().toString() : "";
 		String checkTypeThongKe = cbbSapXep.getSelectedItem() != null ? cbbSapXep.getSelectedItem().toString() : "";
 
-		if (checkNam.equals("") && checkMaKH.equals("") && checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
+		if (checkNam.equals("") && checkMaKH.equals("") && checkMaNV.equals("")
+				&& checkTypeThongKe.equals("Đơn hàng")) {
 			thongKeDon();
 		} else if (!checkNam.equals("") && !checkThang.equals("") && !checkNgay.equals("") && !checkMaKH.equals("")
 				&& !checkMaNV.equals("") && checkTypeThongKe.equals("Đơn hàng")) {
@@ -560,24 +605,25 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		}
 
 	}
+
 	private double tinhTongDoanhThu() {
-	    double tongDoanhThu = 0;
-	    // Duyệt qua từng dòng trong bảng
-	    for (int i = 0; i < model.getRowCount(); i++) {
-	        // Lấy giá trị ở cột "Doanh thu" từ mỗi dòng và cộng vào tổng doanh thu
-	        tongDoanhThu += Double.parseDouble(model.getValueAt(i, 5).toString());
-	    }
-	    return tongDoanhThu;
+		double tongDoanhThu = 0;
+		// Duyệt qua từng dòng trong bảng
+		for (int i = 0; i < model.getRowCount(); i++) {
+			// Lấy giá trị ở cột "Doanh thu" từ mỗi dòng và cộng vào tổng doanh thu
+			tongDoanhThu += Double.parseDouble(model.getValueAt(i, 5).toString());
+		}
+		return tongDoanhThu;
 	}
 
 	private double tinhTongLoiNhuan() {
-	    double tongLoiNhuan = 0;
-	    // Duyệt qua từng dòng trong bảng
-	    for (int i = 0; i < model.getRowCount(); i++) {
-	        // Lấy giá trị ở cột "Lợi nhuận" từ mỗi dòng và cộng vào tổng lợi nhuận
-	        tongLoiNhuan += Double.parseDouble(model.getValueAt(i, 6).toString());
-	    }
-	    return tongLoiNhuan;
+		double tongLoiNhuan = 0;
+		// Duyệt qua từng dòng trong bảng
+		for (int i = 0; i < model.getRowCount(); i++) {
+			// Lấy giá trị ở cột "Lợi nhuận" từ mỗi dòng và cộng vào tổng lợi nhuận
+			tongLoiNhuan += Double.parseDouble(model.getValueAt(i, 6).toString());
+		}
+		return tongLoiNhuan;
 	}
 
 //	Top 3 Khách có số đơn nhiều nhất
@@ -674,12 +720,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		KhachHang_Dao khDao = new KhachHang_Dao();
-		KhachHang kh = khDao.findBySDT(sdtKhach);
-		NhanVien_Dao nvDao = new NhanVien_Dao();
-		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
-		
-		List<HoaDon> listHD = hdDao.findTKFullField(date, nv.getMaNV(), kh.getMaKH());
+
+		List<HoaDon> listHD = hdDao.findTKFullField(date, tenNhanVien, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -713,11 +755,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		LocalDate date = LocalDate.of(nam, thang, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		KhachHang_Dao khDao = new KhachHang_Dao();
-		KhachHang kh = khDao.findBySDT(sdtKhach);
-		NhanVien_Dao nvDao = new NhanVien_Dao();
-		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
-		List<HoaDon> listHD = hdDao.findXYinMonth(date, nv.getMaNV(), kh.getMaKH());
+
+		List<HoaDon> listHD = hdDao.findXYinMonth(date, tenNhanVien, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -750,12 +789,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		KhachHang_Dao khDao = new KhachHang_Dao();
-		KhachHang kh = khDao.findBySDT(sdtKhach);
-		NhanVien_Dao nvDao = new NhanVien_Dao();
-		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
-		
-		List<HoaDon> listHD = hdDao.findXYinYear(date, nv.getMaNV(), kh.getMaKH());
+
+		List<HoaDon> listHD = hdDao.findXYinYear(date, tenNhanVien, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -778,19 +813,15 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
-	
+
 //	Thống kê đơn của KH X được lập bởi NV Y 
 	private void thongKeXY() {
 		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		KhachHang_Dao khDao = new KhachHang_Dao();
-		KhachHang kh = khDao.findBySDT(sdtKhach);
-		NhanVien_Dao nvDao = new NhanVien_Dao();
-		NhanVien nv = nvDao.getNhanVienByName(tenNhanVien);
-		
-		List<HoaDon> listHD = hdDao.findXByY(nv.getMaNV(), kh.getMaKH());
+
+		List<HoaDon> listHD = hdDao.findXByY(tenNhanVien, sdtKhach);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -954,12 +985,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String tenNV = cbbNhanVien.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNVinDay(date, maNV);
+		List<HoaDon> listHD = hdDao.findNVinDay(date, tenNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -988,12 +1019,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeNVinMonth() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String tenNV = cbbNhanVien.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, thang, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNVinMonth(date, maNV);
+		List<HoaDon> listHD = hdDao.findNVinMonth(date, tenNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -1021,12 +1052,12 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 //	Thống kê đơn Nhân Viên lập theo năm
 	private void thongKeNVinYear() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
-		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String tenNV = cbbNhanVien.getSelectedItem().toString();
 
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNVinYear(date, maNV);
+		List<HoaDon> listHD = hdDao.findNVinYear(date, tenNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -1053,10 +1084,10 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Thống kê tất cả đơn Nhân Viên đã lập
 	private void thongKeNV() {
-		String maNV = cbbNhanVien.getSelectedItem().toString();
+		String tenNV = cbbNhanVien.getSelectedItem().toString();
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNV(maNV);
+		List<HoaDon> listHD = hdDao.findNV(tenNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
