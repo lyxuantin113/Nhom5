@@ -41,7 +41,7 @@ public class ChiTietHoaDon_Dao {
 
 				// Tạo mới một đối tượng Thuoc với ID tương ứng
 				Thuoc_Dao thuocDao = new Thuoc_Dao();
-				Thuoc thuoc = thuocDao.timTheoMa(maThuoc).get(0);
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
 
 				ChiTietHoaDon cthd = new ChiTietHoaDon(thuoc, soLuong);
 				listChiTietHoaDon.add(cthd);

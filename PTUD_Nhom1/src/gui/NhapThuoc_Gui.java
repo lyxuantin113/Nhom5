@@ -3,6 +3,8 @@ package gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -22,7 +24,7 @@ import entity.NhanVien;
 import entity.PhieuNhapThuoc;
 import entity.Thuoc;
 
-public class NhapThuoc_Gui extends JPanel implements ActionListener {
+public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListener {
 	private JButton btnAdd;
 	private JButton btnXoaTrang;
 	private JButton btnTim;
@@ -83,7 +85,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		Box b11 = Box.createHorizontalBox();
 		Box b21 = Box.createHorizontalBox();
 		// Nhân viên
-		JLabel lblMaNV = new JLabel("Mã nhân viên: ");
+		JLabel lblMaNV = new JLabel("Nhân viên: ");
 		lblMaNV.setPreferredSize(new Dimension(90, 25));
 		txtMaNV = new JTextField(20);
 		txtMaNV.setEnabled(false);
@@ -318,43 +320,28 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 //		});
 		cbbMaThuoc.addActionListener(this);
 
-//		table.addMouseListener(new java.awt.event.MouseAdapter() {
-//			public void mouseClicked(java.awt.event.MouseEvent evt) {
-//				int row = table.getSelectedRow();
-//				String ncc = table.getValueAt(row, 0).toString();
-//				String ma = table.getValueAt(row, 1).toString();
-//				String ten = table.getValueAt(row, 2).toString();
-//				String giaNhap = table.getValueAt(row, 3).toString();
-//				String soLuong = table.getValueAt(row, 4).toString();
-//				String donVi = table.getValueAt(row, 5).toString();
-//				String thanhTien = table.getValueAt(row, 6).toString();
-//				String ngayNhap = table.getValueAt(row, 7).toString();
-//				cbbNCC.setSelectedItem(ncc);
-//				txtMa.setText(ma);
-//				txtTen.setText(ten);
-//				txtGiaNhap.setText(giaNhap);
-//				txtSoLuong.setText(soLuong);
-//				cbbDonVi.setSelectedItem(donVi);
-//				txtThanhTien.setText(thanhTien);
-//				txtNgayNhap.setText(ngayNhap);
-//			}
-//		});
+		table.addMouseListener(this);
 
 		ConnectDB.connect();
 		// Đổ dữ liệu cho combobox
 		addCombobox();
-		txtMaNV.setText("NV001");
+		// Lấy tên nhân viên
+		txtMaNV.setText(nhanVienDN.getTenNV());
+		
+		// Khóa các nút
+		btnAdd.setEnabled(false);
+		btnXoaTrang.setEnabled(false);
+		btnXoa.setEnabled(false);
+		btnSua.setEnabled(false);
+		btnXacNhan.setEnabled(false);
+		
 	}
 
-	private LocalDate LocalDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	private void addCombobox() {
 		NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
 		for (NhaCungCap ncc : nccDao.readFromTable()) {
-			cbbNCC.addItem(ncc.getMaNCC());
+			cbbNCC.addItem(ncc.getTenNCC());
 		}
 		taoMaPhieuNhap();
 	}
@@ -365,10 +352,9 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		// Lấy dữ liệu từ database
 		ChiTietPhieuNhapThuoc_Dao pntDao = new ChiTietPhieuNhapThuoc_Dao();
 		for (ChiTietPhieuNhapThuoc ct : pntDao.readFromTable(maPhieuNhap)) {
-			model.addRow(new Object[] { ct.getMaThuoc(), ct.getMaPhieuNhap(), ct.getSoLuong(), ct.getGiaNhap(),
-					ct.getHsd(), ct.getDonVi(), ct.getThanhTien() });
+			model.addRow(new Object[] { ct.getMaThuoc(), ct.getMaPhieuNhap(), ct.getGiaNhap(),
+					ct.getHsd(), ct.getSoLuong(), ct.getDonVi(), ct.getThanhTien() });
 		}
-		// Set mã
 		
 
 	}
@@ -402,10 +388,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		if (o.equals(btnXacNhan)) {
 			xacNhan();
 		}
-//		if (o.equals(btnLamMoi)) {
-////            hienTable();
-//        }
-		
+
 	}
 
 	private void xacNhan() {
@@ -452,28 +435,30 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
 		if (pntDao.delete(maPNT)) {
 			JOptionPane.showMessageDialog(this, "Hủy thành công.");
-			txtMaPNT.setEnabled(true);
-			txtMaNV.setEnabled(true);
-			txtNgayNhap.setEnabled(true);
+			
 			cbbNCC.setEnabled(true);
-			txtTongTien.setEnabled(true);
 			cbbMaThuoc.setEnabled(false);
 			txtGiaNhap.setEnabled(false);
 			txtHSD.setEnabled(false);
 			txtSoLuong.setEnabled(false);
 			cbbDonVi.setEnabled(false);
 			txtMaCTPNT.setText("");
-			txtMaPNT.setText("");
-			txtMaNV.setText("");
 			txtTongTien.setText("");
 			txtGiaNhap.setText("");
 			txtHSD.setText("");
 			txtSoLuong.setText("");
 			txtThanhTien.setText("");
+			// Khóa các nút
+			btnAdd.setEnabled(false);
+			btnXoaTrang.setEnabled(false);
+			btnXoa.setEnabled(false);
+			btnSua.setEnabled(false);
+			btnXacNhan.setEnabled(false);
+			
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
 			// Xóa dữ liệu trong combobox
-//			cbbMaThuoc.removeAllItems();
+			cbbMaThuoc.removeAllItems();
 		} else {
 			JOptionPane.showMessageDialog(this, "Hủy thất bại.");
 
@@ -485,7 +470,6 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		String giaNhap = txtGiaNhap.getText();
 		String soLuong = txtSoLuong.getText();
 		String hsd = txtHSD.getText();
-
 		// Cập nhật dữ liệu vào database
 		String maCTPNT = txtMaCTPNT.getText();
 		String maThuoc = cbbMaThuoc.getSelectedItem().toString();
@@ -533,14 +517,21 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 
 	private void taoPhieu() {
 		if (checkDataPhieuNhap()) {
+			
 			String maPNT = txtMaPNT.getText();
-			String maNV = txtMaNV.getText();
+			String tenNV = txtMaNV.getText();
+			// Lấy mã NV
+			NhanVien_Dao nvDao = new NhanVien_Dao();
+			String maNV = nvDao.getNhanVienByName(tenNV).getMaNV();
+			
 			LocalDate ngayNhap = LocalDate.parse(txtNgayNhap.getText());
-			String maNCC = cbbNCC.getSelectedItem().toString();
+			NhaCungCap_Dao nccDao = new NhaCungCap_Dao();
+			String tenNCC = cbbNCC.getSelectedItem().toString();
+			String maNCC = nccDao.getMaNCC(tenNCC);
 			Double tongTien = 0.0;
 			Boolean trangThai = false;
 
-			NhanVien_Dao nvDao = new NhanVien_Dao();
+			
 			if (!nvDao.maNhanVienDaTonTai(maNV)) {
 				JOptionPane.showMessageDialog(this, "Mã nhân viên không tồn tại.");
 				return;
@@ -555,22 +546,30 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			}
 			if (pntDao.create(pnt)) {
 				JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công.");
+				addMaThuoc(maNCC);
 				txtMaPNT.setEnabled(false);
 				txtMaNV.setEnabled(false);
 				txtNgayNhap.setEnabled(false);
 				cbbNCC.setEnabled(false);
 				txtTongTien.setEnabled(false);
+				
 				cbbMaThuoc.setEnabled(true);
-//				txtTen.setEnabled(true);
-				txtGiaNhap.setEnabled(true);
-				txtHSD.setEnabled(true);
+				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				String maThuoc = cbbMaThuoc.getSelectedItem().toString();
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
+				Double giaNhap = thuoc.getGiaNhap();
+				txtGiaNhap.setText(giaNhap.toString());
+				String hsd = thuoc.getHSD().toString();
+				txtHSD.setText(hsd);
 				txtSoLuong.setEnabled(true);
-				cbbDonVi.setEnabled(true);
+				String donVi = thuoc.getDonVi();
+				cbbDonVi.setSelectedItem(donVi);
 				txtMaCTPNT.setText(maPNT);
-				// Add mã thuốc theo ncc vào combobox
-				addMaThuoc(maNCC);
 
 				hienTable(maPNT);
+				// Mở các nút
+				btnAdd.setEnabled(true);
+				btnXoaTrang.setEnabled(true);
 
 			} else {
 				JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại.");
@@ -597,7 +596,6 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			return false;
 		}
 		
-
 		
 		String check = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 		if (!txtNgayNhap.getText().matches(check)) {
@@ -614,46 +612,43 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		for (Thuoc thuoc : thuocDao.getDSTByNCC(maNCC)) {
 			cbbMaThuoc.addItem(thuoc.getMaThuoc());
 		}
-		// Đăng ký sự kiện cho combobox
-		dkLayGiaNhap();
+		layThongTin();
 	}
 
-	private void dkLayGiaNhap() {
+	private void layThongTin() {
 		cbbMaThuoc.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				capNhatGiaNhap();
+				String maThuoc = cbbMaThuoc.getSelectedItem().toString();
+				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
+				Double giaNhap = thuoc.getGiaNhap();
+				txtGiaNhap.setText(giaNhap.toString());
+				txtHSD.setText(thuoc.getHSD().toString());
+				cbbDonVi.setSelectedItem(thuoc.getDonVi());
+				txtSoLuong.setText("");
+				txtThanhTien.setText("");
 			}
 		});
-
+		
 	}
 
-	private void capNhatGiaNhap() {
-		// Lấy giá nhập theo mã thuốc
-		Thuoc_Dao thuocDao = new Thuoc_Dao();
-		Thuoc thuoc = thuocDao.readFromTable(cbbMaThuoc.getSelectedItem().toString());
-		txtGiaNhap.setText(String.valueOf(thuoc.getGiaNhap()));
-		txtGiaNhap.setEnabled(false);
-
-	}
 
 	private void xoaTrang() {
-//		txtMa.setText("");
-//		txtTen.setText("");
 		cbbMaThuoc.setSelectedIndex(0);
-//		txtGiaNhap.setText("");
 		txtSoLuong.setText("");
-//		txtThanhTien.setText("");
-		txtHSD.setText("");
-
 		cbbDonVi.setSelectedIndex(0);
 		cbbNCC.setSelectedIndex(0);
 
 	}
 
 	private void addThuocDat() {
-
+		capNhatThanhTien();
 		if (checkData()) {
+			btnXoa.setEnabled(true);
+			btnSua.setEnabled(true);
+			btnXacNhan.setEnabled(true);
 			String ma = cbbMaThuoc.getSelectedItem().toString();
 			Double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 			LocalDate hsd = LocalDate.parse(txtHSD.getText());
@@ -681,22 +676,36 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			} else {
 				JOptionPane.showMessageDialog(this, "Thêm thất bại.");
 			}
-		} else {
-			JOptionPane.showMessageDialog(this, "Thêm thất bại.");
-			return;
 		}
 
 	}
 
-	private boolean checkData() {
-		String ma = cbbMaThuoc.getSelectedItem().toString();
+	private void capNhatThanhTien() {
 		Double giaNhap = Double.parseDouble(txtGiaNhap.getText());
-		try {
-			LocalDate hsd = LocalDate.parse(txtHSD.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Hạn sử dụng không hợp lệ.");
+		Integer soLuong = Integer.parseInt(txtSoLuong.getText());
+		Double thanhTien = giaNhap * soLuong;
+		txtThanhTien.setText(thanhTien.toString());
+	
+		
+	}
+
+
+	private boolean checkData() {
+		if (txtMaPNT.getText().isEmpty() || cbbMaThuoc.getSelectedIndex() == -1 || txtGiaNhap.getText().isEmpty() || txtHSD.getText().isEmpty()
+				|| txtSoLuong.getText().isEmpty() || cbbDonVi.getSelectedIndex()== -1 ) {
+			JOptionPane.showMessageDialog(this, "Không được để trống thông tin.");
 			return false;
+
 		}
+		
+		
+		try {
+			Double gia = Double.parseDouble(txtGiaNhap.getText());
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(this, "Giá nhập không hợp lệ.");
+				return false;
+		}
+		Double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 		try {
 			Integer soLuong = Integer.parseInt(txtSoLuong.getText());
 		} catch (Exception e) {
@@ -710,16 +719,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 			return false;
 		}
 		LocalDate hsd = LocalDate.parse(txtHSD.getText());
-		Integer soLuong = Integer.parseInt(txtSoLuong.getText());
-		String donVi = cbbDonVi.getSelectedItem().toString();
-		String maCTPNT = txtMaCTPNT.getText();
-		Double thanhTien = giaNhap * soLuong;
-		if (maCTPNT.isEmpty() || ma.isEmpty() || txtGiaNhap.getText().isEmpty() || txtHSD.getText().isEmpty()
-				|| txtSoLuong.getText().isEmpty() || donVi.isEmpty() || thanhTien == 0.0) {
-			JOptionPane.showMessageDialog(this, "Không được để trống thông tin.");
-			return false;
-
-		}
+		
 		if (hsd.isBefore(LocalDate.now())) {
 			JOptionPane.showMessageDialog(this, "Hạn sử dụng không hợp lệ.");
 			return false;
@@ -736,6 +736,55 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener {
 		}
 
 		return true;
+	}
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		int row = table.getSelectedRow();
+		String ma = table.getValueAt(row, 0).toString();
+		String giaNhap = table.getValueAt(row, 2).toString();
+		String hsd = table.getValueAt(row, 3).toString();
+		String soLuong = table.getValueAt(row, 4).toString();
+		String donVi = table.getValueAt(row, 5).toString();
+		String thanhTien = table.getValueAt(row, 6).toString();
+		String maCTPNT = table.getValueAt(row, 1).toString();
+		cbbMaThuoc.setSelectedItem(ma);
+		txtGiaNhap.setText(giaNhap);
+		txtHSD.setText(hsd);
+		txtSoLuong.setText(soLuong);
+		cbbDonVi.setSelectedItem(donVi);
+		txtThanhTien.setText(thanhTien);
+		txtMaCTPNT.setText(maCTPNT);
+		
+	}
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

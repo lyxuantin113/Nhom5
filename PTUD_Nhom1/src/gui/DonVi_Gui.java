@@ -79,16 +79,10 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 	    pnCenterTop.add(b2);
 	    
 	    
-	    JLabel lblQuyDoi = new JLabel("Quy đổi: ");
-	    txtQuyDoi = new JTextField(20);
-	    b3.add(lblQuyDoi);
-	    b3.add(txtQuyDoi);
-	    pnCenterTop.add(b3);
-	    
 	    pnCenter.add(pnCenterTop);
 	    
 	    // Table
-	    String[] header = {"Mã đơn vị", "Tên đơn vị", "Quy đổi"};
+	    String[] header = {"Mã đơn vị", "Tên đơn vị"};
 	    DefaultTableModel dtm = new DefaultTableModel(header, 0);
 	    tblDonVi = new JTable(dtm);
 	    JScrollPane sc = new JScrollPane(tblDonVi);
@@ -130,7 +124,7 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 		DefaultTableModel dtm = (DefaultTableModel) tblDonVi.getModel();
 		dtm.setRowCount(0);
 		for (DonVi dv : dsDonVi) {
-			Object[] rowData = { dv.getMaDonVi(), dv.getDonVi(), dv.getQuyDoi() };
+			Object[] rowData = { dv.getMaDonVi(), dv.getDonVi() };
 			dtm.addRow(rowData);
 		}
 		txtTenDonVi.requestFocus();
@@ -168,7 +162,6 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 	private void xoaTrang() {
 		txtMaDonVi.setText(donViDao.taoMaDonVi());
 		txtTenDonVi.setText("");
-		txtQuyDoi.setText("");
 		tblDonVi.clearSelection();
 		txtTenDonVi.requestFocus();
 	}
@@ -189,8 +182,7 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 		}
 		String maDonVi = (String) tblDonVi.getValueAt(row, 0);
 		String tenDonVi = txtTenDonVi.getText();
-		String quyDoi = txtQuyDoi.getText();
-		DonVi dv = new DonVi(maDonVi, tenDonVi, quyDoi);
+		DonVi dv = new DonVi(maDonVi, tenDonVi);
 		int hoi = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn sửa đơn vị này không?");
 		if (hoi != JOptionPane.YES_OPTION) {
 			return;
@@ -231,7 +223,7 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 			String maDonVi = txtMaDonVi.getText();
 			String tenDonVi = txtTenDonVi.getText();
 			String quyDoi = txtQuyDoi.getText();
-			DonVi dv = new DonVi(maDonVi, tenDonVi, quyDoi);
+			DonVi dv = new DonVi(maDonVi, tenDonVi);
 			if (donViDao.checkMaDonVi(maDonVi)) {
 				JOptionPane.showMessageDialog(null, "Mã đơn vị đã tồn tại");
 				return;
@@ -266,7 +258,6 @@ public class DonVi_Gui extends JFrame implements ActionListener, MouseListener{
 		int row = tblDonVi.getSelectedRow();
 		txtMaDonVi.setText((String) tblDonVi.getValueAt(row, 0));
 		txtTenDonVi.setText((String) tblDonVi.getValueAt(row, 1));
-		txtQuyDoi.setText((String) tblDonVi.getValueAt(row, 2));
 
 	
 	}

@@ -26,8 +26,7 @@ public class DonVi_Dao {
 			while (rs.next()) {
 				String maDonVi = rs.getString(1);
 				String tenDonVi = rs.getString(2);
-				String quyDoi = rs.getString(3);
-				DonVi dv = new DonVi(maDonVi, tenDonVi, quyDoi);
+				DonVi dv = new DonVi(maDonVi, tenDonVi);
 				dsDonVi.add(dv);
 			}
 		} catch (Exception e) {
@@ -38,7 +37,7 @@ public class DonVi_Dao {
 
 	public void addDonVi(DonVi dv) {
 		try {
-            String sql = "insert into DonVi values('"+dv.getMaDonVi()+"','"+dv.getDonVi()+"','"+dv.getQuyDoi()+"')";
+            String sql = "insert into DonVi values('"+dv.getMaDonVi()+"')";
             Statement statement = con.createStatement();
             statement.executeUpdate(sql);
         } catch (Exception e) {
@@ -59,8 +58,7 @@ public class DonVi_Dao {
 	
 	public void updateDonVi(DonVi dv) {
 		try {
-			String sql = "update DonVi set tenDonVi = '" + dv.getDonVi() + "', quyDoi = '" + dv.getQuyDoi()
-					+ "' where maDonVi = '" + dv.getMaDonVi() + "'";
+			String sql = "update DonVi set tenDonVi = '" + dv.getDonVi() + "' where maDonVi = '" + dv.getMaDonVi() + "'";
 			Statement statement = con.createStatement();
 			statement.executeUpdate(sql);
 		} catch (Exception e) {
