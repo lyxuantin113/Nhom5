@@ -12,8 +12,10 @@ import java.awt.event.MouseListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.*;
@@ -24,7 +26,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import dao.HoaDon_Dao;
@@ -72,7 +76,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private JButton btnXoaRong;
 	private Box boxBtn;
 	private JButton btnXemThongKe;
-
+    private DefaultCategoryDataset datasetMonth;
+    private JFreeChart  chartMonth;
 //	private ThongKe_Dao dsTK = new ThongKe_Dao();
 	private HoaDon_Dao dsHD = new HoaDon_Dao();
 	private Box boxBoLocBtn;
@@ -86,6 +91,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private JLabel lblTongLoi;
 	private JTextField txtTongLoi;
 	private JButton btnIn;
+	private DefaultCategoryDataset datasetDay;
+	private JFreeChart chartDay;
 
 	public XemThongKe_Gui(NhanVien nhanVienDN) {
 
@@ -262,15 +269,31 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		boxTong.add(btnIn);
 		pnlBottom.add(boxTong);
 
-		// Biểu đồ
-		JPanel chartPanel = createChartPanel();
-		pnlCenter.add(chartPanel, BorderLayout.WEST);
-
+		// Biểu đồ tháng
+		JPanel pnlWest = new JPanel();
+		Box boxChart = Box.createVerticalBox();
+		
+		JPanel chartPanelmonth = createChartPanelMonth();
+//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		JScrollPane scrollPaneMonth = new JScrollPane(chartPanelmonth); // Đặt biểu đồ vào JScrollPane
+		scrollPaneMonth.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
+		boxChart.add(scrollPaneMonth);
+		
+		// Biểu đồ ngày
+		JPanel chartPanelday = createChartPanelDay();
+//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		JScrollPane scrollPaneDay = new JScrollPane(chartPanelday); // Đặt biểu đồ vào JScrollPane
+		scrollPaneDay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
+		boxChart.add(scrollPaneDay);
+		
+		pnlWest.add(boxChart);
+		
+		
 //		MAIN
 		pnlMain.add(pnlHead, BorderLayout.NORTH);
 		pnlMain.add(pnlCenter, BorderLayout.CENTER);
 		pnlMain.add(pnlBottom, BorderLayout.SOUTH);
-
+		pnlMain.add(pnlWest, BorderLayout.WEST);
 		add(pnlMain);
 
 // 		ACTION
@@ -300,40 +323,73 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 			}
 		});
 	}
+	private JPanel createChartPanelDay() {
+		// Khởi tạo dataset
+        datasetDay = new DefaultCategoryDataset();
 
-	private JPanel createChartPanel() {
-		// Dữ liệu minh họa: doanh thu hàng tháng trong năm
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		for(int i = 1; i<=12; i++) {
-			dataset.addValue(doanhThuTheoThang(i), "Doanh thu", String.valueOf(i));
-		}
-
-		// Tạo biểu đồ
-		JFreeChart chart = ChartFactory.createBarChart("Doanh thu theo tháng trong năm", // Tiêu đề biểu đồ
-				"Tháng", // Nhãn trục x
-				"Doanh thu (VNĐ)", // Nhãn trục y
-				dataset, // Dữ liệu
-				PlotOrientation.VERTICAL, false, // Include legend
-				true, false);
-
-		// Tạo Panel chứa biểu đồ
-		return new ChartPanel(chart);
+        // Khởi tạo biểu đồ line chart
+        chartDay = ChartFactory.createBarChart(
+                "Doanh thu các ngày", // Tiêu đề biểu đồ
+                "Ngày", // Tên trục x
+                "Doanh thu", // Tên trục y
+                datasetDay, // Dữ liệu
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
+        );
+        // Tùy chỉnh màu sắc
+        CategoryPlot plot = chartDay.getCategoryPlot();
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, Color.BLUE);
+        renderer.setMaximumBarWidth(0.05);
+	    return new ChartPanel(chartDay);
 	}
-	
-	public double doanhThuTheoThang(int month) {
-		HoaDon_Dao hdDao = new HoaDon_Dao();
+	// Phương thức để cập nhật dữ liệu trong biểu đồ
+    public void updateChartDay(Map<LocalDate, Double> dailyRevenue) {
+        datasetDay.clear(); // Xóa dữ liệu cũ trước khi cập nhật
 
-		List<HoaDon> listHD = hdDao.findinMonth(month);
+        // Thêm dữ liệu mới vào dataset
+        for (Map.Entry<LocalDate, Double> entry : dailyRevenue.entrySet()) {
+        	datasetDay.addValue(entry.getValue(), "Doanh thu", entry.getKey().toString());
+        }
+        
+        // Cập nhật biểu đồ
+        chartDay.fireChartChanged();
+    }
+    
+    private JPanel createChartPanelMonth() {
+		// Khởi tạo dataset
+        datasetMonth = new DefaultCategoryDataset();
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
-		}
-
-		return tongTien;
+        // Khởi tạo biểu đồ line chart
+        chartMonth = ChartFactory.createLineChart(
+                "Doanh thu các tháng", // Tiêu đề biểu đồ
+                "Tháng", // Tên trục x
+                "Doanh thu", // Tên trục y
+                datasetMonth, // Dữ liệu
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
+        );
+	    return new ChartPanel(chartMonth);
 	}
+    
+	// Phương thức để cập nhật dữ liệu trong biểu đồ
+    public void updateChartMonth(Map<Integer, Double> monthlyRevenue) {
+    	datasetMonth.clear(); // Xóa dữ liệu cũ trước khi cập nhật
+    	HoaDon_Dao hdDao = new HoaDon_Dao();
+        // Thêm dữ liệu mới vào dataset
+    	for (Map.Entry<Integer, Double> entry : monthlyRevenue.entrySet()) {
+    		datasetMonth.addValue(entry.getValue(), "Doanh thu", entry.getKey().toString());
+        }
+
+        // Cập nhật biểu đồ
+        chartMonth.fireChartChanged();
+    }
+    
+    
 	// Trong phương thức hienTable()
 	public void hienTable() {
 		List<HoaDon> danhSachHoaDon = dsHD.readFromTable();
@@ -451,6 +507,9 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 			// Xóa rỗng Combobox của Sắp xếp
 			cbbSapXep.setSelectedIndex(0);
+			
+			datasetDay.clear();
+			datasetMonth.clear();
 		}
 		if (e.getSource() == btnIn) {
 			inThongKeRaExcel();
@@ -630,7 +689,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeKHTiemNang() {
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.thongKeKHTiemNang();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
@@ -640,15 +700,11 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
-
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
-		}
-
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
@@ -657,7 +713,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeNVChamChi() {
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.thongKeNVChamChi();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
@@ -667,15 +724,11 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
-
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
-		}
-
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 	}
@@ -684,7 +737,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeLoiNhuanCaoNhat() {
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.thongKeLoiNhuanCaoNhat();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
@@ -694,14 +748,14 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
-
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
-		}
+		
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -714,14 +768,25 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
-		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
+		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();;
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNhanVien);
+		String maNV = nhanVien.getMaNV();
+		
+		double tongTien = 0;
+		double tongLoi = 0;
+		
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-
-		List<HoaDon> listHD = hdDao.findTKFullField(date, tenNhanVien, sdtKhach);
+		
+		List<HoaDon> listHD = hdDao.findTKFullField(date, maNV, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -732,14 +797,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -751,12 +839,21 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, 1);
-
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNhanVien);
+		String maNV = nhanVien.getMaNV();
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 
-		List<HoaDon> listHD = hdDao.findXYinMonth(date, tenNhanVien, sdtKhach);
+		List<HoaDon> listHD = hdDao.findXYinMonth(date, maNV, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -767,14 +864,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -785,12 +905,21 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNhanVien);
+		String maNV = nhanVien.getMaNV();
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 
-		List<HoaDon> listHD = hdDao.findXYinYear(date, tenNhanVien, sdtKhach);
+		List<HoaDon> listHD = hdDao.findXYinYear(date, maNV, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -801,13 +930,35 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
-		}
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
+		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
+
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
 
 		txtTongTien.setText(String.valueOf(tongTien));
@@ -818,10 +969,20 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeXY() {
 		String tenNhanVien = cbbNhanVien.getSelectedItem().toString();
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNhanVien);
+		String maNV = nhanVien.getMaNV();
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 
-		List<HoaDon> listHD = hdDao.findXByY(tenNhanVien, sdtKhach);
+		List<HoaDon> listHD = hdDao.findXByY(maNV, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -832,13 +993,34 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
 
 		txtTongTien.setText(String.valueOf(tongTien));
@@ -853,11 +1035,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, ngay);
-
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKHinDay(date, sdtKhach);
+		List<HoaDon> listHD = hdDao.findKHinDay(date, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -868,14 +1056,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -887,11 +1098,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, 1);
-
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKHinMonth(date, sdtKhach);
+		List<HoaDon> listHD = hdDao.findKHinMonth(date, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -902,14 +1119,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -920,11 +1160,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeKHinYear() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, 1, 1);
-
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKHinYear(date, sdtKhach);
+		List<HoaDon> listHD = hdDao.findKHinYear(date, maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -935,14 +1181,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -951,9 +1220,16 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 //	Thống kê tất cả đơn của KH
 	private void thongKeKH() {
 		String sdtKhach = cbbKhachHang.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
+		
+		KhachHang_Dao khDao = new KhachHang_Dao();
+		KhachHang khachHang = khDao.findBySDT(sdtKhach);
+		String maKH = khachHang.getMaKH();
+		
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findKH(sdtKhach);
+		List<HoaDon> listHD = hdDao.findKH(maKH);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -964,15 +1240,35 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
-
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 
@@ -986,11 +1282,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
 		String tenNV = cbbNhanVien.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
+		
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNV);
+		String maNV = nhanVien.getMaNV();
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNVinDay(date, tenNV);
+		List<HoaDon> listHD = hdDao.findNVinDay(date, maNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -1001,14 +1303,36 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -1020,11 +1344,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		String tenNV = cbbNhanVien.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, 1);
+		
 
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNV);
+		String maNV = nhanVien.getMaNV();
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNVinMonth(date, tenNV);
+		List<HoaDon> listHD = hdDao.findNVinMonth(date, maNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -1035,15 +1365,38 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
-		}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
+		}
+		
+		
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
 
@@ -1053,11 +1406,16 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeNVinYear() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		String tenNV = cbbNhanVien.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNV);
+		String maNV = nhanVien.getMaNV();
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNVinYear(date, tenNV);
+		List<HoaDon> listHD = hdDao.findNVinYear(date, maNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -1068,14 +1426,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
-		}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
+		}	
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -1085,9 +1466,16 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 //	Thống kê tất cả đơn Nhân Viên đã lập
 	private void thongKeNV() {
 		String tenNV = cbbNhanVien.getSelectedItem().toString();
-
+		double tongTien = 0;
+		double tongLoi = 0;
+		
+		NhanVien_Dao nvDao = new NhanVien_Dao();
+		NhanVien nhanVien = nvDao.getNhanVienByName(tenNV);
+		String maNV = nhanVien.getMaNV();
+		
+		
 		HoaDon_Dao hdDao = new HoaDon_Dao();
-		List<HoaDon> listHD = hdDao.findNV(tenNV);
+		List<HoaDon> listHD = hdDao.findNV(maNV);
 
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -1098,14 +1486,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -1119,7 +1530,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
 		int ngay = Integer.parseInt(cbbNgay.getSelectedItem().toString());
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, ngay);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
@@ -1134,14 +1546,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -1152,7 +1587,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 	private void thongKeDonInMonth() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
 		int thang = Integer.parseInt(cbbThang.getSelectedItem().toString());
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, thang, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
@@ -1167,14 +1603,36 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -1184,7 +1642,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 //	Thống kê đơn theo năm
 	private void thongKeDonInYear() {
 		int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		LocalDate date = LocalDate.of(nam, 1, 1);
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
@@ -1199,14 +1658,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
@@ -1218,7 +1700,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.readFromTable();
-
+		double tongTien = 0;
+		double tongLoi = 0;
 		if (listHD != null) {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
@@ -1228,14 +1711,37 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 						hdDao.tinhLoiNhuanChoHoaDon(hoaDon) };
 				model.addRow(rowData);
 			}
+			for (HoaDon hoaDon : listHD) {
+				tongTien += hdDao.tinhTongTien(hoaDon);
+				tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+			}
 		}
+		if (listHD != null) {
+	        // Tính tổng doanh thu của từng tháng trong năm
+	        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+	        for (HoaDon hoaDon : listHD) {
+	            int thangO = hoaDon.getNgayLap().getMonthValue();
+	            double doanhThu = hdDao.tinhTongTien(hoaDon);
+	            monthlyRevenue.put(thangO, monthlyRevenue.getOrDefault(thangO, 0.0) + doanhThu);
+	        }
 
-		double tongTien = 0;
-		double tongLoi = 0;
-		for (HoaDon hoaDon : listHD) {
-			tongTien += hdDao.tinhTongTien(hoaDon);
-			tongLoi += hdDao.tinhLoiNhuanChoHoaDon(hoaDon);
+	        // Cập nhật biểu đồ với doanh thu của từng tháng trong năm
+	        updateChartMonth(monthlyRevenue);
+	    }
+		if (listHD != null) {
+            // Tính tổng doanh thu của mỗi ngày trong tháng
+            Map<LocalDate, Double> dailyRevenue = new HashMap<>();
+            for (HoaDon hoaDon : listHD) {
+                LocalDate ngayLap = hoaDon.getNgayLap();
+                double doanhThu = hdDao.tinhTongTien(hoaDon);
+                dailyRevenue.put(ngayLap, dailyRevenue.getOrDefault(ngayLap, 0.0) + doanhThu);
+            }
+
+            // Cập nhật biểu đồ với doanh thu của từng ngày trong tháng
+            updateChartDay(dailyRevenue);
 		}
+		
+		
 
 		txtTongTien.setText(String.valueOf(tongTien));
 		txtTongLoi.setText(String.valueOf(tongLoi));
