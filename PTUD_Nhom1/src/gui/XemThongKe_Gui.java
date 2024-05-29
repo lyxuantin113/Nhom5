@@ -274,14 +274,14 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		Box boxChart = Box.createVerticalBox();
 		
 		JPanel chartPanelmonth = createChartPanelMonth();
-//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(320, 140));
 		JScrollPane scrollPaneMonth = new JScrollPane(chartPanelmonth); // Đặt biểu đồ vào JScrollPane
 		scrollPaneMonth.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
 		boxChart.add(scrollPaneMonth);
 		
 		// Biểu đồ ngày
 		JPanel chartPanelday = createChartPanelDay();
-//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(320, 140));
 		JScrollPane scrollPaneDay = new JScrollPane(chartPanelday); // Đặt biểu đồ vào JScrollPane
 		scrollPaneDay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
 		boxChart.add(scrollPaneDay);
