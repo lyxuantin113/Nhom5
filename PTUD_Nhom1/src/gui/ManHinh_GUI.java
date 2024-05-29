@@ -14,11 +14,11 @@ public class ManHinh_GUI extends JFrame {
 	private CardLayout cardLayout;
 	private JPanel cardPanel;
 
-	public static void main(String[] args) {
-		NhanVien_Dao nDao = new NhanVien_Dao();
-		NhanVien n = nDao.getNhanVien("NV001").get(0);
-		new ManHinh_GUI(n);
-	}
+//	public static void main(String[] args) {
+//		NhanVien_Dao nDao = new NhanVien_Dao();
+//		NhanVien n = nDao.getNhanVien("NV001").get(0);
+//		new ManHinh_GUI(n);
+//	}
 
 	public ManHinh_GUI(NhanVien nhanVienDN) {
 		super("Hệ Thống Quản Lý Hiệu Thuốc");

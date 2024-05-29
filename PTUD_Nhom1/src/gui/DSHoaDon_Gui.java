@@ -121,7 +121,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		JLabel lbTableHoaDon = new JLabel("Danh Sách Hóa Đơn:");
 		lbTableHoaDon.setFont(fo16);
 		Box boxTableHoaDon = Box.createVerticalBox();
-		String[] headerHoaDon = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
+		String[] headerHoaDon = "Mã đơn;Tên NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
 		modelHoaDon = new DefaultTableModel(headerHoaDon, 0);
 		tableHoaDon = new JTable(modelHoaDon);
 		JScrollPane scrollHoaDon = new JScrollPane();

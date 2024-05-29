@@ -11,7 +11,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +28,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -274,16 +279,23 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		Box boxChart = Box.createVerticalBox();
 		
 		JPanel chartPanelmonth = createChartPanelMonth();
-//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 200));
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(320, 140));
+
 		JScrollPane scrollPaneMonth = new JScrollPane(chartPanelmonth); // Đặt biểu đồ vào JScrollPane
-		scrollPaneMonth.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
+		scrollPaneMonth.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		boxChart.add(scrollPaneMonth);
 		
 		// Biểu đồ ngày
 		JPanel chartPanelday = createChartPanelDay();
-//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 200));
+
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(320, 140));
+
 		JScrollPane scrollPaneDay = new JScrollPane(chartPanelday); // Đặt biểu đồ vào JScrollPane
-		scrollPaneDay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
+		scrollPaneDay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
 		boxChart.add(scrollPaneDay);
 		
 		pnlWest.add(boxChart);
@@ -343,6 +355,18 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, Color.BLUE);
         renderer.setMaximumBarWidth(0.05);
+        
+        CategoryAxis xAxis = plot.getDomainAxis();
+        xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        
+        xAxis.setLowerMargin(0.02);
+        xAxis.setUpperMargin(0.02);
+
+        // Adjust range axis (y-axis)
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        
+        
 	    return new ChartPanel(chartDay);
 	}
 	// Phương thức để cập nhật dữ liệu trong biểu đồ
@@ -535,9 +559,15 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				row.createCell(j).setCellValue(model.getValueAt(i, j).toString());
 			}
 		}
+		
+		 // Get current timestamp
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        
+        // Create a unique file name
+        String fileName = "thongke_" + timestamp + ".xlsx";
 
 		// Lưu workbook vào một file Excel
-		try (FileOutputStream outputStream = new FileOutputStream("thongke.xlsx")) {
+		try (FileOutputStream outputStream = new FileOutputStream("data/" + fileName)) {
 			workbook.write(outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -687,6 +717,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Top 3 Khách có số đơn nhiều nhất
 	private void thongKeKHTiemNang() {
+		datasetDay.clear();
+		datasetMonth.clear();
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.thongKeKHTiemNang();
 		double tongTien = 0;
@@ -711,6 +743,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Top 3 Nhân viên lập số đơn nhiều nhất
 	private void thongKeNVChamChi() {
+		datasetDay.clear();
+		datasetMonth.clear();
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.thongKeNVChamChi();
 		double tongTien = 0;
@@ -735,6 +769,8 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 
 //	Top 3 Đơn hàng có lợi nhuận cao nhất
 	private void thongKeLoiNhuanCaoNhat() {
+		datasetDay.clear();
+		datasetMonth.clear();
 		HoaDon_Dao hdDao = new HoaDon_Dao();
 		List<HoaDon> listHD = hdDao.thongKeLoiNhuanCaoNhat();
 		double tongTien = 0;
