@@ -14,6 +14,8 @@ import dao.LoaiThuoc_Dao;
 import dao.NhaCungCap_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
+import entity.LoaiThuoc;
+import entity.NhaCungCap;
 import entity.NhanVien;
 import entity.Thuoc;
 
@@ -27,6 +29,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 	private NhaCungCap_Dao nccDao ;
 	private LoaiThuoc_Dao loaiThuocDao;
 	private DonVi_Dao donViDao;
+	private JComboBox<String> cbbThongTin;
 
 	public TimThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
@@ -77,9 +80,21 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 		b2.add(lblThongTin);
 		b2.add(txtThongTin);
 		pnCenterTop.add(Box.createVerticalStrut(10));
+		pnCenterTop.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin tìm kiếm"));
+		
+		// Thông tin tìm kiếm combobox
+		JLabel lblThongTinCBB = new JLabel("Thông tin: ");
+		lblThongTinCBB.setPreferredSize(new Dimension(90, 25));
+		cbbThongTin = new JComboBox<String>();
+		cbbThongTin.setPreferredSize(new Dimension(400, 25));
+		cbbThongTin.setEditable(false);
+		b2.add(Box.createHorizontalStrut(20));
+		b2.add(lblThongTinCBB);
+		b2.add(cbbThongTin);
+		pnCenterTop.add(Box.createVerticalStrut(10));
 		pnCenterTop.add(b2);
-		pnCenterTop.setBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thông tin tìm kiếm"));
+		
+		
 		// Button
 		JPanel pnButton = new JPanel();
 		btnTim = new JButton("Tìm");
@@ -117,6 +132,47 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 
 		ConnectDB.connect();
 		hienTable();
+		cbbCachTim.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String cachTim = (String) cbbCachTim.getSelectedItem();
+				if (cachTim.equals("Mã thuốc")) {
+					txtThongTin.setText("");
+					txtThongTin.setEditable(true);
+					cbbThongTin.setEnabled(false);
+				}
+				if (cachTim.equals("Tên thuốc")) {
+					txtThongTin.setText("");
+					txtThongTin.setEditable(true);
+					cbbThongTin.setEnabled(false);
+				}
+				if (cachTim.equals("Loại thuốc")) {
+					txtThongTin.setText("");
+					txtThongTin.setEditable(false);
+					cbbThongTin.setEnabled(true);
+					cbbThongTin.removeAllItems();
+					// Đổ dữ liệu cho combobox
+					loaiThuocDao = new LoaiThuoc_Dao();
+					List<LoaiThuoc> dsLoai = loaiThuocDao.readFromTable();
+					for (LoaiThuoc loai : dsLoai) {
+						cbbThongTin.addItem(loai.getLoaiThuoc());
+					}
+				}
+				if (cachTim.equals("Nhà cung cấp")) {
+					txtThongTin.setText("");
+					txtThongTin.setEditable(false);
+					cbbThongTin.setEnabled(true);
+					cbbThongTin.removeAllItems();
+					// Đổ dữ liệu cho combobox
+					nccDao = new NhaCungCap_Dao();
+					List<NhaCungCap> dsNCC = nccDao.readFromTable();
+					for (NhaCungCap ncc : dsNCC) {
+						cbbThongTin.addItem(ncc.getTenNCC());
+					}
+					
+				}
+			}
+		});
 
 	}
 
@@ -146,25 +202,27 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o.equals(btnTim)) {
-			timThuoc();
+			String cachTim = (String) cbbCachTim.getSelectedItem();
+			if (cachTim.equals("Mã thuốc") || cachTim.equals("Tên thuốc")) {
+				timThuocTheoTenVaMa();
+			} else {
+				timThuocTheoLoaiVaNCC();
+			}
 		}
 		if (o.equals(btnReset)) {
 			txtThongTin.setText("");
+			cbbCachTim.setSelectedIndex(0);
 			hienTable();
 		}
 	}
 
-	private void timThuoc() {
+	private void timThuocTheoTenVaMa() {
 		thuocDao = new Thuoc_Dao();
-		nccDao = new NhaCungCap_Dao();
-		loaiThuocDao = new LoaiThuoc_Dao();
-		donViDao = new DonVi_Dao();
-		// Lấy thông tin tìm kiếm
 		String thongTin = txtThongTin.getText();
-		
+		donViDao = new DonVi_Dao();
+		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		// Lấy cách tìm kiếm
 		String cachTim = (String) cbbCachTim.getSelectedItem();
-		List<Thuoc> dsThuoc = thuocDao.readFromTable();
 		if (thongTin.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin tìm kiếm.");
 			return;
@@ -206,12 +264,30 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 					hienTable();
 				}
 			}
+		}
+	}
+
+	private void timThuocTheoLoaiVaNCC() {
+		thuocDao = new Thuoc_Dao();
+		nccDao = new NhaCungCap_Dao();
+		loaiThuocDao = new LoaiThuoc_Dao();
+		donViDao = new DonVi_Dao();
+		// Lấy thông tin tìm kiếm
+		String thongTin = cbbThongTin.getSelectedItem().toString();
+		// Lấy cách tìm kiếm
+		String cachTim = (String) cbbCachTim.getSelectedItem();
+		
+		List<Thuoc> dsThuoc = thuocDao.readFromTable();
+		if (thongTin.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin tìm kiếm.");
+			return;
+		} else {
 			if (cachTim.equals("Loại thuốc")) {
 				String loai = loaiThuocDao.getMaLoaiThuoc(thongTin);
 				if (thuocDao.timTheoLoai(loai)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
-					JOptionPane.showMessageDialog(this, "Tìm thấy loại thuốc.");
+					JOptionPane.showMessageDialog(this, "Tìm thấy loại thuốc " + thongTin);
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getMaLoai().getMaLoai().contains(loai)) {
 							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
@@ -221,7 +297,8 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 						}
 					}
 				} else {
-					JOptionPane.showMessageDialog(this, "Không tìm thấy loại thuốc.");
+					cbbThongTin.setSelectedIndex(0);
+					JOptionPane.showMessageDialog(this, "Không tìm thấy các thuốc có loại thuốc này.");
 					hienTable();
 				}
 			}
@@ -230,7 +307,7 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 				if (thuocDao.timTheoNCC(ncc)) {
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.setRowCount(0);
-					JOptionPane.showMessageDialog(this, "Tìm thấy nhà cung cấp.");
+					JOptionPane.showMessageDialog(this, "Tìm thấy nhà cung cấp "+ thongTin);
 					for (Thuoc thuoc : dsThuoc) {
 						if (thuoc.getMaNCC().contains(ncc)) {
 							Object[] rowData = { nccDao.getNCC(thuoc.getMaNCC()), thuoc.getMaThuoc(), thuoc.getTenThuoc(),
@@ -240,7 +317,8 @@ public class TimThuoc_Gui extends JPanel implements ActionListener {
 						}
 					}
 				} else {
-					JOptionPane.showMessageDialog(this, "Không tìm thấy nhà cung cấp.");
+					cbbThongTin.setSelectedIndex(0);
+					JOptionPane.showMessageDialog(this, "Không tìm thấy các thuốc của nhà cung cấp này.");
 					hienTable();
 				}
 			}

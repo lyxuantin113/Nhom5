@@ -16,9 +16,11 @@ import dao.NhaCungCap_Dao;
 import dao.NhanVien_Dao;
 import dao.PhieuNhapThuoc_Dao;
 import dao.ChiTietPhieuNhapThuoc_Dao;
+import dao.DonVi_Dao;
 import dao.Thuoc_Dao;
 import db.ConnectDB;
 import entity.ChiTietPhieuNhapThuoc;
+import entity.DonVi;
 import entity.NhaCungCap;
 import entity.NhanVien;
 import entity.PhieuNhapThuoc;
@@ -201,11 +203,6 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		lblDonVi.setPreferredSize(new Dimension(90, 25));
 		cbbDonVi = new JComboBox<String>();
 		cbbDonVi.setPreferredSize(new Dimension(395, 25));
-		cbbDonVi.addItem("Vien");
-		cbbDonVi.addItem("Vi");
-		cbbDonVi.addItem("Hop");
-		cbbDonVi.addItem("Goi");
-		cbbDonVi.addItem("Chai");
 		b3.add(Box.createHorizontalStrut(10));
 		b3.add(lblDonVi);
 		b3.add(cbbDonVi);
@@ -299,26 +296,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		btnXacNhan.addActionListener(this);
 		btnTao.addActionListener(this);
 		btnHuy.addActionListener(this);
-//		btnLamMoi.addActionListener(this);
-//		table.addMouseListener(new java.awt.event.MouseAdapter() {
-//			public void mouseClicked(java.awt.event.MouseEvent evt) {
-//				int row = table.getSelectedRow();
-//				String ma = table.getValueAt(row, 0).toString();
-//				String giaNhap = table.getValueAt(row, 1).toString();
-//				String hsd = table.getValueAt(row, 2).toString();
-//				String soLuong = table.getValueAt(row, 3).toString();
-//				String donVi = table.getValueAt(row, 4).toString();
-//				String thanhTien = table.getValueAt(row, 5).toString();
-//				String maCTPNT = table.getValueAt(row, 6).toString();
-//				cbbMaThuoc.setSelectedItem(ma);
-//				txtGiaNhap.setText(giaNhap);
-//				txtHSD.setText(hsd);
-//				txtSoLuong.setText(soLuong);
-//				cbbDonVi.setSelectedItem(donVi);
-//				txtThanhTien.setText(thanhTien);
-//				txtMaCTPNT.setText(maCTPNT);
-//			}
-//		});
+
 		cbbMaThuoc.addActionListener(this);
 
 		table.addMouseListener(this);
@@ -326,6 +304,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		ConnectDB.connect();
 		// Đổ dữ liệu cho combobox
 		addCombobox();
+		addComboboxDonVi();
 		// Lấy tên nhân viên
 		txtMaNV.setText(nhanVienDN.getTenNV());
 		
@@ -335,6 +314,15 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 		btnXoa.setEnabled(false);
 		btnSua.setEnabled(false);
 		btnXacNhan.setEnabled(false);
+		
+	}
+
+
+	private void addComboboxDonVi() {
+		DonVi_Dao dvDao = new DonVi_Dao();
+		for (DonVi dv : dvDao.readFromTable()) {
+			cbbDonVi.addItem(dv.getDonVi());
+		}
 		
 	}
 
@@ -608,7 +596,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 				String hsd = thuoc.getHSD().toString();
 				txtHSD.setText(hsd);
 				txtSoLuong.setEnabled(true);
-				String donVi = thuoc.getMaDonVi().getMaDonVi();
+				String donVi = thuoc.getMaDonVi().getDonVi();
 				cbbDonVi.setSelectedItem(donVi);
 				txtMaCTPNT.setText(maPNT);
 
