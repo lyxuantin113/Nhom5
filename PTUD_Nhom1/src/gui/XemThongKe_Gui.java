@@ -26,6 +26,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -274,16 +277,17 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 		Box boxChart = Box.createVerticalBox();
 		
 		JPanel chartPanelmonth = createChartPanelMonth();
-//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 200));
 		JScrollPane scrollPaneMonth = new JScrollPane(chartPanelmonth); // Đặt biểu đồ vào JScrollPane
-		scrollPaneMonth.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
+		scrollPaneMonth.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		boxChart.add(scrollPaneMonth);
 		
 		// Biểu đồ ngày
 		JPanel chartPanelday = createChartPanelDay();
-//		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 350));
+		chartPanelmonth.setPreferredSize(new java.awt.Dimension(800, 200));
 		JScrollPane scrollPaneDay = new JScrollPane(chartPanelday); // Đặt biểu đồ vào JScrollPane
-		scrollPaneDay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Hiển thị thanh cuộn ngang
+		scrollPaneDay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
 		boxChart.add(scrollPaneDay);
 		
 		pnlWest.add(boxChart);
@@ -343,6 +347,18 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, Color.BLUE);
         renderer.setMaximumBarWidth(0.05);
+        
+        CategoryAxis xAxis = plot.getDomainAxis();
+        xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        
+        xAxis.setLowerMargin(0.02);
+        xAxis.setUpperMargin(0.02);
+
+        // Adjust range axis (y-axis)
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        
+        
 	    return new ChartPanel(chartDay);
 	}
 	// Phương thức để cập nhật dữ liệu trong biểu đồ
