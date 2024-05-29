@@ -11,7 +11,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -557,9 +559,15 @@ public class XemThongKe_Gui extends JPanel implements ActionListener {
 				row.createCell(j).setCellValue(model.getValueAt(i, j).toString());
 			}
 		}
+		
+		 // Get current timestamp
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        
+        // Create a unique file name
+        String fileName = "thongke_" + timestamp + ".xlsx";
 
 		// Lưu workbook vào một file Excel
-		try (FileOutputStream outputStream = new FileOutputStream("thongke.xlsx")) {
+		try (FileOutputStream outputStream = new FileOutputStream("data/" + fileName)) {
 			workbook.write(outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
