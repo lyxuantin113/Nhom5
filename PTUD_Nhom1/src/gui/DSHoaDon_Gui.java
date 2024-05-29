@@ -152,7 +152,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 
 		cbbTim = new JComboBox<String>();
 		cbbTim.addItem("Mã đơn");
-		cbbTim.addItem("Mã Nhân viên");
+		cbbTim.addItem("Nhân viên");
 		cbbTim.addItem("Ngày lập");
 		cbbTim.addItem("Ngày nhận");
 		cbbTim.setPreferredSize(new Dimension(110, 35));
@@ -219,7 +219,7 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		List<HoaDon> listHoaDon = hoaDonDao.readFromTable();
 		if (listHoaDon != null) {
 			for (HoaDon hoaDon : listHoaDon) {
-				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(), hoaDon.getMaKH().getHoTen(),
+				Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getTenNV(), hoaDon.getMaKH().getHoTen(),
 						hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(), hoaDon.getNgayNhan(),
 						hoaDonDao.tinhTongTien(hoaDon) };
 
@@ -238,8 +238,8 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 		if (listChiTietHoaDon != null) {
 			for (ChiTietHoaDon chiTietHoaDon : listChiTietHoaDon) {
 				Object[] rowData = { chiTietHoaDon.getMaThuoc().getMaThuoc(), chiTietHoaDon.getMaThuoc().getTenThuoc(),
-						chiTietHoaDon.getMaThuoc().getMaLoai().getMaLoai(), chiTietHoaDon.getMaThuoc().getGiaBan(),
-						chiTietHoaDon.getMaThuoc().getMaDonVi().getMaDonVi(), chiTietHoaDon.getSoLuong(),
+						chiTietHoaDon.getMaThuoc().getMaLoai().getLoaiThuoc(), chiTietHoaDon.getMaThuoc().getGiaBan(),
+						chiTietHoaDon.getMaThuoc().getMaDonVi().getDonVi(), chiTietHoaDon.getSoLuong(),
 						chiTietHoaDon.getSoLuong() * chiTietHoaDon.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng mới
 				model.addRow(rowData); // Thêm hàng vào model
 			}
@@ -461,18 +461,24 @@ public class DSHoaDon_Gui extends JPanel implements ActionListener, MouseListene
 
 					model.addRow(rowData);
 				}
-			} else if (typeSearch.equalsIgnoreCase("Mã Nhân viên")) {
-				List<HoaDon> listHD = hoaDonDao.findByNhanVien(textFind);
+			} else if (typeSearch.equalsIgnoreCase("Nhân viên")) {
+				// Chuyển tên nhân viên thành mã nhân viên
+				NhanVien nv = nhanVienDao.getNhanVienByName(textFind);
+				if (nv == null) {
+					JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên!");
+					return;
+				}
+				List<HoaDon> listHD = hoaDonDao.findByNhanVien(nv.getMaNV());
 				if (listHD != null) {
 					DefaultTableModel model = (DefaultTableModel) tableHoaDon.getModel();
 					model.setRowCount(0);
 					for (HoaDon hoaDon : listHD) {
-						Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getMaNV(),
+						Object[] rowData = { hoaDon.getMaHoaDon(), hoaDon.getMaNV().getTenNV(),
 								hoaDon.getMaKH().getHoTen(), hoaDon.getMaKH().getSoDienThoai(), hoaDon.getNgayLap(),
 								hoaDon.getNgayNhan(), hoaDonDao.tinhTongTien(hoaDon) };
 						model.addRow(rowData);
 					}
-				}
+				} 
 			} else if (typeSearch.equalsIgnoreCase("Ngày lập")) {
 				try {
 					LocalDate textFindDate = LocalDate.parse(tfTim.getText());

@@ -214,7 +214,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		List<DonDat> listDonDat = donDatDao.readFromTable();
 		if (listDonDat != null) {
 			for (DonDat donDat : listDonDat) {
-				Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(), donDat.getMaKH().getHoTen(),
+				Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getTenNV(), donDat.getMaKH().getHoTen(),
 						donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(), donDat.getNgayNhan(),
 						donDatDao.tinhTongTien(donDat) };
 
@@ -235,8 +235,8 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 			if (listChiTietDonDat != null) {
 				for (ChiTietDonDat chiTietDonDat : listChiTietDonDat) {
 					Object[] rowData = { chiTietDonDat.getMaThuoc().getMaThuoc(),
-							chiTietDonDat.getMaThuoc().getTenThuoc(), chiTietDonDat.getMaThuoc().getMaLoai().getMaLoai(),
-							chiTietDonDat.getMaThuoc().getGiaBan(), chiTietDonDat.getMaThuoc().getMaDonVi().getMaDonVi(),
+							chiTietDonDat.getMaThuoc().getTenThuoc(), chiTietDonDat.getMaThuoc().getMaLoai().getLoaiThuoc(),
+							chiTietDonDat.getMaThuoc().getGiaBan(), chiTietDonDat.getMaThuoc().getMaDonVi().getDonVi(),
 							chiTietDonDat.getSoLuong(),
 							chiTietDonDat.getSoLuong() * chiTietDonDat.getMaThuoc().getGiaBan() }; // Tạo dữ liệu hàng
 																									// mới
@@ -345,7 +345,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 					DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
 					model.setRowCount(0);
 
-					Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(), donDat.getMaKH().getHoTen(),
+					Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getTenNV(), donDat.getMaKH().getHoTen(),
 							donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(), donDat.getNgayNhan(),
 							donDatDao.tinhTongTien(donDat) };
 
@@ -357,7 +357,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 					DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
 					model.setRowCount(0);
 					for (DonDat donDat : listHD) {
-						Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(),
+						Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getTenNV(),
 								donDat.getMaKH().getHoTen(), donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(),
 								donDat.getNgayNhan(), donDatDao.tinhTongTien(donDat) };
 						model.addRow(rowData);
@@ -371,7 +371,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 						DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
 						model.setRowCount(0);
 						for (DonDat donDat : listHD) {
-							Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(),
+							Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getTenNV(),
 									donDat.getMaKH().getHoTen(), donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(),
 									donDat.getNgayNhan(), donDatDao.tinhTongTien(donDat) };
 							model.addRow(rowData);
@@ -389,7 +389,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 						DefaultTableModel model = (DefaultTableModel) tableDonDat.getModel();
 						model.setRowCount(0);
 						for (DonDat donDat : listHD) {
-							Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getMaNV(),
+							Object[] rowData = { donDat.getMaDonDat(), donDat.getMaNV().getTenNV(),
 									donDat.getMaKH().getHoTen(), donDat.getMaKH().getSoDienThoai(), donDat.getNgayLap(),
 									donDat.getNgayNhan(), donDatDao.tinhTongTien(donDat) };
 							model.addRow(rowData);

@@ -133,7 +133,7 @@ public class HoaDon_Dao {
 //	NHÂN VIÊN
 	public List<HoaDon> findByNhanVien(String tenNV) {
 		List<HoaDon> listHD = new ArrayList<HoaDon>();
-		String query = "select * from HoaDon where tenNV = ?";
+		String query = "select * from HoaDon where maNV = ?";
 
 		try {
 			pstmt = con.prepareStatement(query);
