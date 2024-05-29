@@ -401,6 +401,16 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			return;
 		} else {
 			JOptionPane.showMessageDialog(this, "Xác nhận thành công.");
+			
+			// Set tổng tiền cho phiếu nhập
+			Double tongTien = Double.parseDouble(txtTongTien.getText());
+			String maPNT = txtMaPNT.getText();
+			PhieuNhapThuoc_Dao pntDao = new PhieuNhapThuoc_Dao();
+			PhieuNhapThuoc pnt = pntDao.timTheoMa(maPNT);
+			pnt.setTongTien(tongTien);
+			pntDao.updateTongTien(pnt);
+			
+			
 			XoaTrangToanBo();
 			taoMaPhieuNhap();
 		}
@@ -454,8 +464,21 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
-			// Xóa dữ liệu trong combobox
-			cbbMaThuoc.removeAllItems();
+			
+			 // Tạm thời xóa ActionListener trước khi xóa các mục trong JComboBox
+	        ActionListener[] listeners = cbbMaThuoc.getActionListeners();
+	        for (ActionListener listener : listeners) {
+	            cbbMaThuoc.removeActionListener(listener);
+	        }
+
+	        // Xóa dữ liệu trong combobox
+	        cbbMaThuoc.removeAllItems();
+	        
+	        // Thêm lại các ActionListener sau khi hoàn tất
+	        for (ActionListener listener : listeners) {
+	            cbbMaThuoc.addActionListener(listener);
+	        }
+			
 		} else {
 			JOptionPane.showMessageDialog(this, "Hủy thất bại.");
 
@@ -573,6 +596,11 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 				
 				cbbMaThuoc.setEnabled(true);
 				Thuoc_Dao thuocDao = new Thuoc_Dao();
+				if (cbbMaThuoc.getItemCount() == 0) {
+					JOptionPane.showMessageDialog(this, "Nhà cung cấp không có thuốc.");
+					huy();
+					return;
+				}
 				String maThuoc = cbbMaThuoc.getSelectedItem().toString();
 				Thuoc thuoc = thuocDao.timTheoMa(maThuoc);
 				Double giaNhap = thuoc.getGiaNhap();
@@ -626,6 +654,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 	}
 
 	private void addMaThuoc(String maNCC) {
+		
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		for (Thuoc thuoc : thuocDao.getDSTByNCC(maNCC)) {
 			cbbMaThuoc.addItem(thuoc.getMaThuoc());
@@ -635,7 +664,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 
 	private void layThongTin() {
 		cbbMaThuoc.addActionListener(new ActionListener() {
-
+			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String maThuoc = cbbMaThuoc.getSelectedItem().toString();
@@ -707,6 +736,7 @@ public class NhapThuoc_Gui extends JPanel implements ActionListener, MouseListen
 			tongTien += thanhTien;
 			
 		}
+		
 		txtTongTien.setText(tongTien.toString());
 		
 	}
