@@ -47,7 +47,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
-public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener, MouseListener {
+public class DSPhieuNhapThuoc_Gui extends JPanel implements ActionListener, MouseListener {
 
 	private JTable table;
 	private JTable table2;
@@ -58,7 +58,7 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 	private NhanVien nvdn;
 	
 
-	public DanhSachPhieuNhapThuoc_Gui(NhanVien nhanVienDN) {
+	public DSPhieuNhapThuoc_Gui(NhanVien nhanVienDN) {
 		setSize(1070, 600);
 		setVisible(true);
 
@@ -237,23 +237,26 @@ public class DanhSachPhieuNhapThuoc_Gui extends JPanel implements ActionListener
 
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 
-			// Lấy header
-			Row headerRow = ((XSSFSheet) sheet).createRow(0);
-			for (int col = 0; col < model.getColumnCount(); col++) {
-				Cell cell = headerRow.createCell(col);
-				cell.setCellValue(model.getColumnName(col));
+			// Tạo Header cho bảng Excel
+			Row headerRow = sheet.createRow(0);
+			int[] selectedColumns = {0, 1, 2, 3, 5, 6};
+			int cellNum = 0;
+			for (int col : selectedColumns) {
+			    Cell cell = headerRow.createCell(cellNum++);
+			    cell.setCellValue(model.getColumnName(col));
 			}
 
-			// Lấy data
+			// Thêm dữ liệu từ JTable vào bảng Excel
 			for (int row = 0; row < model.getRowCount(); row++) {
-				Row excelRow = ((XSSFSheet) sheet).createRow(row + 1);
-				for (int col = 0; col < model.getColumnCount(); col++) {
-					Object value = model.getValueAt(row, col);
-					Cell cell = excelRow.createCell(col);
-					if (value != null) {
-						cell.setCellValue(value.toString());
-					}
-				}
+			    Row excelRow = sheet.createRow(row + 1);
+			    cellNum = 0;
+			    for (int col : selectedColumns) {
+			        Object value = model.getValueAt(row, col);
+			        Cell cell = excelRow.createCell(cellNum++);
+			        if (value != null) {
+			            cell.setCellValue(value.toString());
+			        }
+			    }
 			}
 
 			// Viết vào file
