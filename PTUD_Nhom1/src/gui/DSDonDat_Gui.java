@@ -121,7 +121,7 @@ public class DSDonDat_Gui extends JPanel implements ActionListener, MouseListene
 		JLabel lblTableDonDat = new JLabel("Danh Sách Đơn Đặt:");
 		lblTableDonDat.setFont(fo16);
 		Box boxTableDonDat = Box.createVerticalBox();
-		String[] headerDonDat = "Mã đơn;Mã NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
+		String[] headerDonDat = "Mã đơn;Tên NV;Tên khách;SĐT Khách;Ngày lập;Ngày nhận;Tổng tiền".split(";");
 		modelDonDat = new DefaultTableModel(headerDonDat, 0);
 		tableDonDat = new JTable(modelDonDat);
 		JScrollPane scrollDonDat = new JScrollPane();

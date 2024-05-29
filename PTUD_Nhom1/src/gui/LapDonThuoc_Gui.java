@@ -306,7 +306,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 
 //		BOX2
 //		Mã NV
-		JLabel lbMaNV = new JLabel("Mã Nhân Viên: ");
+		JLabel lbMaNV = new JLabel("Tên Nhân Viên: ");
 		lbMaNV.setPreferredSize(new Dimension(100, 30));
 		txtMaNV = new JTextField(20);
 		txtMaNV.setText(nhanVienDN.getTenNV());
@@ -531,7 +531,7 @@ public class LapDonThuoc_Gui extends JPanel implements ActionListener, MouseList
 	private boolean checkHSD() {
 		Thuoc_Dao thuocDao = new Thuoc_Dao();
 		Thuoc thuoc = thuocDao.timTheoMa(txtMaThuoc.getText());
-		if (thuoc.getHSD().isBefore(LocalDate.now().minusDays(3))) {
+		if (thuoc.getHSD().isBefore(LocalDate.now().plusDays(3))) {
 			JOptionPane.showMessageDialog(this, "Lưu ý: Thuốc đã quá hạn hoặc sắp hết hạn!");
 			return false;
 		}

@@ -47,9 +47,9 @@ public class ManHinhNV_GUI extends JFrame {
 //		Thuốc
 		cardPanel.add(new DSThuoc_Gui(nhanVienDN), "Quản Lý Thuốc");
 		cardPanel.add(new TimThuoc_Gui(nhanVienDN), "Tìm Kiếm Thuốc");
-		cardPanel.add(new NhapThuoc_Gui(nhanVienDN), "Nhập Thuốc");
-		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(nhanVienDN), "Danh sách phiếu nhập thuốc");
-		cardPanel.add(new ThemNCC_Gui(nhanVienDN), "Thêm Nhà Cung Cấp");
+//		cardPanel.add(new NhapThuoc_Gui(nhanVienDN), "Nhập Thuốc");
+//		cardPanel.add(new DanhSachPhieuNhapThuoc_Gui(nhanVienDN), "Danh sách phiếu nhập thuốc");
+//		cardPanel.add(new ThemNCC_Gui(nhanVienDN), "Thêm Nhà Cung Cấp");
 		
 //		Hệ thống
 		cardPanel.add(new DoiMatKhau_Gui(nhanVienDN), "Đổi Mật Khẩu");
@@ -398,28 +398,28 @@ public class ManHinhNV_GUI extends JFrame {
 			}
 		});
 		
-		nhapThuoc.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Nhập Thuốc");
-			}
-		});
-		
-		dsPhieuNhapThuoc.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Danh sách phiếu nhập thuốc");
-			}
-		});
-		
-		themNCC.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "Thêm Nhà Cung Cấp");
-            }
-        });
+//		nhapThuoc.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				cardLayout.show(cardPanel, "Nhập Thuốc");
+//			}
+//		});
+//		
+//		dsPhieuNhapThuoc.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				cardLayout.show(cardPanel, "Danh sách phiếu nhập thuốc");
+//			}
+//		});
+//		
+//		themNCC.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                cardLayout.show(cardPanel, "Thêm Nhà Cung Cấp");
+//            }
+//        });
 
 //		HÓA ĐƠN		
 		timHoaDon.addActionListener(new ActionListener() {
